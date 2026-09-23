@@ -16,3 +16,5 @@ header{border-bottom-color:#e2e5ed}.brand{letter-spacing:.055em}.brand small{let
 
 /* Wide course map; other pages retain their existing content width. */
 .map-main{max-width:none;width:auto;margin-left:clamp(24px,3vw,64px);margin-right:clamp(24px,3vw,64px)}.map-main .prose{padding-left:28px;padding-right:28px}.map-main .prose table{font-size:15px}.map-main .prose td:first-child{width:57%}@media(max-width:720px){.map-main{margin-left:0;margin-right:0;padding:26px 16px}.map-main .prose{padding-left:16px;padding-right:16px}.map-main .prose table{font-size:14px}}
+
+.homework .section-head{align-items:flex-start}.homework-unit{text-align:right;max-width:75%}.homework-unit p{font-size:14px;line-height:1.6;color:#203454}.homework-unit>span{display:block;font-size:13px;color:#657187;margin-top:4px}@media(max-width:720px){.homework-unit{text-align:left;max-width:none;margin-top:8px}}
