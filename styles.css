@@ -237,3 +237,8 @@ footer>a:hover{background:var(--pink-soft)}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 @media(prefers-reduced-motion:no-preference){a{transition:background-color .15s,color .15s,border-color .15s,box-shadow .2s,transform .2s}}
 @media print{body{background:#fff}.intro::after,nav,.map-banner>span{display:none}.material,.homework-row,.prose{box-shadow:none}}
+
+/* New lecture uploads use the same update treatment as homework. */
+.material-updated{background:linear-gradient(90deg,var(--pink-wash),#fff 70%);border-color:var(--pink-2);box-shadow:0 0 0 3px rgba(244,220,230,.55),var(--shadow)}
+.details .update-badge{display:inline-flex;align-items:center;gap:5px;margin-top:7px;padding:3px 10px;border-radius:999px;background:var(--pink);color:var(--navy);font-size:12px;font-weight:650;line-height:1.5}
+.details .update-badge::before{content:"✦";color:var(--rose)}
