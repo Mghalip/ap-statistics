@@ -113,6 +113,8 @@ h1{font-size:clamp(30px,4vw,46px);letter-spacing:-.03em;line-height:1.2;margin:0
 .homework-topic{flex:1;min-width:0}
 .homework-topic>span{font-size:15px;font-weight:650;line-height:1.4}
 .homework-topic small{display:block;font-size:12px;color:var(--muted);margin-top:3px}
+.homework-row.hw-quiz{flex-wrap:wrap}
+.hw-quiz .homework-links{width:100%;flex-wrap:wrap}
 .homework-links{display:flex;align-items:center;gap:10px;flex-shrink:0}
 .homework-file{display:inline-flex;align-items:center;gap:4px;padding:4px 4px 4px 12px;border-radius:999px;background:var(--mist)}
 .homework-file+.homework-file{background:var(--pink-soft)}
