@@ -431,3 +431,9 @@ main:has(.group) .map-banner { padding-block: 12px; margin-bottom: 18px; }
     font-size: 10px;
   }
 }
+@media (max-width: 380px) {
+  main:has(.homework) { padding-inline: 8px; }
+  .homework-row .homework-topic small { margin-top: 2px; line-height: 1.15; }
+  .homework-row .tile-open { padding-block: 2px; line-height: 1.2; }
+  .homework-row .homework-topic > span { font-size: 13px; line-height: 1.15; }
+}
