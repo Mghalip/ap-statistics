@@ -244,3 +244,67 @@ footer>a:hover{background:var(--pink-soft)}
 .material-updated{background:linear-gradient(90deg,var(--pink-wash),#fff 70%);border-color:var(--pink-2);box-shadow:0 0 0 3px rgba(244,220,230,.55),var(--shadow)}
 .details .update-badge{display:inline-flex;align-items:center;gap:5px;margin-top:7px;padding:3px 10px;border-radius:999px;background:var(--pink);color:var(--navy);font-size:12px;font-weight:650;line-height:1.5}
 .details .update-badge::before{content:"✦";color:var(--rose)}
+
+/* Course and assignment collections share the same unit and card layout. */
+.group, .homework {
+  display: block;
+  margin-bottom: 44px;
+}
+.materials, .homework-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 16px;
+}
+.material, .homework-row {
+  min-width: 0;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: stretch;
+  gap: 14px;
+  padding: 20px;
+}
+.material .number, .homework-date {
+  align-self: flex-start;
+  height: 34px;
+  border-radius: 10px;
+}
+.material .details, .homework-topic {
+  flex: 1 0 auto;
+  overflow-wrap: anywhere;
+}
+.material .actions { display: flex; width: auto; }
+.homework-links, .hw-quiz .homework-links {
+  width: 100%;
+  display: grid;
+  gap: 6px;
+  padding: 0;
+}
+.homework-file {
+  display: flex;
+  flex-wrap: wrap;
+  padding-left: 10px;
+}
+.homework-file-label { margin-right: auto; }
+.homework-links a { padding-inline: 10px; }
+.homework-row.simulator-card {
+  background: #f0faf7;
+  border-color: #9bcfc2;
+  box-shadow: var(--shadow);
+}
+.homework-row.simulator-card::before { background: #217562; }
+.simulator-card .homework-date, .simulator-card .update-badge,
+.homework-file.simulator-link { color: #165748; background: #d3eee5; }
+.simulator-link a { color: white; background: #176654; }
+.simulator-link a:hover, .simulator-link a:focus-visible { background: #104d3e; }
+@media (max-width: 940px) {
+  .materials, .homework-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .homework-list { grid-template-columns: minmax(0, 1fr); }
+  .materials { gap: 10px; }
+  .material { padding: 14px; }
+}
+@media (max-width: 359px) {
+  .materials { grid-template-columns: minmax(0, 1fr); }
+}
