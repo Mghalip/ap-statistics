@@ -308,3 +308,91 @@ footer>a:hover{background:var(--pink-soft)}
 @media (max-width: 359px) {
   .materials { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* Square tiles keep file actions in an accessible, dismissible panel. */
+.materials, .homework-list {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 184px), 1fr));
+  gap: 10px;
+}
+.material, .homework-row {
+  position: relative;
+  aspect-ratio: 1;
+  min-height: 0;
+  align-self: start;
+  padding: 14px;
+  gap: 6px;
+}
+.group, .homework { margin-bottom: 22px; }
+.group .section-head, .homework .section-head { margin-bottom: 10px; }
+.material .details, .homework-topic { flex: 1 1 auto; min-height: 0; }
+.homework-topic > span, .material .details h3 {
+  display: block;
+  font-size: 15px;
+  line-height: 1.22;
+}
+.material .number, .homework-date { height: 26px; min-width: 40px; font-size: 12px; }
+.tile-open, .panel-close {
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  color: var(--navy);
+  background: var(--mist);
+}
+.tile-open {
+  align-self: flex-start;
+  padding: 5px 9px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 650;
+}
+.tile-open::after, .material .view::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+}
+.homework-row:has(.tile-open:focus-visible), .material:has(.view:focus-visible) {
+  outline: 3px solid var(--navy);
+}
+.simulator-card .tile-open { background: #176654; color: white; }
+.file-panel {
+  margin: auto;
+  width: min(380px, calc(100vw - 32px));
+  max-height: 85vh;
+  overflow: auto;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  color: var(--ink);
+  box-shadow: var(--shadow-hover);
+}
+.file-panel::backdrop { background: rgb(24 39 63 / 32%); }
+.file-panel h3 { margin: 4px 30px 8px 0; line-height: 1.3; }
+.file-panel p { margin: 0 0 16px; font-size: 14px; color: var(--muted); }
+.panel-close { float: right; border-radius: 50%; width: 30px; height: 30px; }
+main:has(.homework) .intro { padding: 12px 18px; margin-bottom: 14px; flex-direction: row; align-items: center; }
+main:has(.homework) .intro h1 { font-size: clamp(18px, 3vw, 28px); }
+main:has(.homework) .eyebrow, main:has(.homework) .intro::after { display: none; }
+main:has(.homework) .count { min-width: 0; padding: 6px 10px; }
+main:has(.homework) .count strong { font-size: 20px; }
+main:has(.homework) .count span { font-size: 10px; }
+.material .details p { font-size: 12px; line-height: 1.25; }
+.material .view { min-height: 24px; padding: 2px 9px; font-size: 12px; }
+@media (max-width: 600px) {
+  .materials, .homework-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .material, .homework-row { padding: 10px; gap: 4px; }
+  .material .details h3 { font-size: 14px; }
+  .material .details p { display: none; }
+  .material .update-badge, .homework-topic .update-badge { padding: 1px 6px; font-size: 10px; margin-top: 4px; }
+}
+@media (max-width: 359px) {
+  .material, .homework-row { padding: 8px; gap: 2px; }
+  .material .number, .homework-date { height: 20px; }
+  .homework-topic > span, .material .details h3 { font-size: 13px; line-height: 1.15; }
+}
+@media (max-width: 359px) {
+  .material .update-badge { position: absolute; top: 8px; right: 8px; margin: 0; }
+  .material .update-badge::before { display: none; }
+}
+main:has(.group) .intro { padding: 16px 20px; margin-bottom: 14px; }
+main:has(.group) .map-banner { padding-block: 12px; margin-bottom: 18px; }
