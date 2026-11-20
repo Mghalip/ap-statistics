@@ -396,3 +396,35 @@ main:has(.homework) .count span { font-size: 10px; }
 }
 main:has(.group) .intro { padding: 16px 20px; margin-bottom: 14px; }
 main:has(.group) .map-banner { padding-block: 12px; margin-bottom: 18px; }
+
+/* Recent uploads share a solid top edge and a dated status label. */
+.material-updated { --update-color: #663bbb; --update-tint: #f4efff; }
+.homework-row-updated { --update-color: #ad3d08; --update-tint: #fff3e7; }
+.simulator-card.homework-row-updated { --update-color: #086c5b; --update-tint: #e4f7ef; }
+.material.material-updated, .homework-row.homework-row-updated {
+  background: linear-gradient(160deg, var(--update-tint), white 82%);
+  border-color: var(--update-color);
+  border-top-width: 5px;
+  box-shadow: var(--shadow);
+}
+.material-updated .update-badge, .homework-row-updated .update-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  margin: 0;
+  padding: 3px 7px;
+  color: white;
+  background: var(--update-color);
+  font-size: 12px;
+  font-weight: 700;
+}
+.material-updated .update-badge::before, .homework-row-updated .update-badge::before { content: none; }
+@media (max-width: 600px) {
+  .homework-row-updated .homework-date { width: 42px; }
+  .material-updated .update-badge, .homework-row-updated .update-badge {
+    top: 8px;
+    right: 6px;
+    padding: 2px 5px;
+    font-size: 10px;
+  }
+}
