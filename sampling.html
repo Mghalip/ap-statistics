@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>抽样分布模拟器</title>
+<style>
+*{box-sizing:border-box}body{font:17px/1.6 system-ui,sans-serif;color:#172c46;background:#faf7f6;max-width:880px;margin:auto;padding:24px}main{background:white;border:1px solid #ded9dc;border-radius:16px;padding:clamp(14px,4vw,36px)}h1{font-size:clamp(24px,5vw,38px);margin:0 0 12px}select,button,input{font:inherit;padding:6px;border:1px solid #9ca8b4;border-radius:6px}select{max-width:100%}input{width:6em}fieldset{margin:16px 0;border:1px solid #d6dce2;border-radius:8px}label{display:inline-block;margin:4px 12px 4px 0}button{background:#233f60;color:white;padding:8px 16px;cursor:pointer}canvas{width:100%;height:auto}output{display:block;margin:16px 0}
+</style><main><h1>抽样分布模拟器</h1><select id="mode" aria-label="选择抽样分布"><option>样本比例的抽样分布</option><option>样本比例的差值的抽样分布</option><option>样本均值的抽样分布</option><option>样本均值的差值的抽样分布</option></select>
+<p id="model"></p><form id="form"><div id="groups"></div><button>重复抽样 1,000 次</button></form><output id="summary" aria-live="polite"></output><canvas id="chart" width="760" height="280" aria-label="模拟统计量的频数直方图"></canvas></main>
+<script>
+const mode=document.querySelector('#mode'), groups=document.querySelector('#groups');
+const canvas=document.querySelector('#chart'), ctx=canvas.getContext('2d');
+const keys=['proportion','proportion-difference','mean','mean-difference'];
+function setup(){
+  const means=mode.selectedIndex>=2, difference=mode.selectedIndex%2===1;
+  document.querySelector('#model').textContent=(means?'从正态总体独立随机抽样。':'每次观测独立，以概率 p 取得成功。')+(difference?'每轮分别抽取两个独立样本，计算第一组减第二组。':'每轮抽取一个样本并计算样本统计量。');
+  groups.replaceChildren();
+  for(let i=0;i<(difference?2:1);i++){
+    const field=document.createElement('fieldset');
+    field.innerHTML='<legend>总体 '+(i+1)+'</legend>'+ (means?
+      '<label>均值 μ <input name="m" type="number" required min="-100000" max="100000" step="any" value="'+(i?46:50)+'"></label><label>标准差 σ <input name="s" type="number" min="0.001" max="100000" step="any" required value="10"></label>':
+      '<label>比例 p <input name="p" type="number" min="0" max="1" step="any" required value="'+(i?0.4:0.5)+'"></label>')+
+      '<label>样本量 n <input name="n" type="number" min="1" max="1000" required value="30"></label>';
+    groups.append(field);
+  }
+  simulate();
+}
+function simulate(){
+  const params=Array.from(groups.children,field=>Object.fromEntries(Array.from(field.querySelectorAll('input'),el=>[el.name,el.valueAsNumber])));
+  function draw(g){
+    if('m' in g){
+      // A normal sample mean is exactly normal with standard deviation σ/√n.
+      const z=Math.sqrt(-2*Math.log(1-Math.random()))*Math.cos(2*Math.PI*Math.random());
+      return g.m+g.s*z/Math.sqrt(g.n);
+    }
+    let successes=0;
+    for(let j=0;j<g.n;j++) if(Math.random()<g.p) successes++;
+    return successes/g.n;
+  }
+  const values=Array.from({length:1000},()=>draw(params[0])-(params[1]?draw(params[1]):0));
+  const center=params.reduce((a,g,i)=>a+(i?-1:1)*(g.m??g.p),0);
+  const sd=Math.sqrt(params.reduce((a,g)=>a+(g.s===undefined?g.p*(1-g.p):g.s*g.s)/g.n,0));
+  const avg=values.reduce((a,v)=>a+v,0)/values.length;
+  const spread=Math.sqrt(values.reduce((a,v)=>a+(v-avg)**2,0)/(values.length-1));
+  const fmt=v=>Number(v.toPrecision(5)).toString();
+  document.querySelector('#summary').textContent='理论均值 '+fmt(center)+'　理论标准差 '+fmt(sd)+'　｜　模拟均值 '+fmt(avg)+'　模拟标准差 '+fmt(spread);
+  let lo=Math.min(...values),hi=Math.max(...values);
+  if(lo===hi){lo-=0.5;hi+=0.5}
+  const bins=Array(30).fill(0);
+  for(const v of values) bins[Math.min(29,Math.floor((v-lo)/(hi-lo)*30))]++;
+  const peak=Math.max(...bins);
+  ctx.clearRect(0,0,760,280);ctx.font='16px sans-serif';ctx.fillStyle='#172c46';
+  ctx.textAlign='left';ctx.fillText('频数',4,18);ctx.fillText(String(peak),4,46);ctx.fillText('0',16,226);
+  ctx.strokeStyle='#8898a5';ctx.strokeRect(52,36,660,190);
+  bins.forEach((v,i)=>{ctx.fillStyle='#3c7681';ctx.fillRect(52+22*i,226-190*v/peak,21,190*v/peak)});
+  ctx.fillStyle='#172c46';ctx.textAlign='center';
+  for(let k=0;k<=4;k++) ctx.fillText(fmt(lo+(hi-lo)*k/4),52+165*k,249);
+  ctx.fillText(['样本比例','样本比例之差','样本均值','样本均值之差'][mode.selectedIndex],380,274);
+}
+document.querySelector('#form').onsubmit=e=>{e.preventDefault();simulate()};
+function loadMode(){mode.selectedIndex=Math.max(0,keys.indexOf(location.hash.slice(1)));setup()}
+mode.onchange=()=>{location.hash=keys[mode.selectedIndex]};
+window.onhashchange=loadMode;loadMode();
+</script></html>

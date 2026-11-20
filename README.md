@@ -16,7 +16,7 @@
 
 ## 抽样分布模拟器
 
-1. [样本比例的抽样分布](https://muse.ai/s/sample-proportion-simulator-xdc6dxfxt67ac1/UMhQwGwLyjiKLz7--hDyT1iwAIVsCGm9uIaHKeiKfRw)
-2. [样本比例的差值的抽样分布](https://muse.ai/s/difference-of-sample-proportions-xcxj6dxfxttlxkxrxs/oRhOfFD1h2WD9SIWBP3-2yRkUIt3LZ9eifzcSpeVc34)
-3. [样本均值的抽样分布](https://muse.ai/s/sample-mean-simulator-qc6dxfxtxo6uxrxw/MfSSm057dvKYxf41K2aH7MBKQjjMYDL3l-cWtO_pdPs)
-4. [样本均值的差值的抽样分布](https://muse.ai/s/difference-of-sample-means-simulator-xrxv6dxfxwxmxrivxb/EXAK0RoL1KnD52H9Opap_64PTc38nlmwMnvp8HDBdqA)
+1. [样本比例的抽样分布](https://mghalip.github.io/ap-statistics/sampling.html#proportion)
+2. [样本比例的差值的抽样分布](https://mghalip.github.io/ap-statistics/sampling.html#proportion-difference)
+3. [样本均值的抽样分布](https://mghalip.github.io/ap-statistics/sampling.html#mean)
+4. [样本均值的差值的抽样分布](https://mghalip.github.io/ap-statistics/sampling.html#mean-difference)
