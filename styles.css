@@ -1339,7 +1339,8 @@ main {
   .site-nav {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+    border-radius: 14px;
   }
 
   .site-nav a {
