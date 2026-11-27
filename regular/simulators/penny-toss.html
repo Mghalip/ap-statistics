@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>Penny Toss Simulation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <style>
+      button, [role="button"], select, summary, input:not([type="checkbox"], [type="radio"]) { min-height: 2.25rem; }
+
+      :root {
+        --bg: #f4f2ec;
+        --surface: #ffffff;
+        --surface-2: #ece8dd;
+        --ink: #1d1a15;
+        --ink-2: #55503f;
+        --line: #d9d2c0;
+        --copper: #b0662a;
+        --copper-dark: #7c4416;
+        --copper-soft: #f3e2cd;
+        --target-red: #b3392e;
+        --target-ring: #cbbfa4;
+        --board: #faf7ef;
+        --good: #2e6b34;
+        --shadow: 0 1px 2px rgba(29,26,21,.06), 0 8px 24px rgba(29,26,21,.07);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #16140f;
+          --surface: #221f18;
+          --surface-2: #2b271d;
+          --ink: #f0ebdd;
+          --ink-2: #b3ab97;
+          --line: #403a2c;
+          --copper: #d08a45;
+          --copper-dark: #eda963;
+          --copper-soft: #3a2c1c;
+          --target-red: #e0685c;
+          --target-ring: #574e3a;
+          --board: #1c1a14;
+          --good: #7fc488;
+          --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+        }
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Public Sans", system-ui, -apple-system, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+
+      .wrap { max-width: 1080px; margin: 0 auto; padding: 24px 20px 48px; }
+
+      .topbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+      .backpill {
+        display: inline-flex; align-items: center; gap: 6px; min-height: 34px;
+        padding: 5px 14px; border-radius: 999px;
+        background: var(--surface); border: 1px solid var(--line);
+        color: var(--copper-dark); font-size: 13px; font-weight: 700; text-decoration: none;
+        transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+      }
+      .backpill:hover { background: var(--copper); border-color: var(--copper); color: #fff; }
+      .backpill.subtle { color: var(--ink-2); font-weight: 600; }
+      .backpill.subtle:hover { background: var(--surface-2); border-color: var(--line); color: var(--ink); }
+      @media (prefers-color-scheme: dark) { .backpill { color: var(--copper); } }
+
+      header { margin-bottom: 22px; }
+      h1 { font-size: clamp(26px, 4.5vw, 38px); line-height: 1.12; margin: 0 0 8px; font-weight: 800; letter-spacing: -.01em; }
+      .lede { margin: 0; color: var(--ink-2); font-size: 16px; line-height: 1.55; max-width: 62ch; }
+      .lede strong { color: var(--ink); }
+
+      .layout { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+      @media (max-width: 820px) { .layout { grid-template-columns: 1fr; } }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        box-shadow: var(--shadow);
+        padding: 18px;
+      }
+      .card h2 { font-size: 17px; margin: 0 0 4px; font-weight: 700; }
+      .card .sub { color: var(--ink-2); font-size: 13.5px; margin: 0 0 14px; line-height: 1.5; }
+
+      /* ---------- Target board ---------- */
+      .board-wrap { position: relative; width: 100%; aspect-ratio: 1 / 1; border-radius: 10px; overflow: hidden; background: var(--board); border: 1px solid var(--line); }
+      .rings {
+        position: absolute; inset: 0;
+        background:
+          radial-gradient(circle at 50% 50%,
+            var(--target-red) 0, var(--target-red) 4.16%,
+            transparent 4.16%),
+          repeating-radial-gradient(circle at 50% 50%,
+            transparent 0, transparent calc(8.333% - 1px),
+            var(--target-ring) calc(8.333% - 1px), var(--target-ring) 8.333%);
+      }
+      .rings::after {
+        content: ""; position: absolute; inset: 0;
+        background:
+          linear-gradient(to right, transparent calc(50% - .5px), var(--target-ring) calc(50% - .5px), var(--target-ring) calc(50% + .5px), transparent calc(50% + .5px)),
+          linear-gradient(to bottom, transparent calc(50% - .5px), var(--target-ring) calc(50% - .5px), var(--target-ring) calc(50% + .5px), transparent calc(50% + .5px));
+        opacity: .55;
+      }
+      .ring-label { position: absolute; font-size: 10.5px; color: var(--ink-2); transform: translate(-50%, -130%); white-space: nowrap; }
+      #boardCanvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+      .fly-penny {
+        position: absolute; left: 0; top: 0; width: 34px; height: 34px; margin: -17px 0 0 -17px;
+        border-radius: 50%; display: none; place-items: center;
+        background: radial-gradient(circle at 35% 32%, #eda963, #b0662a 62%, #7c4416);
+        border: 2px solid var(--copper-dark);
+        color: #fff7ea; font-weight: 700; font-size: 17px;
+        box-shadow: 0 6px 14px rgba(0,0,0,.28);
+        z-index: 5; pointer-events: none;
+      }
+      .board-note { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 10px; font-size: 12.5px; color: var(--ink-2); }
+
+      .last-toss {
+        margin-top: 14px; border-top: 1px dashed var(--line); padding-top: 14px;
+        display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+      }
+      .last-toss .big { font-size: 30px; font-weight: 600; }
+      .last-toss .lbl { font-size: 13px; color: var(--ink-2); text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
+      .verdict { font-size: 14px; font-weight: 600; color: var(--copper-dark); }
+      @media (prefers-color-scheme: dark) { .verdict { color: var(--copper); } }
+
+      /* ---------- Controls ---------- */
+      .toss-main {
+        width: 100%; padding: 14px; font-size: 17px; font-weight: 700;
+        background: var(--copper); color: #fff8ee; border: none; border-radius: 10px; cursor: pointer;
+        display: flex; align-items: center; justify-content: center; gap: 10px;
+      }
+      .toss-main:hover { background: var(--copper-dark); }
+      .toss-main:active { transform: translateY(1px); }
+      .coin-dot { width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle at 35% 32%, #f4bc7d, #d08a45 60%, #8a4d1c); border: 1.5px solid rgba(255,248,238,.65); display: inline-grid; place-items: center; font-size: 12px; font-weight: 700; flex: none; }
+      .batch-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 8px; }
+      .btn {
+        padding: 10px 8px; font-size: 14.5px; font-weight: 600; border-radius: 9px; cursor: pointer;
+        background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); font-family: inherit;
+      }
+      .btn:hover { border-color: var(--copper); color: var(--copper-dark); }
+      @media (prefers-color-scheme: dark) { .btn:hover { color: var(--copper); } }
+      .btn.ghost { background: transparent; }
+      .reset-row { margin-top: 8px; }
+      .reset-row .btn { width: 100%; }
+
+      .aim { margin-top: 18px; }
+      .aim .aim-lbl { font-size: 13px; font-weight: 600; color: var(--ink-2); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+      .seg { display: grid; grid-template-columns: 1fr 1fr 1fr; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; }
+      .seg button {
+        padding: 9px 4px; font-size: 13.5px; font-weight: 600; border: none; cursor: pointer; font-family: inherit;
+        background: var(--surface); color: var(--ink-2); border-right: 1px solid var(--line);
+      }
+      .seg button:last-child { border-right: none; }
+      .seg button[aria-pressed="true"] { background: var(--copper-soft); color: var(--copper-dark); }
+      @media (prefers-color-scheme: dark) { .seg button[aria-pressed="true"] { color: var(--copper); } }
+      .aim-note { font-size: 12.5px; color: var(--ink-2); margin: 8px 0 0; line-height: 1.5; }
+
+      /* ---------- Stats ---------- */
+      .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 18px; }
+      .stat { background: var(--surface-2); border-radius: 9px; padding: 10px 12px; }
+      .stat .k { font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-2); }
+      .stat .v { font-size: 20px; font-weight: 600; margin-top: 2px; white-space: nowrap; }
+      .stat .v small { font-size: 12px; color: var(--ink-2); font-weight: 500; }
+
+      .rings-hit { margin-top: 16px; }
+      .rings-hit .aim-lbl { font-size: 13px; font-weight: 600; color: var(--ink-2); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+      .hit-row { display: grid; grid-template-columns: 92px 1fr 74px; align-items: center; gap: 10px; font-size: 13.5px; margin-bottom: 7px; }
+      .hit-row .bar { height: 8px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
+      .hit-row .bar i { display: block; height: 100%; background: var(--copper); border-radius: 99px; width: 0%; transition: width .3s ease; }
+      .hit-row .val { text-align: right; color: var(--ink-2); }
+
+      /* ---------- Histogram ---------- */
+      .full { margin-top: 18px; }
+      .hist-wrap { width: 100%; }
+      .hist-wrap svg { width: 100%; height: auto; display: block; }
+      .legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: var(--ink-2); margin-top: 6px; }
+      .legend .sw { display: inline-block; width: 22px; height: 0; border-top: 3px solid; vertical-align: middle; margin-right: 6px; }
+      .insight {
+        margin-top: 14px; background: var(--copper-soft); border-radius: 10px; padding: 13px 15px;
+        font-size: 14.5px; line-height: 1.6;
+      }
+      .insight strong { color: var(--copper-dark); }
+      @media (prefers-color-scheme: dark) { .insight strong { color: var(--copper); } }
+
+      .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+      .chip {
+        font-size: 13px; padding: 5px 10px; border-radius: 99px; background: var(--surface-2);
+        border: 1px solid var(--line);
+      }
+      .chip.latest { background: var(--copper); color: #fff8ee; border-color: var(--copper); font-weight: 600; }
+      .empty-note { color: var(--ink-2); font-size: 14px; }
+
+      footer { margin-top: 22px; color: var(--ink-2); font-size: 13px; line-height: 1.6; }
+      @media (prefers-reduced-motion: reduce) { .hit-row .bar i { transition: none; } }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <nav class="topbar" aria-label="返回普通统计">
+        <a class="backpill" href="../index.html#simulators">← 返回普通统计</a>
+        <a class="backpill subtle" href="../index.html#syllabus">课程大纲</a>
+      </nav>
+      <header>
+        <h1>Toss a penny at the target</h1>
+        <p class="lede">Each toss, a penny is thrown toward the centre of the target. We record one number per toss: <strong>the distance from the centre to where the penny lands</strong>, in centimetres. Toss a few hundred and watch the shape of the distribution build up.</p>
+      </header>
+
+      <div class="layout">
+        <!-- Stage -->
+        <section class="card" aria-label="Target">
+          <h2>The target</h2>
+          <p class="sub">The dashed line measures the most recent toss — centre to penny, straight-line distance.</p>
+          <div class="board-wrap" id="boardWrap">
+            <div class="rings" aria-hidden="true"></div>
+            <span class="ring-label mono" style="left:58.33%; top:50%;">10</span>
+            <span class="ring-label mono" style="left:66.66%; top:50%;">20</span>
+            <span class="ring-label mono" style="left:75%; top:50%;">30</span>
+            <span class="ring-label mono" style="left:83.33%; top:50%;">40</span>
+            <span class="ring-label mono" style="left:91.66%; top:50%;">50 cm</span>
+            <canvas id="boardCanvas"></canvas>
+            <div class="fly-penny" id="flyPenny" aria-hidden="true">¢</div>
+          </div>
+          <div class="board-note">
+            <span>Each ring = 10 cm</span>
+            <span>Board is 120 cm × 120 cm</span>
+          </div>
+          <div class="last-toss" aria-live="polite">
+            <div>
+              <div class="lbl">Last toss</div>
+              <div class="big mono" id="lastDist">—</div>
+            </div>
+            <div class="verdict" id="lastVerdict">Toss a penny to start.</div>
+          </div>
+        </section>
+
+        <!-- Controls + stats -->
+        <section class="card" aria-label="Controls and summary statistics">
+          <h2>Toss pennies</h2>
+          <p class="sub">One at a time to watch it fly, or in batches to build the distribution fast.</p>
+
+          <button class="toss-main" id="toss1"><span class="coin-dot">¢</span> Toss 1 penny</button>
+          <div class="batch-row">
+            <button class="btn" id="toss10">Toss 10</button>
+            <button class="btn" id="toss100">Toss 100</button>
+            <button class="btn" id="toss1000">Toss 1,000</button>
+          </div>
+          <div class="reset-row"><button class="btn ghost" id="resetBtn">Reset — clear all tosses</button></div>
+
+          <div class="aim">
+            <div class="aim-lbl">Thrower's aim</div>
+            <div class="seg" role="group" aria-label="Thrower aim">
+              <button data-sigma="10" aria-pressed="false">Tight</button>
+              <button data-sigma="17" aria-pressed="true">Typical</button>
+              <button data-sigma="26" aria-pressed="false">Loose</button>
+            </div>
+            <p class="aim-note">Aim changes the scatter of future tosses only — pennies already recorded stay in the data.</p>
+          </div>
+
+          <div class="stats" aria-live="polite">
+            <div class="stat"><div class="k">Tosses</div><div class="v mono" id="stN">0</div></div>
+            <div class="stat"><div class="k">Mean</div><div class="v mono" id="stMean">—</div></div>
+            <div class="stat"><div class="k">Median</div><div class="v mono" id="stMedian">—</div></div>
+            <div class="stat"><div class="k">Std dev</div><div class="v mono" id="stSD">—</div></div>
+            <div class="stat"><div class="k">Closest</div><div class="v mono" id="stMin">—</div></div>
+            <div class="stat"><div class="k">Farthest</div><div class="v mono" id="stMax">—</div></div>
+          </div>
+
+          <div class="rings-hit">
+            <div class="aim-lbl">How close did they land?</div>
+            <div class="hit-row"><span>Within 10 cm</span><div class="bar"><i id="bar10"></i></div><span class="val mono" id="hit10">—</span></div>
+            <div class="hit-row"><span>Within 20 cm</span><div class="bar"><i id="bar20"></i></div><span class="val mono" id="hit20">—</span></div>
+            <div class="hit-row"><span>Within 30 cm</span><div class="bar"><i id="bar30"></i></div><span class="val mono" id="hit30">—</span></div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Histogram -->
+      <section class="card full" aria-label="Histogram of distances">
+        <h2>Distribution of distances</h2>
+        <p class="sub">Every toss goes into exactly one bar, by its distance from the centre. The two markers ride along the top: watch where the mean sits compared with the median.</p>
+        <div class="hist-wrap" id="histWrap"></div>
+        <div class="legend">
+          <span><span class="sw" style="border-color: var(--copper);"></span>Mean</span>
+          <span><span class="sw" style="border-color: var(--target-red);"></span>Median</span>
+          <span>Bar shading marks the bin of the most recent toss.</span>
+        </div>
+        <div class="insight" id="insight">No data yet. Distances can't be negative and the penny usually lands fairly near the centre — predict the shape first, then toss 100 and check.</div>
+      </section>
+
+      <!-- Recent tosses -->
+      <section class="card full" aria-label="Recent tosses">
+        <h2>Recent tosses</h2>
+        <p class="sub">Distance from the centre, in cm, most recent first.</p>
+        <div class="chips" id="chips"><span class="empty-note">Nothing yet — your tosses will appear here.</span></div>
+      </section>
+
+      <footer>
+        How the simulation works: each landing point is generated with the same random error left–right as forward–back (a bivariate normal scatter around the centre), and the recorded distance is √(x² + y²). That is why the distances pile up near the centre with a long right tail — a Rayleigh-shaped, right-skewed distribution, so the mean gets pulled above the median by the occasional wild toss.
+      </footer>
+    </div>
+
+    <script>
+      (function () {
+        "use strict";
+
+        var BOARD_CM = 120;          // board is 120 cm across, centre at (0,0)
+        var sigma = 17;              // per-axis scatter, cm
+        var tosses = [];             // {x, y, d} in cm, x right, y up
+        var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        var wrap = document.getElementById("boardWrap");
+        var canvas = document.getElementById("boardCanvas");
+        var ctx = canvas.getContext("2d");
+        var fly = document.getElementById("flyPenny");
+
+        /* ---------- random landing ---------- */
+        function randn() { // Box–Muller
+          var u = 0, v = 0;
+          while (u === 0) u = Math.random();
+          while (v === 0) v = Math.random();
+          return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+        }
+        function makeToss() {
+          var x = randn() * sigma;
+          var y = randn() * sigma;
+          return { x: x, y: y, d: Math.sqrt(x * x + y * y) };
+        }
+
+        /* ---------- board drawing ---------- */
+        function sizeCanvas() {
+          var r = wrap.getBoundingClientRect();
+          var dpr = window.devicePixelRatio || 1;
+          canvas.width = Math.round(r.width * dpr);
+          canvas.height = Math.round(r.height * dpr);
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          drawBoard();
+        }
+        function cmToPx(cm) { return wrap.clientWidth / BOARD_CM * cm; }
+        function pointPx(t) {
+          var s = wrap.clientWidth;
+          return { px: s / 2 + cmToPx(t.x), py: s / 2 - cmToPx(t.y) };
+        }
+        function drawBoard() {
+          var s = wrap.clientWidth;
+          if (!s) return;
+          ctx.clearRect(0, 0, s, s);
+          var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+          // landed pennies (all but last: plain; last: ringed)
+          for (var i = 0; i < tosses.length; i++) {
+            var p = pointPx(tosses[i]);
+            if (p.px < -8 || p.px > s + 8 || p.py < -8 || p.py > s + 8) continue;
+            var last = i === tosses.length - 1;
+            ctx.beginPath();
+            ctx.arc(p.px, p.py, last ? 7 : 4, 0, Math.PI * 2);
+            ctx.fillStyle = last ? "#b0662a" : (dark ? "rgba(208,138,69,.55)" : "rgba(176,102,42,.5)");
+            ctx.fill();
+            ctx.lineWidth = last ? 2 : 1;
+            ctx.strokeStyle = last ? (dark ? "#eda963" : "#7c4416") : (dark ? "rgba(237,169,99,.6)" : "rgba(124,68,22,.55)");
+            ctx.stroke();
+            if (last) {
+              ctx.beginPath();
+              ctx.arc(p.px, p.py, 2.2, 0, Math.PI * 2);
+              ctx.fillStyle = dark ? "#1c1a14" : "#faf7ef";
+              ctx.fill();
+            }
+          }
+          // measuring line for the last toss
+          if (tosses.length) {
+            var t = tosses[tosses.length - 1];
+            var q = pointPx(t);
+            ctx.beginPath();
+            ctx.setLineDash([5, 4]);
+            ctx.moveTo(s / 2, s / 2);
+            ctx.lineTo(q.px, q.py);
+            ctx.lineWidth = 1.6;
+            ctx.strokeStyle = dark ? "#e0685c" : "#b3392e";
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.beginPath();
+            ctx.arc(s / 2, s / 2, 3.4, 0, Math.PI * 2);
+            ctx.fillStyle = dark ? "#e0685c" : "#b3392e";
+            ctx.fill();
+          }
+        }
+
+        /* ---------- stats ---------- */
+        function fmt(v) { return v == null || isNaN(v) ? "—" : v.toFixed(1); }
+        function medianOf(a) {
+          var s = a.slice().sort(function (p, q) { return p - q; });
+          var m = Math.floor(s.length / 2);
+          return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+        }
+        function stats() {
+          var n = tosses.length;
+          if (!n) return null;
+          var ds = tosses.map(function (t) { return t.d; });
+          var sum = ds.reduce(function (a, b) { return a + b; }, 0);
+          var mean = sum / n;
+          var sd = null;
+          if (n > 1) {
+            var ss = ds.reduce(function (a, b) { return a + (b - mean) * (b - mean); }, 0);
+            sd = Math.sqrt(ss / (n - 1));
+          }
+          return {
+            n: n, mean: mean, median: medianOf(ds), sd: sd,
+            min: Math.min.apply(null, ds), max: Math.max.apply(null, ds)
+          };
+        }
+
+        function verdict(d) {
+          if (d <= 5) return "Bullseye — inside 5 cm of the centre.";
+          if (d <= 10) return "On the target — inside the 10 cm ring.";
+          if (d <= 20) return "Close — within 20 cm.";
+          if (d <= 35) return "A bit wide of the centre.";
+          if (d <= 60) return "Way out near the edge of the board.";
+          return "Off the board entirely — a wild one.";
+        }
+
+        /* ---------- histogram ---------- */
+        var BIN = 5, MAXBIN = 65; // bins 0–5 … 60–65, last bin is 60+
+        function drawHist(st) {
+          var hw = document.getElementById("histWrap");
+          var W = 720, H = 250, padL = 40, padR = 10, padT = 30, padB = 34;
+          var plotW = W - padL - padR, plotH = H - padT - padB;
+          var nb = Math.ceil(MAXBIN / BIN);
+          var counts = new Array(nb).fill(0);
+          tosses.forEach(function (t) {
+            var i = Math.min(Math.floor(t.d / BIN), nb - 1);
+            counts[i]++;
+          });
+          var maxC = Math.max.apply(null, counts.concat([1]));
+          var bw = plotW / nb;
+          var lastD = tosses.length ? tosses[tosses.length - 1].d : null;
+          var lastBin = lastD == null ? -1 : Math.min(Math.floor(lastD / BIN), nb - 1);
+          var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var barCol = dark ? "#d08a45" : "#b0662a";
+          var barLast = dark ? "#e0685c" : "#b3392e";
+          var axisCol = dark ? "#b3ab97" : "#55503f";
+          var gridCol = dark ? "#403a2c" : "#ddd5c1";
+
+          var out = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Histogram of distances from the centre">';
+          // gridlines + y labels (counts) — unique integer ticks only
+          var step = Math.max(1, Math.ceil(maxC / 4));
+          var topTick = step * Math.ceil(maxC / step);
+          for (var val = 0; val <= topTick; val += step) {
+            var y = padT + plotH - plotH * val / topTick;
+            out += '<line x1="' + padL + '" y1="' + y + '" x2="' + (W - padR) + '" y2="' + y + '" stroke="' + gridCol + '" stroke-width="1"/>';
+            out += '<text x="' + (padL - 6) + '" y="' + (y + 4) + '" text-anchor="end" font-size="11" fill="' + axisCol + '" font-family="IBM Plex Mono, monospace">' + val + "</text>";
+          }
+          // bars
+          for (var i = 0; i < nb; i++) {
+            var h = counts[i] / topTick * plotH;
+            var x = padL + i * bw;
+            var y2 = padT + plotH - h;
+            out += '<rect x="' + (x + 1.5) + '" y="' + y2 + '" width="' + (bw - 3) + '" height="' + h + '" rx="2" fill="' + (i === lastBin ? barLast : barCol) + '" opacity="' + (i === lastBin ? "1" : ".82") + '"/>';
+            if (counts[i] > 0) {
+              out += '<text x="' + (x + bw / 2) + '" y="' + (y2 - 5) + '" text-anchor="middle" font-size="11" font-weight="600" fill="' + axisCol + '" font-family="IBM Plex Mono, monospace">' + counts[i] + "</text>";
+            }
+            var lbl = i * BIN;
+            out += '<text x="' + (x + bw / 2) + '" y="' + (padT + plotH + 17) + '" text-anchor="middle" font-size="11" fill="' + axisCol + '" font-family="IBM Plex Mono, monospace">' + (i === nb - 1 ? lbl + "+" : lbl) + "</text>";
+          }
+          // axis titles
+          out += '<text x="' + (padL + plotW / 2) + '" y="' + (H - 2) + '" text-anchor="middle" font-size="12" fill="' + axisCol + '">Distance from centre (cm)</text>';
+          out += '<text x="14" y="' + (padT + plotH / 2) + '" text-anchor="middle" font-size="12" fill="' + axisCol + '" transform="rotate(-90 14 ' + (padT + plotH / 2) + ')">Pennies</text>';
+          // mean / median markers
+          if (st) {
+            function marker(v, color, label, dy) {
+              var mx = padL + Math.min(v, MAXBIN) / MAXBIN * plotW;
+              return '<line x1="' + mx + '" y1="' + (padT - 14 + dy) + '" x2="' + mx + '" y2="' + (padT + plotH) + '" stroke="' + color + '" stroke-width="2.5"/>' +
+                '<text x="' + mx + '" y="' + (padT - 19 + dy) + '" text-anchor="middle" font-size="12" font-weight="700" fill="' + color + '">' + label + " " + v.toFixed(1) + "</text>";
+            }
+            out += marker(st.mean, dark ? "#eda963" : "#b0662a", "Mean", 0);
+            out += marker(st.median, dark ? "#e0685c" : "#b3392e", "Median", 0);
+          }
+          out += "</svg>";
+          hw.innerHTML = out;
+        }
+
+        /* ---------- render all ---------- */
+        function render() {
+          var st = stats();
+          document.getElementById("stN").textContent = st ? st.n : 0;
+          document.getElementById("stMean").innerHTML = st ? fmt(st.mean) + " <small>cm</small>" : "—";
+          document.getElementById("stMedian").innerHTML = st ? fmt(st.median) + " <small>cm</small>" : "—";
+          document.getElementById("stSD").innerHTML = st ? fmt(st.sd) + (st.sd != null ? " <small>cm</small>" : "") : "—";
+          document.getElementById("stMin").innerHTML = st ? fmt(st.min) + " <small>cm</small>" : "—";
+          document.getElementById("stMax").innerHTML = st ? fmt(st.max) + " <small>cm</small>" : "—";
+
+          [10, 20, 30].forEach(function (r) {
+            var el = document.getElementById("hit" + r);
+            var bar = document.getElementById("bar" + r);
+            if (!st) { el.textContent = "—"; bar.style.width = "0%"; return; }
+            var c = tosses.filter(function (t) { return t.d <= r; }).length;
+            var pct = Math.round(c / st.n * 100);
+            el.textContent = c + " · " + pct + "%";
+            bar.style.width = pct + "%";
+          });
+
+          var lastEl = document.getElementById("lastDist");
+          var verdEl = document.getElementById("lastVerdict");
+          if (tosses.length) {
+            var d = tosses[tosses.length - 1].d;
+            lastEl.textContent = d.toFixed(1) + " cm";
+            verdEl.textContent = verdict(d);
+          } else {
+            lastEl.textContent = "—";
+            verdEl.textContent = "Toss a penny to start.";
+          }
+
+          // recent chips (last 14, newest first)
+          var chips = document.getElementById("chips");
+          if (!tosses.length) {
+            chips.innerHTML = '<span class="empty-note">Nothing yet — your tosses will appear here.</span>';
+          } else {
+            var recent = tosses.slice(-14).reverse();
+            chips.innerHTML = recent.map(function (t, i) {
+              return '<span class="chip mono' + (i === 0 ? " latest" : "") + '">' + t.d.toFixed(1) + " cm</span>";
+            }).join("");
+          }
+
+          // insight
+          var ins = document.getElementById("insight");
+          if (!st) {
+            ins.innerHTML = "No data yet. Distances can't be negative and the penny usually lands fairly near the centre — predict the shape first, then toss 100 and check.";
+          } else if (st.n < 10) {
+            ins.innerHTML = "<strong>" + st.n + (st.n === 1 ? " toss" : " tosses") + " so far.</strong> Too few to judge the shape — keep tossing.";
+          } else {
+            var diff = st.mean - st.median;
+            var shape;
+            if (diff > 0.5) shape = "The <strong>mean (" + st.mean.toFixed(1) + ") sits above the median (" + st.median.toFixed(1) + ")</strong> — the occasional long toss drags the mean to the right, while the median stays with the typical toss. That's the signature of a <strong>right-skewed</strong> distribution.";
+            else if (diff < -0.5) shape = "Unusual: the mean is currently below the median. With distances bounded at zero and a long right tail, the mean should end up on top — toss more and watch it cross over.";
+            else shape = "Mean and median are nearly tied right now (" + st.mean.toFixed(1) + " vs " + st.median.toFixed(1) + "). The right tail is still there — more tosses will usually pull the mean above the median.";
+            ins.innerHTML = shape + " So far <strong>" + Math.round(tosses.filter(function (t) { return t.d <= 20; }).length / st.n * 100) + "%</strong> of pennies landed within 20 cm of the centre, and the single farthest reached <strong>" + st.max.toFixed(1) + " cm</strong>.";
+          }
+
+          drawBoard();
+          drawHist(st);
+        }
+
+        /* ---------- tossing ---------- */
+        var animating = false;
+        var pendingToss = null;
+        var currentAnim = null;
+        function addToss(t) { tosses.push(t); render(); }
+
+        function finishFlight() {
+          if (!animating) return;
+          if (currentAnim) { try { currentAnim.cancel(); } catch (e) {} currentAnim = null; }
+          fly.style.display = "none";
+          animating = false;
+          if (pendingToss) { var t = pendingToss; pendingToss = null; addToss(t); }
+        }
+
+        function tossOne() {
+          if (animating) return;
+          var t = makeToss();
+          if (reduced) { addToss(t); return; }
+          animating = true;
+          pendingToss = t;
+          var s = wrap.clientWidth;
+          var target = pointPx(t);
+          var startX = s / 2, startY = s + 40;
+          fly.style.display = "grid";
+          fly.style.left = startX + "px";
+          fly.style.top = startY + "px";
+          var midX = (startX + target.px) / 2, midY = Math.min(startY, target.py) - 60;
+          var anim = fly.animate([
+            { transform: "translate(0,0) scale(1.15) rotate(0deg)", opacity: 1 },
+            { transform: "translate(" + (midX - startX) + "px," + (midY - startY) + "px) scale(1.65) rotate(340deg)", opacity: 1, offset: 0.55 },
+            { transform: "translate(" + (target.px - startX) + "px," + (target.py - startY) + "px) scale(1) rotate(680deg)", opacity: 1 }
+          ], { duration: 620, easing: "cubic-bezier(.25,.7,.35,1)" });
+          currentAnim = anim;
+          anim.onfinish = function () {
+            currentAnim = null;
+            pendingToss = null;
+            fly.style.display = "none";
+            animating = false;
+            addToss(t);
+          };
+        }
+
+        function tossBatch(n) {
+          finishFlight(); // an in-flight penny lands instantly rather than eating the click
+          if (n <= 10 && !reduced) {
+            var i = 0;
+            animating = true;
+            (function step() {
+              addToss(makeToss());
+              i++;
+              if (i < n) setTimeout(step, 70);
+              else animating = false;
+            })();
+          } else {
+            for (var j = 0; j < n; j++) tosses.push(makeToss());
+            render();
+          }
+        }
+
+        document.getElementById("toss1").addEventListener("click", tossOne);
+        document.getElementById("toss10").addEventListener("click", function () { tossBatch(10); });
+        document.getElementById("toss100").addEventListener("click", function () { tossBatch(100); });
+        document.getElementById("toss1000").addEventListener("click", function () { tossBatch(1000); });
+        document.getElementById("resetBtn").addEventListener("click", function () {
+          finishFlight();
+          tosses = [];
+          render();
+        });
+
+        document.querySelectorAll(".seg button").forEach(function (b) {
+          b.addEventListener("click", function () {
+            document.querySelectorAll(".seg button").forEach(function (o) { o.setAttribute("aria-pressed", "false"); });
+            b.setAttribute("aria-pressed", "true");
+            sigma = parseFloat(b.getAttribute("data-sigma"));
+          });
+        });
+
+        window.addEventListener("resize", sizeCanvas);
+        if (window.matchMedia) {
+          var mq = window.matchMedia("(prefers-color-scheme: dark)");
+          if (mq.addEventListener) mq.addEventListener("change", render);
+        }
+        sizeCanvas();
+        render();
+      })();
+    </script>
+  </body>
+</html>

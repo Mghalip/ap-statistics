@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Die Roll Simulation</title>
+<style>
+  :root{
+    --bg:#f4f4f2;
+    --surface:#ffffff;
+    --surface-2:#ececea;
+    --ink:#17181a;
+    --muted:#5b5e63;
+    --line:#dcdcd8;
+    --red:#c1271d;
+    --red-dark:#941b14;
+    --red-soft:#fdecea;
+    --teal:#0e6b5e;
+    --teal-soft:#e2f0ed;
+    --bar:#17181a;
+    --bar-last:#c1271d;
+    --expected:#0e6b5e;
+    --shadow:0 10px 30px rgba(0,0,0,.10), 0 2px 6px rgba(0,0,0,.08);
+    --radius:18px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#121314;
+      --surface:#1c1e20;
+      --surface-2:#26282b;
+      --ink:#f2f2ef;
+      --muted:#a7a9ad;
+      --line:#33363a;
+      --red:#e0483d;
+      --red-dark:#b93228;
+      --red-soft:#3a2321;
+      --teal:#3ec2ae;
+      --teal-soft:#1d2f2c;
+      --bar:#f2f2ef;
+      --bar-last:#e0483d;
+      --expected:#3ec2ae;
+      --shadow:0 10px 30px rgba(0,0,0,.45), 0 2px 6px rgba(0,0,0,.4);
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family: ui-sans-system, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  button{font:inherit; cursor:pointer; min-height:44px}
+  .wrap{max-width:1080px; margin:0 auto; padding:24px 20px 56px}
+
+  .topbar{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:16px}
+  .backpill{
+    display:inline-flex; align-items:center; gap:6px; min-height:34px;
+    padding:5px 14px; border-radius:999px;
+    background:var(--surface); border:1px solid var(--line);
+    color:var(--teal); font-size:13px; font-weight:700; text-decoration:none;
+    transition:background-color .15s ease, border-color .15s ease, color .15s ease;
+  }
+  .backpill:hover{background:var(--teal); border-color:var(--teal); color:#fff}
+  .backpill.subtle{color:var(--muted); font-weight:600}
+  .backpill.subtle:hover{background:var(--surface-2); border-color:var(--line); color:var(--ink)}
+
+  header{margin-bottom:22px}
+  h1{
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight:700; letter-spacing:-.02em;
+    font-size:clamp(32px,5vw,48px); line-height:1.05; margin:0 0 10px;
+  }
+  h1 em{font-style:italic; color:var(--red)}
+  .lede{color:var(--muted); font-size:17px; max-width:640px; margin:0}
+  .lede strong{color:var(--ink)}
+
+  .layout{display:grid; grid-template-columns: 380px 1fr; gap:20px; align-items:start}
+  @media (max-width:860px){ .layout{grid-template-columns:1fr} }
+
+  .card{
+    background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius); padding:22px;
+  }
+  .card h2{
+    font-size:13px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--muted); margin:0 0 16px; font-weight:700;
+  }
+
+  /* ---- Die ---- */
+  .stage{display:flex; flex-direction:column; align-items:center; text-align:center}
+  .die-scene{perspective:700px; margin:6px 0 4px}
+  .die{
+    width:168px; height:168px; border-radius:28px;
+    background:var(--red);
+    background-image:linear-gradient(145deg, rgba(255,255,255,.22), rgba(0,0,0,.14) 55%, rgba(0,0,0,.28));
+    box-shadow:var(--shadow), inset 0 2px 0 rgba(255,255,255,.35), inset 0 -6px 14px rgba(0,0,0,.25);
+    display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr);
+    padding:22px; gap:4px;
+  }
+  .die.rolling{animation:tumble .55s cubic-bezier(.3,1.4,.5,1)}
+  @keyframes tumble{
+    0%{transform:rotate(0) scale(1)}
+    25%{transform:rotate(-14deg) scale(1.06) translateY(-8px)}
+    55%{transform:rotate(11deg) scale(.96) translateY(3px)}
+    80%{transform:rotate(-5deg) scale(1.02)}
+    100%{transform:rotate(0) scale(1)}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .die.rolling{animation:none}
+  }
+  .pip{width:30px; height:30px; border-radius:50%; background:#fff; place-self:center;
+       box-shadow: inset 0 -3px 5px rgba(0,0,0,.22), 0 1px 1px rgba(0,0,0,.2); visibility:hidden}
+  .pip.on{visibility:visible}
+  .result-line{margin-top:16px; min-height:34px}
+  .result-big{font-family:Georgia,serif; font-size:26px; font-weight:700}
+  .result-sub{color:var(--muted); font-size:14px}
+
+  .controls{display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; margin-top:16px}
+  .btn{
+    border:1px solid var(--line); background:var(--surface-2); color:var(--ink);
+    border-radius:12px; padding:11px 12px; font-weight:650; font-size:15px;
+    transition:transform .08s ease, background .15s ease;
+  }
+  .btn:active{transform:scale(.97)}
+  .btn.primary{
+    grid-column:1 / -1; background:var(--ink); color:var(--bg); border-color:var(--ink);
+    font-size:17px; padding:14px; border-radius:14px;
+  }
+  @media (prefers-color-scheme: dark){ .btn.primary{background:#f2f2ef; color:#121314; border-color:#f2f2ef} }
+  .btn.ghost{background:transparent}
+  .btn:disabled{opacity:.45; cursor:default}
+
+  .last-rolls{margin-top:20px; width:100%; text-align:left}
+  .last-rolls .label{font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:700; margin-bottom:8px}
+  .chips{display:flex; flex-wrap:wrap; gap:6px; min-height:30px}
+  .chip{
+    width:30px; height:30px; border-radius:8px; display:grid; place-items:center;
+    background:var(--surface-2); border:1px solid var(--line); font-weight:700; font-size:14px;
+  }
+  .chip.latest{background:var(--red); border-color:var(--red); color:#fff}
+  .empty-note{color:var(--muted); font-size:14px}
+
+  /* ---- Stats ---- */
+  .stat-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px}
+  @media (max-width:520px){ .stat-grid{grid-template-columns:1fr 1fr} }
+  .stat{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px}
+  .stat .k{font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:700}
+  .stat .v{font-family:Georgia,serif; font-size:32px; font-weight:700; line-height:1.15; margin-top:2px}
+  .stat .s{font-size:13px; color:var(--muted)}
+  .stat.highlight{background:var(--teal-soft); border-color:transparent}
+  .stat.highlight .v{color:var(--teal)}
+
+  /* ---- Chart ---- */
+  .chart-wrap{padding-bottom:6px}
+  .chart{display:flex; align-items:flex-end; gap:10px; height:190px; padding:18px 4px 0; position:relative}
+  .col{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; min-width:0}
+  .bar{
+    width:100%; max-width:64px; background:var(--bar); border-radius:7px 7px 0 0;
+    min-height:3px; transition:height .35s ease; position:relative;
+  }
+  .bar.last{background:var(--bar-last)}
+  .bar-count{font-size:13px; font-weight:700; margin-bottom:6px; font-variant-numeric:tabular-nums}
+  .bar-face{margin-top:8px; font-weight:700; font-size:15px; display:flex; align-items:center; gap:6px}
+  .mini-die{width:18px;height:18px;border-radius:4px;background:var(--red); display:inline-grid; place-items:center; color:#fff; font-size:11px; font-weight:800; line-height:1}
+  .expected-note{display:flex; align-items:center; gap:8px; color:var(--muted); font-size:13.5px; margin-top:14px}
+  .dash{width:26px; border-top:2px dashed var(--expected)}
+
+  /* ---- Table ---- */
+  table{width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums}
+  th,td{padding:10px 8px; text-align:right; border-bottom:1px solid var(--line); font-size:15px}
+  th{font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:700}
+  th:first-child, td:first-child{text-align:left}
+  tr:last-child td{border-bottom:none}
+  tr.total td{font-weight:800; border-top:2px solid var(--ink)}
+  .relbar{height:6px; border-radius:99px; background:var(--surface-2); margin-top:5px; overflow:hidden}
+  .relbar > div{height:100%; background:var(--teal); border-radius:99px; transition:width .35s ease}
+  td.face-cell{font-weight:800}
+
+  .insight{
+    margin-top:20px; background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius); padding:18px 22px; font-size:15px; color:var(--muted);
+  }
+  .insight strong{color:var(--ink)}
+  footer{margin-top:22px; color:var(--muted); font-size:13.5px; text-align:center}
+  .sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="topbar" aria-label="返回普通统计">
+    <a class="backpill" href="../index.html#simulators">← 返回普通统计</a>
+    <a class="backpill subtle" href="../index.html#syllabus">课程大纲</a>
+  </nav>
+  <header>
+    <h1>Roll a Die, <em>Record the Result</em></h1>
+    <p class="lede">A simulation of one fair six-sided die. Every face — 1 through 6 — is equally likely, so the distribution is <strong>flat (uniform)</strong> with theoretical mean <strong>3.5</strong>. Roll a few times and the results look random; roll a few thousand times and the pattern settles down.</p>
+  </header>
+
+  <div class="layout">
+    <!-- LEFT: die + controls -->
+    <section class="card stage" aria-label="Die roller">
+      <h2 style="align-self:flex-start">The Die</h2>
+      <div class="die-scene">
+        <div class="die" id="die" role="img" aria-label="Die showing 6">
+          <span class="pip" data-cell="1"></span><span class="pip" data-cell="2"></span><span class="pip" data-cell="3"></span>
+          <span class="pip" data-cell="4"></span><span class="pip" data-cell="5"></span><span class="pip" data-cell="6"></span>
+          <span class="pip" data-cell="7"></span><span class="pip" data-cell="8"></span><span class="pip" data-cell="9"></span>
+        </div>
+      </div>
+      <div class="result-line" aria-live="polite">
+        <div class="result-big" id="resultBig">Ready to roll</div>
+        <div class="result-sub" id="resultSub">Press Roll Once to start recording.</div>
+      </div>
+
+      <div class="controls">
+        <button class="btn primary" id="roll1">🎲&ensp;Roll Once</button>
+        <button class="btn" id="roll10">Roll 10×</button>
+        <button class="btn" id="roll100">Roll 100×</button>
+        <button class="btn" id="roll1000">Roll 1,000×</button>
+        <button class="btn ghost" id="reset">Reset — clear all records</button>
+      </div>
+
+      <div class="last-rolls">
+        <div class="label">Latest rolls</div>
+        <div class="chips" id="chips"><span class="empty-note">No rolls yet.</span></div>
+      </div>
+    </section>
+
+    <!-- RIGHT: stats, chart, table -->
+    <div>
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="k">Total rolls</div>
+          <div class="v" id="statN">0</div>
+          <div class="s">recorded so far</div>
+        </div>
+        <div class="stat highlight">
+          <div class="k">Sample mean</div>
+          <div class="v" id="statMean">—</div>
+          <div class="s">theory says 3.5</div>
+        </div>
+        <div class="stat">
+          <div class="k">Most frequent</div>
+          <div class="v" id="statMode">—</div>
+          <div class="s" id="statModeSub">no data yet</div>
+        </div>
+      </div>
+
+      <section class="card chart-wrap" aria-label="Frequency chart">
+        <h2>How many times each face landed</h2>
+        <div class="chart" id="chart"></div>
+        <div class="expected-note"><span class="dash"></span><span id="expectedNote">If the die is fair, all six bars should end up about the same height — each face should get roughly 1⁄6 ≈ 16.7% of the rolls.</span></div>
+      </section>
+
+      <section class="card" style="margin-top:20px" aria-label="Record table">
+        <h2>Record — counts &amp; relative frequencies</h2>
+        <table>
+          <thead>
+            <tr><th>Face</th><th>Count</th><th>Relative freq.</th><th>Theoretical</th></tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </section>
+
+      <div class="insight" id="insight">
+        <strong>What to watch:</strong> with only a handful of rolls, one face can easily lead by luck. As the total grows into the hundreds and thousands, each relative frequency drifts toward 1⁄6 and the sample mean drifts toward 3.5. That settling-down is the <strong>Law of Large Numbers</strong> — the reason a simulation can stand in for theory.
+      </div>
+    </div>
+  </div>
+
+  <footer>Fair die · P(each face) = 1⁄6 · Mean = Median = 3.5 · Uniform distribution</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  // Pip layouts on a 3x3 grid (cells numbered 1-9, row-major)
+  var PIPS = {
+    1:[5],
+    2:[1,9],
+    3:[1,5,9],
+    4:[1,3,7,9],
+    5:[1,3,5,7,9],
+    6:[1,3,4,6,7,9]
+  };
+  var counts = [0,0,0,0,0,0,0]; // index 1..6
+  var total = 0, sum = 0, lastValue = 0;
+  var recent = []; // newest first
+  var rolling = false;
+
+  var die = document.getElementById('die');
+  var pips = die.querySelectorAll('.pip');
+  var resultBig = document.getElementById('resultBig');
+  var resultSub = document.getElementById('resultSub');
+  var chipsEl = document.getElementById('chips');
+  var chartEl = document.getElementById('chart');
+  var tbody = document.getElementById('tbody');
+
+  function showFace(v){
+    var on = PIPS[v];
+    for (var i=0;i<pips.length;i++){
+      var cell = parseInt(pips[i].getAttribute('data-cell'),10);
+      pips[i].classList.toggle('on', on.indexOf(cell) !== -1);
+    }
+    die.setAttribute('aria-label','Die showing ' + v);
+  }
+
+  function rollOnceValue(){
+    return Math.floor(Math.random()*6)+1;
+  }
+
+  function record(v){
+    counts[v]++; total++; sum += v; lastValue = v;
+    recent.unshift(v);
+    if (recent.length > 24) recent.length = 24;
+  }
+
+  function fmt(n){ return n.toLocaleString('en-US'); }
+
+  function render(){
+    document.getElementById('statN').textContent = fmt(total);
+    document.getElementById('statMean').textContent = total ? (sum/total).toFixed(2) : '—';
+
+    var mode = 0, modeCount = 0;
+    for (var f=1; f<=6; f++){ if (counts[f] > modeCount){ modeCount = counts[f]; mode = f; } }
+    document.getElementById('statMode').textContent = total ? String(mode) : '—';
+    document.getElementById('statModeSub').textContent = total ? (fmt(modeCount) + ' times so far') : 'no data yet';
+
+    // chips
+    if (!recent.length){
+      chipsEl.innerHTML = '<span class="empty-note">No rolls yet.</span>';
+    } else {
+      chipsEl.innerHTML = recent.map(function(v,i){
+        return '<span class="chip' + (i===0 ? ' latest' : '') + '">' + v + '</span>';
+      }).join('');
+    }
+
+    // chart
+    var max = Math.max(1, Math.max.apply(null, counts.slice(1)));
+    var html = '';
+    for (var f2=1; f2<=6; f2++){
+      var h = Math.round(counts[f2]/max*100);
+      html += '<div class="col">'
+        + '<div class="bar-count">' + fmt(counts[f2]) + '</div>'
+        + '<div class="bar' + (f2===lastValue && total ? ' last' : '') + '" style="height:' + Math.max(h,2) + '%"></div>'
+        + '<div class="bar-face"><span class="mini-die">' + f2 + '</span>' + f2 + '</div>'
+        + '</div>';
+    }
+    chartEl.innerHTML = html;
+
+    // table
+    var rows = '';
+    for (var f3=1; f3<=6; f3++){
+      var rel = total ? counts[f3]/total : 0;
+      rows += '<tr>'
+        + '<td class="face-cell">' + f3 + '</td>'
+        + '<td>' + fmt(counts[f3]) + '</td>'
+        + '<td>' + (total ? (rel*100).toFixed(1) + '%' : '—')
+        + '<div class="relbar"><div style="width:' + (rel*100) + '%"></div></div></td>'
+        + '<td>16.7%</td>'
+        + '</tr>';
+    }
+    rows += '<tr class="total"><td>Total</td><td>' + fmt(total) + '</td><td>' + (total ? '100%' : '—') + '</td><td>100%</td></tr>';
+    tbody.innerHTML = rows;
+  }
+
+  function animateTo(finalValue, bulk){
+    if (rolling) return;
+    rolling = true;
+    die.classList.remove('rolling'); void die.offsetWidth; die.classList.add('rolling');
+    var ticks = 0;
+    var iv = setInterval(function(){
+      ticks++;
+      showFace(rollOnceValue());
+      if (ticks >= 6){
+        clearInterval(iv);
+        showFace(finalValue);
+        rolling = false;
+        if (!bulk){
+          resultBig.textContent = 'You rolled a ' + finalValue;
+          resultSub.textContent = 'Roll #' + fmt(total) + ' recorded in the table.';
+        } else {
+          resultBig.textContent = 'Last roll: ' + finalValue;
+          resultSub.textContent = fmt(total) + ' rolls recorded in total.';
+        }
+        render();
+      }
+    }, 70);
+    // Render stats immediately for bulk so numbers feel instant; die settles after.
+    if (bulk) render();
+  }
+
+  function doRolls(n){
+    if (rolling) return;
+    var last = 0;
+    for (var i=0;i<n;i++){ last = rollOnceValue(); record(last); }
+    animateTo(last, n > 1);
+    if (n === 1 && !rolling){ /* animateTo handles messaging */ }
+  }
+
+  document.getElementById('roll1').addEventListener('click', function(){ doRolls(1); });
+  document.getElementById('roll10').addEventListener('click', function(){ doRolls(10); });
+  document.getElementById('roll100').addEventListener('click', function(){ doRolls(100); });
+  document.getElementById('roll1000').addEventListener('click', function(){ doRolls(1000); });
+  document.getElementById('reset').addEventListener('click', function(){
+    counts = [0,0,0,0,0,0,0]; total = 0; sum = 0; lastValue = 0; recent = [];
+    showFace(6);
+    resultBig.textContent = 'Ready to roll';
+    resultSub.textContent = 'Records cleared. Press Roll Once to start again.';
+    render();
+  });
+
+  showFace(6);
+  render();
+})();
+</script>
+</body>
+</html>

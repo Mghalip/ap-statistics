@@ -35,6 +35,77 @@ window.MG_REGULAR_STATS = {
         <circle cx="192" cy="34" r="4.5" fill="#008A6E"/>
         <circle cx="212" cy="24" r="4.8" fill="#C5221F" stroke="#FFFFFF" stroke-width="1.4"/>
       </svg>`
+    },
+    {
+      id: 'die-roll',
+      unit: 'unit-2',
+      unitNum: 2,
+      unitLabel: 'Unit 2 · Lesson 2.4',
+      titleZh: '掷骰子分布模拟',
+      titleEn: 'Die Roll Simulation — Uniform',
+      desc: '模拟投掷均匀六面骰子并记录点数频数：滚几千次后直方图趋于平坦（均匀分布），样本均值趋近理论期望 3.5。',
+      tags: ['Unit 2 数据建模', '均匀分布 Uniform', 'Classnote 2.4'],
+      path: 'simulators/die-roll.html?v=20261127-cn3',
+      isNew: false,
+      symbol: 'U',
+      svg: `<svg viewBox="0 0 260 112" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <line x1="28" y1="94" x2="232" y2="94" stroke="#21242C" stroke-width="1.4" stroke-opacity="0.28"/>
+        <line x1="28" y1="42" x2="232" y2="42" stroke="#1865F2" stroke-width="1.6" stroke-dasharray="5 4"/>
+        <rect x="38" y="40" width="24" height="54" rx="3" fill="#008A6E" fill-opacity="0.72"/>
+        <rect x="70" y="45" width="24" height="49" rx="3" fill="#008A6E" fill-opacity="0.58"/>
+        <rect x="102" y="38" width="24" height="56" rx="3" fill="#008A6E" fill-opacity="0.76"/>
+        <rect x="134" y="43" width="24" height="51" rx="3" fill="#008A6E" fill-opacity="0.6"/>
+        <rect x="166" y="41" width="24" height="53" rx="3" fill="#C5221F" fill-opacity="0.78"/>
+        <rect x="198" y="44" width="24" height="50" rx="3" fill="#008A6E" fill-opacity="0.62"/>
+      </svg>`
+    },
+    {
+      id: 'penny-toss',
+      unit: 'unit-2',
+      unitNum: 2,
+      unitLabel: 'Unit 2 · Lesson 2.4',
+      titleZh: '投币打靶分布模拟',
+      titleEn: 'Penny Toss Simulation — Right-Skewed',
+      desc: '向靶心投掷硬币并记录落点到圆心的直线距离（cm），可切换投掷精准度，观察典型的单峰右偏分布形态。',
+      tags: ['Unit 2 数据建模', '右偏分布 Right-Skewed', 'Classnote 2.4'],
+      path: 'simulators/penny-toss.html?v=20261127-cn3',
+      isNew: false,
+      symbol: 'Sk',
+      svg: `<svg viewBox="0 0 260 112" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <line x1="26" y1="94" x2="234" y2="94" stroke="#21242C" stroke-width="1.4" stroke-opacity="0.28"/>
+        <rect x="36" y="58" width="18" height="36" rx="2" fill="#008A6E" fill-opacity="0.45"/>
+        <rect x="58" y="26" width="18" height="68" rx="2" fill="#008A6E" fill-opacity="0.78"/>
+        <rect x="80" y="32" width="18" height="62" rx="2" fill="#008A6E" fill-opacity="0.68"/>
+        <rect x="102" y="48" width="18" height="46" rx="2" fill="#008A6E" fill-opacity="0.54"/>
+        <rect x="124" y="66" width="18" height="28" rx="2" fill="#008A6E" fill-opacity="0.42"/>
+        <rect x="146" y="77" width="18" height="17" rx="2" fill="#C75000" fill-opacity="0.58"/>
+        <rect x="168" y="84" width="18" height="10" rx="2" fill="#C75000" fill-opacity="0.72"/>
+        <rect x="190" y="88" width="18" height="6" rx="2" fill="#C75000" fill-opacity="0.82"/>
+        <path d="M36 58 C 56 18, 86 24, 126 62 C 154 84, 186 90, 224 92" stroke="#1865F2" stroke-width="2" fill="none"/>
+      </svg>`
+    },
+    {
+      id: 'stopwatch',
+      unit: 'unit-2',
+      unitNum: 2,
+      unitLabel: 'Unit 2 · Lesson 2.4',
+      titleZh: '5 秒秒表挑战模拟',
+      titleEn: 'Stopwatch Simulation — Normal & 68-95-99.7',
+      desc: '亲手启停秒表挑战精准停在 5.000 秒（支持盲按模式与空格快捷键），实时绘制分布并检验 68-95-99.7 经验法则。',
+      tags: ['Unit 2 数据建模', '正态分布 Normal', '68-95-99.7', 'Classnote 2.4'],
+      path: 'simulators/stopwatch.html?v=20261127-cn3',
+      isNew: false,
+      symbol: 'N',
+      svg: `<svg viewBox="0 0 260 112" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <line x1="26" y1="94" x2="234" y2="94" stroke="#21242C" stroke-width="1.4" stroke-opacity="0.28"/>
+        <rect x="86" y="42" width="16" height="52" rx="2" fill="#008A6E" fill-opacity="0.45"/>
+        <rect x="106" y="28" width="16" height="66" rx="2" fill="#008A6E" fill-opacity="0.65"/>
+        <rect x="126" y="22" width="16" height="72" rx="2" fill="#008A6E" fill-opacity="0.82"/>
+        <rect x="146" y="34" width="16" height="60" rx="2" fill="#008A6E" fill-opacity="0.62"/>
+        <rect x="166" y="54" width="16" height="40" rx="2" fill="#008A6E" fill-opacity="0.42"/>
+        <path d="M 34 92 C 74 91, 98 20, 130 20 S 186 91, 226 92" stroke="#1865F2" stroke-width="2.2" fill="none"/>
+        <line x1="130" y1="16" x2="130" y2="96" stroke="#C5221F" stroke-width="1.8" stroke-dasharray="4 3"/>
+      </svg>`
     }
   ],
 
@@ -379,7 +450,7 @@ window.MG_REGULAR_STATS = {
         { code: '2.1', en: 'Percentile', zh: '百分位数' },
         { code: '2.2', en: 'Location in a Distribution', zh: '分布中的相对位置与 z 分数' },
         { code: '2.3', en: 'Linear Transformations of Quantitative Data', zh: '定量数据的线性变换' },
-        { code: '2.4', en: 'Normal Distributions and the Empirical Rule', zh: '正态分布与经验法则（68-95-99.7）' },
+        { code: '2.4', en: 'Normal Distributions and the Empirical Rule', zh: '正态分布与经验法则（68-95-99.7）', simulatorIds: ['die-roll', 'penny-toss', 'stopwatch'] },
         { code: '2.5', en: 'Normal Distribution Calculations', zh: '正态分布概率与分位数计算' }
       ]
     },

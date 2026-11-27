@@ -134,7 +134,7 @@
   <a class="back-top" href="#main">返回顶部 ↑</a>
 </footer>
 
-<script src="data.js?v=20261127-cn2"></script>
+<script src="data.js?v=20261127-cn3"></script>
 <script>
 (() => {
   const data = window.MG_REGULAR_STATS || { simulators: [], materials: [], syllabus: [] };
@@ -505,15 +505,18 @@
           </thead>
           <tbody>
             ${u.lessons.map(l => {
-              const sim = l.simulatorId ? simMap.get(l.simulatorId) : null;
-              const simLink = sim
-                ? `<a class="syllabus-sim-link" href="${esc(sim.path)}">${esc(sim.titleZh)} →</a>`
-                : '';
+              const ids = Array.isArray(l.simulatorIds) ? l.simulatorIds : (l.simulatorId ? [l.simulatorId] : []);
+              const sims = ids.map(id => simMap.get(id)).filter(Boolean);
+              const simLinks = sims.length === 1
+                ? `<a class="syllabus-sim-link" href="${esc(sims[0].path)}">${esc(sims[0].titleZh)} →</a>`
+                : (sims.length > 1
+                    ? `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">${sims.map(sim => `<a class="syllabus-sim-link" style="margin-left:0" href="${esc(sim.path)}">${esc(sim.titleZh)} →</a>`).join('')}</div>`
+                    : '');
               return `
                 <tr>
                   <td><strong>${esc(l.code)}</strong></td>
                   <td lang="en">${esc(l.en)}</td>
-                  <td>${esc(l.zh)}${simLink}</td>
+                  <td>${esc(l.zh)}${simLinks}</td>
                 </tr>
               `;
             }).join('')}

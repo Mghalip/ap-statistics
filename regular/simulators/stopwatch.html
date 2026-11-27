@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Stopwatch Simulation — Stop at 5.00 Seconds</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F2EFE7;
+    --surface:#FFFFFF;
+    --surface-2:#E9E4D6;
+    --ink:#171918;
+    --muted:#686E6A;
+    --line:#DAD3C2;
+    --accent:#C93312;
+    --accent-soft:#FDECE7;
+    --good:#177245;
+    --good-bg:#E6F2EB;
+    --mid:#9A6B0F;
+    --mid-bg:#FBF0D3;
+    --panel:#141716;
+    --panel-ink:#F5F2E9;
+    --panel-dim:#8E968F;
+    --bar:#2A7FFF;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#101211;
+      --surface:#1B1E1C;
+      --surface-2:#262A27;
+      --ink:#F0EFE7;
+      --muted:#9BA19C;
+      --line:#333834;
+      --accent:#FF5C2E;
+      --accent-soft:#3A211A;
+      --good:#4CC07F;
+      --good-bg:#1E3328;
+      --mid:#E3B341;
+      --mid-bg:#38301B;
+      --panel:#090A0A;
+      --panel-ink:#F5F2E9;
+      --panel-dim:#7E877F;
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Archivo", system-ui, -apple-system, Segoe UI, sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  button, [role="button"], select, summary, input:not([type="checkbox"],[type="radio"]){min-height:2.25rem}
+  .wrap{max-width:1060px;margin:0 auto;padding:20px 18px 40px}
+  .topbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .backpill{
+    display:inline-flex;align-items:center;gap:6px;min-height:34px;
+    padding:5px 14px;border-radius:999px;
+    background:var(--surface);border:1px solid var(--line);
+    color:var(--good);font-size:13px;font-weight:700;text-decoration:none;
+    transition:background-color .15s ease,border-color .15s ease,color .15s ease;
+  }
+  .backpill:hover{background:var(--good);border-color:var(--good);color:#fff}
+  .backpill.subtle{color:var(--muted);font-weight:600}
+  .backpill.subtle:hover{background:var(--surface-2);border-color:var(--line);color:var(--ink)}
+  /* header */
+  .top{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;justify-content:space-between;margin-bottom:16px}
+  .top h1{font-size:clamp(26px,4.5vw,40px);line-height:.95;letter-spacing:-.02em;margin:0;font-weight:800}
+  .top h1 span{color:var(--accent)}
+  .top p{margin:8px 0 0;color:var(--muted);font-size:15px;line-height:1.45;max-width:560px}
+  .target-pill{
+    background:var(--ink);color:var(--bg);border-radius:999px;padding:10px 14px;
+    font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:700;letter-spacing:.04em;white-space:nowrap;
+  }
+  .target-pill b{color:#FFB199}
+  @media (prefers-color-scheme: dark){ .target-pill{background:var(--surface-2);color:var(--ink)} }
+
+  /* stopwatch panel */
+  .watch{
+    background:var(--panel);color:var(--panel-ink);border-radius:18px;padding:22px 20px 18px;
+    border:1px solid #00000022; position:relative; overflow:hidden;
+  }
+  .watch-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .watch-label{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--panel-dim)}
+  .status{display:inline-flex;align-items:center;gap:7px;font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:700;letter-spacing:.08em}
+  .dot{width:9px;height:9px;border-radius:50%;background:#5A625C;flex:none}
+  .dot.live{background:#FF5C2E;box-shadow:0 0 0 5px #ff5c2e22;animation:pulse 1s infinite}
+  @keyframes pulse{50%{transform:scale(1.25)}}
+  @media (prefers-reduced-motion: reduce){ .dot.live{animation:none} }
+  .digits{
+    font-family:"IBM Plex Mono",monospace;font-weight:700;text-align:center;
+    font-size:clamp(64px,14vw,118px);line-height:1;letter-spacing:-.03em;margin:14px 0 4px;font-variant-numeric:tabular-nums;
+  }
+  .digits small{font-size:.28em;font-weight:600;color:var(--panel-dim);letter-spacing:0}
+  .subdigits{text-align:center;color:var(--panel-dim);font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.06em}
+  /* progress track 0-6s */
+  .track{margin:18px 2px 6px;height:10px;background:#FFFFFF1F;border-radius:999px;position:relative}
+  .track-fill{height:100%;width:0%;background:#F5F2E9;border-radius:999px;transition:none}
+  .track-fill.over{background:var(--accent)}
+  .target-mark{position:absolute;top:-6px;bottom:-6px;left:83.333%;width:3px;background:var(--accent);border-radius:2px}
+  .target-mark::after{content:"5.00";position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:700;color:#FF8A66}
+  .track-scale{display:flex;justify-content:space-between;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--panel-dim);margin-top:6px;padding:0 1px}
+  /* controls */
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .btn{
+    border:0;border-radius:12px;padding:13px 20px;font-family:inherit;font-weight:800;font-size:16px;cursor:pointer;
+    min-height:52px;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{background:var(--accent);color:white;flex:1 1 200px}
+  .btn-primary.stop{background:#171918;color:#F5F2E9;border:2px solid #F5F2E9}
+  @media (prefers-color-scheme: dark){ .btn-primary.stop{background:#F5F2E9;color:#111} }
+  .btn-ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+  .btn-small{padding:9px 13px;font-size:13.5px;min-height:44px;border-radius:10px}
+  .toggle-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+  .toggle{
+    display:inline-flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);
+    border-radius:999px;padding:8px 14px 8px 10px;cursor:pointer;min-height:44px;font-size:14px;font-weight:600;
+  }
+  .toggle input{width:20px;height:20px;accent-color:var(--accent);cursor:pointer}
+  .hint{font-size:13px;color:var(--muted)}
+  kbd{font-family:"IBM Plex Mono",monospace;font-size:11px;background:var(--surface-2);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:2px 6px}
+
+  /* result banner */
+  .result{display:none;margin-top:14px;border-radius:14px;padding:16px 18px;border:1px solid var(--line);background:var(--surface)}
+  .result.show{display:block}
+  .result.excellent{background:var(--good-bg);border-color:transparent}
+  .result.good{background:var(--accent-soft);border-color:transparent}
+  .result.far{background:var(--surface)}
+  .result-main{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;justify-content:space-between}
+  .result-time{font-family:"IBM Plex Mono",monospace;font-size:clamp(28px,5vw,38px);font-weight:700}
+  .result-verdict{font-weight:800;font-size:17px}
+  .result-detail{color:var(--muted);font-size:14px;margin-top:4px;line-height:1.5}
+
+  /* stats */
+  .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:14px}
+  @media (max-width:760px){ .stats{grid-template-columns:repeat(2,1fr)} .stats .stat:last-child{grid-column:span 2} }
+  .stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:13px 14px}
+  .stat label{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .stat strong{display:block;font-family:"IBM Plex Mono",monospace;font-size:24px;margin-top:5px;font-weight:700}
+  .stat span{font-size:12.5px;color:var(--muted)}
+
+  /* lower grid */
+  .grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-top:14px;align-items:start}
+  @media (max-width:860px){ .grid{grid-template-columns:1fr} }
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .card h2{margin:0;font-size:17px;letter-spacing:-.01em}
+  .card h2 + p{margin:6px 0 0;color:var(--muted);font-size:13.5px;line-height:1.5}
+  /* histogram */
+  .histo{display:flex;align-items:flex-end;gap:5px;height:150px;margin-top:18px;padding-top:8px;border-bottom:2px solid var(--line)}
+  .bin{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;min-width:0}
+  .bin-bar{width:100%;max-width:44px;border-radius:6px 6px 0 0;background:#CFC8B4;min-height:3px;position:relative}
+  .bin.in1 .bin-bar{background:var(--accent)}
+  .bin.in2 .bin-bar{background:#E08A6B}
+  .bin-count{font-family:"IBM Plex Mono",monospace;font-size:11.5px;font-weight:700}
+  .histo-labels{display:flex;gap:5px;margin-top:6px}
+  .histo-labels span{flex:1;text-align:center;font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--muted)}
+  .legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;font-size:12.5px;color:var(--muted)}
+  .legend i{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:-1px}
+  .empty{color:var(--muted);font-size:14px;line-height:1.6;background:var(--surface-2);border-radius:10px;padding:14px;margin-top:14px}
+  /* bands */
+  .bands{margin-top:16px;display:grid;gap:10px}
+  .band{border:1px solid var(--line);border-radius:12px;padding:12px 13px}
+  .band-head{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+  .band-head b{font-size:14px}
+  .band-head code{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted)}
+  .band-track{height:8px;background:var(--surface-2);border-radius:999px;margin-top:9px;overflow:hidden;position:relative}
+  .band-fill{height:100%;background:var(--good);border-radius:999px;width:0%}
+  .band-expected{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink)}
+  .band-meta{font-size:12.5px;color:var(--muted);margin-top:7px}
+  /* history */
+  .history-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .history-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .list{margin-top:12px;display:grid;gap:8px;max-height:430px;overflow:auto;padding-right:2px}
+  .row{
+    display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;
+    border:1px solid var(--line);border-radius:11px;padding:10px 12px;
+  }
+  .row.best{border-color:var(--good);background:var(--good-bg)}
+  .row-num{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted);font-weight:700;text-align:center}
+  .row-time{font-family:"IBM Plex Mono",monospace;font-weight:700;font-size:17px}
+  .row-err{font-size:12.5px;color:var(--muted);margin-top:1px}
+  .chip{font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:700;padding:5px 8px;border-radius:999px;background:var(--surface-2);white-space:nowrap}
+  .chip.excellent{background:var(--good);color:#fff}
+  .chip.good{background:var(--accent);color:#fff}
+  .note{margin-top:14px;font-size:13.5px;color:var(--muted);line-height:1.6}
+  .note b{color:var(--ink)}
+  footer{margin-top:18px;color:var(--muted);font-size:12.5px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="topbar" aria-label="返回普通统计">
+    <a class="backpill" href="../index.html#simulators">← 返回普通统计</a>
+    <a class="backpill subtle" href="../index.html#syllabus">课程大纲</a>
+  </nav>
+
+  <div class="top">
+    <div>
+      <h1>Stop the clock<br>at <span>5.00 seconds</span></h1>
+      <p>Start the stopwatch, then stop it as close to exactly 5 seconds as you can. Every attempt is recorded — do it over and over and watch your times pile up around 5.0.</p>
+    </div>
+    <div class="target-pill">TARGET&nbsp; <b>5.000 s</b> &nbsp;·&nbsp; μ = 5.0, σ ≈ 0.1</div>
+  </div>
+
+  <!-- STOPWATCH -->
+  <section class="watch" aria-label="Stopwatch">
+    <div class="watch-top">
+      <div class="watch-label">Stopwatch · Simulation 3</div>
+      <div class="status"><span class="dot" id="dot"></span><span id="statusText">READY</span></div>
+    </div>
+    <div class="digits" id="digits">0.000<small> s</small></div>
+    <div class="subdigits" id="subdigits">Press START — then try to stop on 5.000</div>
+    <div class="track" aria-hidden="true">
+      <div class="target-mark"></div>
+      <div class="track-fill" id="trackFill"></div>
+    </div>
+    <div class="track-scale" aria-hidden="true"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6s</span></div>
+  </section>
+
+  <div class="controls">
+    <button class="btn btn-primary" id="mainBtn" type="button">▶&nbsp; Start stopwatch</button>
+    <button class="btn btn-ghost" id="resetTimerBtn" type="button">Reset timer</button>
+  </div>
+  <div class="toggle-row">
+    <label class="toggle"><input type="checkbox" id="blindToggle"> Blind mode — hide the time while it runs</label>
+    <span class="hint">Tip: press <kbd>Space</kbd> to start / stop</span>
+  </div>
+
+  <!-- RESULT -->
+  <div class="result" id="resultBox" role="status">
+    <div class="result-main">
+      <div class="result-time" id="resultTime">—</div>
+      <div class="result-verdict" id="resultVerdict">—</div>
+    </div>
+    <div class="result-detail" id="resultDetail">—</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats" aria-label="Summary statistics">
+    <div class="stat"><label>Attempts</label><strong id="stN">0</strong><span>recorded stops</span></div>
+    <div class="stat"><label>Mean</label><strong id="stMean">—</strong><span>target is 5.000 s</span></div>
+    <div class="stat"><label>Median</label><strong id="stMedian">—</strong><span>middle attempt</span></div>
+    <div class="stat"><label>Std. dev.</label><strong id="stSD">—</strong><span>spread of your times</span></div>
+    <div class="stat"><label>Closest yet</label><strong id="stBest">—</strong><span id="stBestSub">no attempts yet</span></div>
+  </div>
+
+  <div class="grid">
+    <!-- DISTRIBUTION -->
+    <section class="card">
+      <h2>Distribution of your stops</h2>
+      <p>Each bar is a 0.1 s bin. If the class model holds (mean 5.0, SD 0.1), most stops should land in the middle bins — a symmetric, bell-shaped pile-up around 5.0.</p>
+      <div id="histoWrap">
+        <div class="histo" id="histo"></div>
+        <div class="histo-labels" id="histoLabels"></div>
+        <div class="legend">
+          <span><i style="background:var(--accent)"></i>Within 1 SD (4.9–5.1)</span>
+          <span><i style="background:#E08A6B"></i>Within 2 SD (4.8–5.2)</span>
+          <span><i style="background:#CFC8B4"></i>Outside 2 SD</span>
+        </div>
+      </div>
+      <div class="empty" id="histoEmpty">No attempts yet. Stop the watch a few times — aim for 10–20 stops — and the shape will start to appear here.</div>
+
+      <div class="bands">
+        <div class="band">
+          <div class="band-head"><b>Within 1 SD</b><code>4.90 – 5.10 s · expected ≈ 68%</code></div>
+          <div class="band-track"><div class="band-fill" id="band1Fill"></div><div class="band-expected" style="left:68%"></div></div>
+          <div class="band-meta" id="band1Meta">0 of 0 attempts (0%) · black tick = 68%</div>
+        </div>
+        <div class="band">
+          <div class="band-head"><b>Within 2 SD</b><code>4.80 – 5.20 s · expected ≈ 95%</code></div>
+          <div class="band-track"><div class="band-fill" id="band2Fill"></div><div class="band-expected" style="left:95%"></div></div>
+          <div class="band-meta" id="band2Meta">0 of 0 attempts (0%) · black tick = 95%</div>
+        </div>
+        <div class="band">
+          <div class="band-head"><b>Within 3 SD</b><code>4.70 – 5.30 s · expected ≈ 99.7%</code></div>
+          <div class="band-track"><div class="band-fill" id="band3Fill"></div><div class="band-expected" style="left:99.7%"></div></div>
+          <div class="band-meta" id="band3Meta">0 of 0 attempts (0%) · black tick = 99.7%</div>
+        </div>
+      </div>
+      <p class="note"><b>Empirical Rule check:</b> with only a handful of stops the percentages will jump around. The more attempts you record, the closer they should settle to 68% / 95% / 99.7% — if your timing really is roughly Normal with SD ≈ 0.1.</p>
+    </section>
+
+    <!-- HISTORY -->
+    <section class="card">
+      <div class="history-head">
+        <div>
+          <h2>Recorded times</h2>
+          <p style="margin:6px 0 0;color:var(--muted);font-size:13.5px">Newest first. Green row = your closest stop so far.</p>
+        </div>
+        <div class="history-actions">
+          <button class="btn btn-ghost btn-small" id="csvBtn" type="button" disabled>Download CSV</button>
+          <button class="btn btn-ghost btn-small" id="clearBtn" type="button" disabled>Clear all</button>
+        </div>
+      </div>
+      <div class="list" id="list">
+        <div class="empty" style="margin-top:12px">Nothing recorded yet.<br>Your first stop will appear here with its error from 5.000 s.</div>
+      </div>
+      <p class="note"><b>Reading a row:</b> “−0.07 s” means you stopped 0.07 s <b>early</b>; “+0.12 s” means 0.12 s <b>late</b>. A stop within ±0.10 s is within 1 standard deviation of the target.</p>
+    </section>
+  </div>
+
+  <footer>
+    Activity 3 — stopwatch times tend to be approximately Normal: symmetric, single-peaked, centred near 5.0 s, so mean ≈ median. Your own mean and SD above are calculated from the stops you actually record on this page.
+  </footer>
+</div>
+
+<script>
+(function(){
+  var TARGET = 5.0;
+  var attempts = []; // {time, err}
+  var running = false;
+  var startStamp = 0;
+  var rafId = null;
+  var lastElapsed = 0;
+
+  var digits = document.getElementById('digits');
+  var subdigits = document.getElementById('subdigits');
+  var dot = document.getElementById('dot');
+  var statusText = document.getElementById('statusText');
+  var trackFill = document.getElementById('trackFill');
+  var mainBtn = document.getElementById('mainBtn');
+  var blindToggle = document.getElementById('blindToggle');
+  var resultBox = document.getElementById('resultBox');
+  var resultTime = document.getElementById('resultTime');
+  var resultVerdict = document.getElementById('resultVerdict');
+  var resultDetail = document.getElementById('resultDetail');
+
+  function fmt(s, dec){ return s.toFixed(dec == null ? 3 : dec); }
+  function fmtSigned(x){ return (x > 0 ? '+' : (x < 0 ? '−' : '')) + Math.abs(x).toFixed(3); }
+
+  function renderDigits(elapsed){
+    if (running && blindToggle.checked){
+      digits.innerHTML = '–.–––<small> s</small>';
+      subdigits.textContent = 'Blind mode — count in your head and stop on 5';
+      trackFill.style.width = '0%';
+      return;
+    }
+    digits.innerHTML = fmt(elapsed) + '<small> s</small>';
+    var pct = Math.min(elapsed / 6 * 100, 100);
+    trackFill.style.width = pct + '%';
+    trackFill.classList.toggle('over', elapsed > TARGET);
+  }
+
+  function tick(){
+    if (!running) return;
+    lastElapsed = (performance.now() - startStamp) / 1000;
+    renderDigits(lastElapsed);
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function start(){
+    running = true;
+    startStamp = performance.now();
+    lastElapsed = 0;
+    dot.classList.add('live');
+    statusText.textContent = 'RUNNING';
+    mainBtn.textContent = '■  Stop';
+    mainBtn.classList.add('stop');
+    resultBox.classList.remove('show');
+    subdigits.textContent = 'Running… stop it on 5.000';
+    renderDigits(0);
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function rating(absErr){
+    if (absErr <= 0.020) return {label:'BULLSEYE', verdict:'Bullseye — essentially exactly 5 seconds.', cls:'excellent', chip:'excellent'};
+    if (absErr <= 0.050) return {label:'EXCELLENT', verdict:'Excellent — within half a standard deviation.', cls:'excellent', chip:'excellent'};
+    if (absErr <= 0.100) return {label:'WITHIN 1 SD', verdict:'Within 1 standard deviation of 5.0.', cls:'good', chip:'good'};
+    if (absErr <= 0.200) return {label:'WITHIN 2 SD', verdict:'Within 2 standard deviations — still in the main pile.', cls:'good', chip:'good'};
+    if (absErr <= 0.300) return {label:'WITHIN 3 SD', verdict:'Within 3 standard deviations, out in the tail.', cls:'far', chip:''};
+    return {label:'OUTSIDE 3 SD', verdict:'Outside 3 standard deviations — a real outlier for this task.', cls:'far', chip:''};
+  }
+
+  function stop(){
+    if (!running) return;
+    running = false;
+    if (rafId) cancelAnimationFrame(rafId);
+    var t = (performance.now() - startStamp) / 1000;
+    lastElapsed = t;
+    // always reveal the real time on stop, even in blind mode
+    digits.innerHTML = fmt(t) + '<small> s</small>';
+    trackFill.style.width = Math.min(t / 6 * 100, 100) + '%';
+    trackFill.classList.toggle('over', t > TARGET);
+    dot.classList.remove('live');
+    statusText.textContent = 'STOPPED';
+    mainBtn.innerHTML = '▶&nbsp; Start again';
+    mainBtn.classList.remove('stop');
+
+    var err = t - TARGET;
+    attempts.push({time:t, err:err});
+    var r = rating(Math.abs(err));
+    resultBox.className = 'result show ' + r.cls;
+    resultTime.textContent = fmt(t) + ' s';
+    resultVerdict.textContent = r.verdict;
+    resultDetail.textContent = 'Error: ' + fmtSigned(err) + ' s — you stopped ' + Math.abs(err).toFixed(3) + ' s ' + (err < 0 ? 'early' : (err > 0 ? 'late' : 'exactly on target')) + '. That is attempt #' + attempts.length + '.';
+    subdigits.textContent = 'Stopped at ' + fmt(t) + ' s · error ' + fmtSigned(err) + ' s';
+    updateAll();
+  }
+
+  function resetTimer(){
+    if (running){
+      running = false;
+      if (rafId) cancelAnimationFrame(rafId);
+    }
+    lastElapsed = 0;
+    dot.classList.remove('live');
+    statusText.textContent = 'READY';
+    mainBtn.innerHTML = '▶&nbsp; Start stopwatch';
+    mainBtn.classList.remove('stop');
+    digits.innerHTML = '0.000<small> s</small>';
+    subdigits.textContent = 'Press START — then try to stop on 5.000';
+    trackFill.style.width = '0%';
+    trackFill.classList.remove('over');
+  }
+
+  mainBtn.addEventListener('click', function(){ running ? stop() : start(); });
+  document.getElementById('resetTimerBtn').addEventListener('click', resetTimer);
+  document.addEventListener('keydown', function(e){
+    if (e.code === 'Space' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)){
+      // avoid double-firing when the main button itself has focus
+      if (document.activeElement === mainBtn) return;
+      e.preventDefault();
+      running ? stop() : start();
+    }
+  });
+  blindToggle.addEventListener('change', function(){ if (running) renderDigits(lastElapsed); });
+
+  /* ---------- stats / histogram / history ---------- */
+  function mean(a){ return a.reduce(function(s,x){return s+x;},0)/a.length; }
+  function median(a){
+    var s = a.slice().sort(function(x,y){return x-y;});
+    var m = Math.floor(s.length/2);
+    return s.length % 2 ? s[m] : (s[m-1]+s[m])/2;
+  }
+  function sd(a){
+    if (a.length < 2) return 0;
+    var m = mean(a);
+    var v = a.reduce(function(s,x){return s+(x-m)*(x-m);},0)/(a.length-1);
+    return Math.sqrt(v);
+  }
+  function pctIn(lo, hi){
+    if (!attempts.length) return {n:0, pct:0};
+    var n = attempts.filter(function(a){ return a.time >= lo && a.time <= hi; }).length;
+    return {n:n, pct: n/attempts.length*100};
+  }
+
+  var BINS = [];
+  for (var b=0; b<10; b++){ BINS.push({lo: 4.5 + b*0.1, hi: 4.5 + (b+1)*0.1}); }
+
+  function buildHistoSkeleton(){
+    var histo = document.getElementById('histo');
+    var labels = document.getElementById('histoLabels');
+    histo.innerHTML = ''; labels.innerHTML = '';
+    BINS.forEach(function(bin, i){
+      var mid = (bin.lo + bin.hi)/2;
+      var cls = (mid >= 4.9 && mid < 5.1) ? 'in1' : ((mid >= 4.8 && mid < 5.2) ? 'in2' : '');
+      var div = document.createElement('div');
+      div.className = 'bin ' + cls;
+      div.innerHTML = '<div class="bin-count" data-c></div><div class="bin-bar" data-bar style="height:3px"></div>';
+      histo.appendChild(div);
+      var lab = document.createElement('span');
+      lab.textContent = bin.lo.toFixed(1);
+      labels.appendChild(lab);
+      if (i === BINS.length-1){
+        var end = document.createElement('span'); end.style.flex = '0 0 0'; end.textContent='';
+        // final edge label handled by last bin's hi in title
+      }
+    });
+  }
+  buildHistoSkeleton();
+
+  function updateAll(){
+    var n = attempts.length;
+    var times = attempts.map(function(a){return a.time;});
+    document.getElementById('stN').textContent = n;
+    document.getElementById('csvBtn').disabled = n === 0;
+    document.getElementById('clearBtn').disabled = n === 0;
+    document.getElementById('histoEmpty').style.display = n ? 'none' : 'block';
+    document.getElementById('histoWrap').style.display = n ? 'block' : 'none';
+
+    if (n){
+      document.getElementById('stMean').textContent = fmt(mean(times));
+      document.getElementById('stMedian').textContent = fmt(median(times));
+      document.getElementById('stSD').textContent = n > 1 ? fmt(sd(times)) : '—';
+      var best = attempts.reduce(function(bst,a){ return Math.abs(a.err) < Math.abs(bst.err) ? a : bst; }, attempts[0]);
+      document.getElementById('stBest').textContent = fmt(best.time);
+      document.getElementById('stBestSub').textContent = 'error ' + fmtSigned(best.err) + ' s';
+    } else {
+      document.getElementById('stMean').textContent = '—';
+      document.getElementById('stMedian').textContent = '—';
+      document.getElementById('stSD').textContent = '—';
+      document.getElementById('stBest').textContent = '—';
+      document.getElementById('stBestSub').textContent = 'no attempts yet';
+    }
+
+    // histogram
+    var counts = BINS.map(function(bin){
+      return attempts.filter(function(a){ return a.time >= bin.lo && a.time < bin.hi; }).length;
+    });
+    // times >=5.5 fall outside the chart range; note via counts check only
+    var max = Math.max.apply(null, counts.concat([1]));
+    var bars = document.querySelectorAll('#histo .bin');
+    bars.forEach(function(el, i){
+      el.querySelector('[data-c]').textContent = counts[i] ? counts[i] : '';
+      el.querySelector('[data-bar]').style.height = Math.max(3, counts[i]/max*118) + 'px';
+    });
+
+    // empirical bands
+    [[4.9,5.1,'1'],[4.8,5.2,'2'],[4.7,5.3,'3']].forEach(function(cfg){
+      var r = pctIn(cfg[0], cfg[1]);
+      document.getElementById('band'+cfg[2]+'Fill').style.width = r.pct + '%';
+      document.getElementById('band'+cfg[2]+'Meta').textContent =
+        r.n + ' of ' + n + ' attempts (' + (n ? r.pct.toFixed(1) : '0') + '%) · black tick = expected';
+    });
+
+    // history
+    var list = document.getElementById('list');
+    if (!n){
+      list.innerHTML = '<div class="empty" style="margin-top:12px">Nothing recorded yet.<br>Your first stop will appear here with its error from 5.000 s.</div>';
+      return;
+    }
+    var bestErr = Math.min.apply(null, attempts.map(function(a){return Math.abs(a.err);}));
+    list.innerHTML = '';
+    attempts.slice().reverse().forEach(function(a, ri){
+      var idx = attempts.length - ri;
+      var r = rating(Math.abs(a.err));
+      var row = document.createElement('div');
+      row.className = 'row' + (Math.abs(Math.abs(a.err) - bestErr) < 1e-9 ? ' best' : '');
+      row.innerHTML =
+        '<div class="row-num">#' + idx + '</div>' +
+        '<div><div class="row-time">' + fmt(a.time) + ' s</div>' +
+        '<div class="row-err">' + fmtSigned(a.err) + ' s · ' + (a.err < 0 ? 'early' : (a.err > 0 ? 'late' : 'on target')) + '</div></div>' +
+        '<div class="chip ' + r.chip + '">' + r.label + '</div>';
+      list.appendChild(row);
+    });
+  }
+
+  document.getElementById('clearBtn').addEventListener('click', function(){
+    attempts = [];
+    resultBox.classList.remove('show');
+    resetTimer();
+    updateAll();
+  });
+
+  document.getElementById('csvBtn').addEventListener('click', function(){
+    if (!attempts.length) return;
+    var rows = ['attempt,time_s,error_s'];
+    attempts.forEach(function(a,i){ rows.push((i+1) + ',' + a.time.toFixed(3) + ',' + a.err.toFixed(3)); });
+    var blob = new Blob([rows.join('\n')], {type:'text/csv'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = 'stopwatch-attempts.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 500);
+  });
+
+  updateAll();
+})();
+</script>
+</body>
+</html>
