@@ -30,7 +30,7 @@
       <a href="#practice" data-tab="practice" aria-current="page">练习与答案</a>
       <a href="#simulators" data-tab="simulators">互动模拟器</a>
       <a href="#syllabus" data-tab="syllabus">课程大纲</a>
-      <a href="https://lab.mgpreplab.com/" target="_blank" rel="noopener">互动实验 ↗</a>
+      <a href="https://lab.mgpreplab.com/">互动实验</a>
     </nav>
   </div>
 </header>
@@ -105,7 +105,7 @@
       </div>
       <div class="toolbar-meta">
         <span class="result-status" id="sim-status" aria-live="polite"></span>
-        <span class="unit-sub">点击「打开模拟器」即可在新窗口全屏演示与互动</span>
+        <span class="unit-sub">点击「打开模拟器」即可进入互动，页面顶部可随时返回普通统计</span>
       </div>
     </section>
 
@@ -222,7 +222,7 @@
           <p>${esc(featuredSim.desc)}</p>
         </div>
         <div class="sim-spotlight-actions">
-          <a class="btn-pill btn-pill-sage" href="${esc(featuredSim.path)}" target="_blank" rel="noopener">打开模拟器 ↗</a>
+          <a class="btn-pill btn-pill-sage" href="${esc(featuredSim.path)}">打开模拟器 →</a>
           <button type="button" class="btn-pill btn-pill-ghost" id="goto-sims-btn">查看全部模拟器 (${simulators.length})</button>
         </div>
       </div>
@@ -245,7 +245,7 @@
         <strong>课堂练习与作业本答案即将按单元陆续上传</strong>
         <p>普通统计的课堂练习（Classwork）与作业本答案（Workbook Answer Keys）将统一收录在此，支持按单元筛选、在线预览与直接下载。在此之前，你可以先体验本学期最新上线的互动模拟器或查阅完整课程大纲。</p>
         <div class="placeholder-actions">
-          ${featuredSim ? `<a class="btn-pill btn-pill-sage" href="${esc(featuredSim.path)}" target="_blank" rel="noopener">体验 ${esc(featuredSim.titleZh)} ↗</a>` : ''}
+          ${featuredSim ? `<a class="btn-pill btn-pill-sage" href="${esc(featuredSim.path)}">体验 ${esc(featuredSim.titleZh)} →</a>` : ''}
           <a class="btn-pill btn-pill-ghost" href="#syllabus" data-jump-tab="syllabus">查看 13 个单元课程大纲 →</a>
         </div>
       </div>
@@ -332,7 +332,7 @@
               const simGroup = linkedSim ? `
                 <div class="hw-file-group is-sim">
                   <span class="hw-file-label">模拟器</span>
-                  <a class="btn-act btn-sim-primary" href="${esc(linkedSim.path)}" target="_blank" rel="noopener">打开 ↗</a>
+                  <a class="btn-act btn-sim-primary" href="${esc(linkedSim.path)}">打开 →</a>
                 </div>
               ` : '';
 
@@ -465,7 +465,7 @@
             </div>
             <div class="sim-foot">
               <span class="unit-sub">${esc(s.unitLabel)}</span>
-              <a class="btn-pill btn-pill-sage" href="${esc(s.path)}" target="_blank" rel="noopener">打开模拟器 ↗</a>
+              <a class="btn-pill btn-pill-sage" href="${esc(s.path)}">打开模拟器 →</a>
             </div>
           </article>
         `;
@@ -537,7 +537,7 @@
             ${u.lessons.map(l => {
               const sim = l.simulatorId ? simMap.get(l.simulatorId) : null;
               const simLink = sim
-                ? `<a class="syllabus-sim-link" href="${esc(sim.path)}" target="_blank" rel="noopener">${esc(sim.titleZh)} ↗</a>`
+                ? `<a class="syllabus-sim-link" href="${esc(sim.path)}">${esc(sim.titleZh)} →</a>`
                 : '';
               return `
                 <tr>
