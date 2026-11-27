@@ -1192,8 +1192,21 @@ main {
   background: #EFF9F6;
 }
 
-.table-card td:first-child {
+body:not(.theme-regular) .table-card td:first-child {
   width: 58%;
+}
+
+.theme-regular .table-card td:first-child {
+  width: 11%;
+  white-space: nowrap;
+}
+
+.theme-regular .table-card td:nth-child(2) {
+  width: 47%;
+}
+
+.theme-regular .table-card td:nth-child(3) {
+  width: 42%;
 }
 
 .table-card td[style*="right"] {
