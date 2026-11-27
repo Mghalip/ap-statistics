@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>普通统计 · MG | Statistics</title>
+<meta name="description" content="MG 普通统计（Statistics）课程资料站：课堂练习、作业本答案、互动模拟器与课程大纲">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2040%2040%22%3E%3Crect%20width%3D%2240%22%20height%3D%2240%22%20rx%3D%2210%22%20fill%3D%22%231D6B53%22%2F%3E%3Ctext%20x%3D%2220%22%20y%3D%2226%22%20text-anchor%3D%22middle%22%20font-family%3D%22Georgia%2Cserif%22%20font-size%3D%2218%22%20font-weight%3D%22700%22%20fill%3D%22%23E8B04A%22%3EMG%3C%2Ftext%3E%3C%2Fsvg%3E">
+<link rel="preload" href="../fonts/Montserrat-Variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../styles.css?v=editorial-3">
+</head>
+<body class="theme-regular">
+<a class="skip" href="#main">跳转到内容</a>
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-left">
+      <a class="brand" href="index.html">
+        <span class="mark" aria-hidden="true">M<em>G</em></span>
+        <span class="brand-text">
+          <strong>STATISTICS</strong>
+          <small>普通统计 · MG 课堂</small>
+        </span>
+      </a>
+      <div class="course-switch" role="navigation" aria-label="切换课程">
+        <a href="../index.html" class="is-ap">AP 统计</a>
+        <a href="index.html" class="is-regular" aria-current="true">普通统计</a>
+      </div>
+    </div>
+    <nav class="site-nav" aria-label="普通统计导航">
+      <a href="#practice" data-tab="practice" aria-current="page">练习与答案</a>
+      <a href="#simulators" data-tab="simulators">互动模拟器</a>
+      <a href="#syllabus" data-tab="syllabus">课程大纲</a>
+      <a href="https://lab.mgpreplab.com/" target="_blank" rel="noopener">互动实验 ↗</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow"><span aria-hidden="true">✦</span> THE MG CLASSROOM · REGULAR STATISTICS</p>
+      <h1>Regular Statistics</h1>
+      <p class="hero-sub">普通统计课程资料站 · 课堂练习、作业本答案、互动模拟器与课程大纲</p>
+    </div>
+    <div class="hero-side">
+      <div class="hero-stat">
+        <strong id="stat-units">13</strong>
+        <span>个教学单元</span>
+      </div>
+      <div class="hero-stat">
+        <strong id="stat-sims">1</strong>
+        <span>个互动模拟器</span>
+      </div>
+      <div class="hero-stat" id="stat-materials-wrap" hidden>
+        <strong id="stat-materials">0</strong>
+        <span>份练习与答案</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Panel 1: 课堂练习与作业本答案 -->
+  <section class="regular-panel" id="panel-practice" aria-label="课堂练习与作业本答案">
+    <div id="spotlight-root"></div>
+
+    <div id="practice-toolbar-wrap" hidden>
+      <section class="toolbar" aria-label="筛选与搜索练习答案">
+        <div class="toolbar-row">
+          <div class="filter-pills" id="practice-pills" role="group" aria-label="按类型或单元筛选"></div>
+          <div class="search-box">
+            <svg class="search-ico" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="9" r="6"/><path d="M13.5 13.5L17.5 17.5"/></svg>
+            <input type="search" id="practice-search" placeholder="搜索课堂练习、作业本或单元…" aria-label="搜索练习与答案">
+            <button type="button" class="search-clear" id="practice-clear" aria-label="清空搜索" hidden>×</button>
+          </div>
+        </div>
+        <div class="toolbar-meta">
+          <span class="result-status" id="practice-status" aria-live="polite"></span>
+          <div class="hw-legend" aria-label="类型图例">
+            <span><i class="k-classwork" aria-hidden="true"></i>课堂练习</span>
+            <span><i class="k-workbook" aria-hidden="true"></i>作业本答案</span>
+            <span><i class="k-sim" aria-hidden="true"></i>配套模拟器</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="practice-root"></div>
+
+    <div class="empty-state" id="practice-empty" hidden>
+      <strong>没有找到匹配的练习或答案</strong>
+      <p>试试清空搜索关键词或切换回「全部」查看全部已上传资料。</p>
+      <button type="button" class="empty-reset" id="practice-reset">显示全部资料</button>
+    </div>
+  </section>
+
+  <!-- Panel 2: 互动模拟器 -->
+  <section class="regular-panel" id="panel-simulators" aria-label="普通统计互动模拟器" hidden>
+    <section class="toolbar" aria-label="筛选与搜索模拟器">
+      <div class="toolbar-row">
+        <div class="filter-pills" id="sim-pills" role="group" aria-label="按单元筛选模拟器"></div>
+        <div class="search-box">
+          <svg class="search-ico" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="9" r="6"/><path d="M13.5 13.5L17.5 17.5"/></svg>
+          <input type="search" id="sim-search" placeholder="搜索模拟器名称、单元或知识点…" aria-label="搜索互动模拟器">
+          <button type="button" class="search-clear" id="sim-clear" aria-label="清空搜索" hidden>×</button>
+        </div>
+      </div>
+      <div class="toolbar-meta">
+        <span class="result-status" id="sim-status" aria-live="polite"></span>
+        <span class="unit-sub">点击「打开模拟器」即可在新窗口全屏演示与互动</span>
+      </div>
+    </section>
+
+    <div id="simulators-root"></div>
+
+    <div class="empty-state" id="sim-empty" hidden>
+      <strong>没有找到匹配的互动模拟器</strong>
+      <p>试试清空搜索关键词或切换回「全部」查看全部模拟器。</p>
+      <button type="button" class="empty-reset" id="sim-reset">显示全部模拟器</button>
+    </div>
+
+    <p class="sim-note">更多单元的课堂互动模拟器将随教学进度持续更新上线。</p>
+  </section>
+
+  <!-- Panel 3: 普通统计课程大纲 -->
+  <section class="regular-panel" id="panel-syllabus" aria-label="普通统计课程大纲" hidden>
+    <nav class="jump-nav" id="syllabus-jump" aria-label="大纲单元快速跳转"></nav>
+    <div id="syllabus-root"></div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-brand">
+    <strong>MG <span>STATISTICS</span></strong>
+    <p>© 2026 MG · 普通统计课程资料站。</p>
+    <p class="rights-note">引用教材及第三方资料的版权归原权利人所有。</p>
+  </div>
+  <a class="back-top" href="#main">返回顶部 ↑</a>
+</footer>
+
+<script src="data.js"></script>
+<script>
+(() => {
+  const data = window.MG_REGULAR_STATS || { simulators: [], materials: [], syllabus: [] };
+  const simulators = data.simulators || [];
+  const materials = data.materials || [];
+  const syllabus = data.syllabus || [];
+  const simMap = new Map(simulators.map(s => [s.id, s]));
+  const syllabusMap = new Map(syllabus.map(u => [u.unit, u]));
+
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+
+  /* ---------- Hero stats ---------- */
+  document.getElementById('stat-units').textContent = syllabus.length;
+  document.getElementById('stat-sims').textContent = simulators.length;
+  if (materials.length > 0) {
+    document.getElementById('stat-materials-wrap').hidden = false;
+    document.getElementById('stat-materials').textContent = materials.length;
+  }
+
+  /* ---------- Tab switching (supports #practice, #simulators, #syllabus, #syllabus-unit-X) ---------- */
+  const tabLinks = [...document.querySelectorAll('.site-nav a[data-tab]')];
+  const panels = {
+    practice: document.getElementById('panel-practice'),
+    simulators: document.getElementById('panel-simulators'),
+    syllabus: document.getElementById('panel-syllabus')
+  };
+
+  function activateTab(tab, scrollId) {
+    const target = panels[tab] ? tab : 'practice';
+    for (const [k, el] of Object.entries(panels)) {
+      el.hidden = k !== target;
+    }
+    for (const link of tabLinks) {
+      link.setAttribute('aria-current', link.dataset.tab === target ? 'page' : 'false');
+    }
+    if (scrollId) {
+      requestAnimationFrame(() => {
+        const node = document.getElementById(scrollId);
+        if (node) node.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+  }
+
+  function syncFromHash() {
+    const raw = (location.hash || '').replace(/^#/, '');
+    if (raw === 'simulators' || raw === 'syllabus' || raw === 'practice') {
+      activateTab(raw);
+    } else if (raw.startsWith('syllabus-unit-')) {
+      activateTab('syllabus', raw);
+    } else {
+      activateTab('practice');
+    }
+  }
+
+  for (const link of tabLinks) {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const tab = link.dataset.tab;
+      if (location.hash !== '#' + tab) {
+        history.pushState(null, '', '#' + tab);
+      }
+      activateTab(tab);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  window.addEventListener('hashchange', syncFromHash);
+
+  /* ---------- Render Spotlight Banner on Practice Panel ---------- */
+  const spotlightRoot = document.getElementById('spotlight-root');
+  const featuredSim = simulators.find(s => s.isNew) || simulators[0];
+  if (featuredSim) {
+    spotlightRoot.innerHTML = `
+      <div class="sim-spotlight">
+        <div class="sim-spotlight-copy">
+          <div class="sim-spotlight-meta">
+            <span class="badge badge-sim">${esc(featuredSim.unitLabel)}</span>
+            ${featuredSim.updatedLabel ? `<mark class="badge badge-updated">${esc(featuredSim.updatedLabel)}</mark>` : ''}
+          </div>
+          <h2>${esc(featuredSim.titleZh)} · <span lang="en">${esc(featuredSim.titleEn)}</span></h2>
+          <p>${esc(featuredSim.desc)}</p>
+        </div>
+        <div class="sim-spotlight-actions">
+          <a class="btn-pill btn-pill-sage" href="${esc(featuredSim.path)}" target="_blank" rel="noopener">打开模拟器 ↗</a>
+          <button type="button" class="btn-pill btn-pill-ghost" id="goto-sims-btn">查看全部模拟器 (${simulators.length})</button>
+        </div>
+      </div>
+    `;
+    document.getElementById('goto-sims-btn').addEventListener('click', () => {
+      history.pushState(null, '', '#simulators');
+      activateTab('simulators');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  /* ---------- Render Practice & Answer Keys Panel ---------- */
+  const practiceRoot = document.getElementById('practice-root');
+  const practiceToolbarWrap = document.getElementById('practice-toolbar-wrap');
+  const practiceEmpty = document.getElementById('practice-empty');
+
+  if (materials.length === 0) {
+    practiceRoot.innerHTML = `
+      <div class="placeholder-card">
+        <strong>课堂练习与作业本答案即将按单元陆续上传</strong>
+        <p>普通统计的课堂练习（Classwork）与作业本答案（Workbook Answer Keys）将统一收录在此，支持按单元筛选、在线预览与直接下载。在此之前，你可以先体验本学期最新上线的互动模拟器或查阅完整课程大纲。</p>
+        <div class="placeholder-actions">
+          ${featuredSim ? `<a class="btn-pill btn-pill-sage" href="${esc(featuredSim.path)}" target="_blank" rel="noopener">体验 ${esc(featuredSim.titleZh)} ↗</a>` : ''}
+          <a class="btn-pill btn-pill-ghost" href="#syllabus" data-jump-tab="syllabus">查看 13 个单元课程大纲 →</a>
+        </div>
+      </div>
+    `;
+    const jumpSyllabus = practiceRoot.querySelector('[data-jump-tab="syllabus"]');
+    if (jumpSyllabus) {
+      jumpSyllabus.addEventListener('click', e => {
+        e.preventDefault();
+        history.pushState(null, '', '#syllabus');
+        activateTab('syllabus');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+  } else {
+    practiceToolbarWrap.hidden = false;
+
+    const unitCounts = new Map();
+    let cwCount = 0;
+    let wbCount = 0;
+    for (const item of materials) {
+      unitCounts.set(item.unit, (unitCounts.get(item.unit) || 0) + 1);
+      if (item.kind === 'classwork') cwCount += 1;
+      if (item.kind === 'workbook') wbCount += 1;
+    }
+
+    const sortedUnitKeys = [...unitCounts.keys()].sort((a, b) => {
+      const na = syllabusMap.get(a)?.unitNum ?? parseInt(a.replace(/\D+/g, ''), 10) ?? 0;
+      const nb = syllabusMap.get(b)?.unitNum ?? parseInt(b.replace(/\D+/g, ''), 10) ?? 0;
+      return nb - na;
+    });
+
+    const pillsEl = document.getElementById('practice-pills');
+    const pillsHtml = [
+      `<button type="button" class="filter-pill" data-pfilter="all" aria-pressed="true">全部 <span class="pill-n">${materials.length}</span></button>`,
+      cwCount ? `<button type="button" class="filter-pill" data-pfilter="kind:classwork" aria-pressed="false">课堂练习 <span class="pill-n">${cwCount}</span></button>` : '',
+      wbCount ? `<button type="button" class="filter-pill" data-pfilter="kind:workbook" aria-pressed="false">作业本答案 <span class="pill-n">${wbCount}</span></button>` : '',
+      ...sortedUnitKeys.map(uk => {
+        const label = uk.replace('unit-', 'Unit ');
+        return `<button type="button" class="filter-pill" data-pfilter="unit:${esc(uk)}" aria-pressed="false">${esc(label)} <span class="pill-n">${unitCounts.get(uk)}</span></button>`;
+      })
+    ].filter(Boolean).join('');
+    pillsEl.innerHTML = pillsHtml;
+
+    practiceRoot.innerHTML = sortedUnitKeys.map(uk => {
+      const unitInfo = syllabusMap.get(uk);
+      const unitTitle = unitInfo ? unitInfo.title : uk.replace('unit-', 'Unit ');
+      const unitSub = unitInfo ? unitInfo.sub : '';
+      const unitItems = materials.filter(m => m.unit === uk);
+
+      return `
+        <section class="unit-section" data-punit="${esc(uk)}" aria-labelledby="p-${esc(uk)}-title">
+          <div class="unit-head">
+            <div class="unit-title">
+              <h2 id="p-${esc(uk)}-title">${esc(unitTitle)}</h2>
+              ${unitSub ? `<span class="unit-sub">${esc(unitSub)}</span>` : ''}
+            </div>
+            <span class="unit-count">${unitItems.length} 份</span>
+          </div>
+          <ul class="hw-list">
+            ${unitItems.map(item => {
+              const isCw = item.kind === 'classwork';
+              const cardKindClass = isCw ? 'hw-classwork' : 'hw-workbook';
+              const badgeHtml = isCw
+                ? '<span class="badge badge-classwork">课堂练习</span>'
+                : '<span class="badge badge-workbook">作业本答案</span>';
+              const updatedBadge = item.updated
+                ? `<mark class="badge badge-updated">${esc(item.updatedLabel || '近期更新')}</mark>`
+                : '';
+              const linkedSim = item.simulatorId ? simMap.get(item.simulatorId) : null;
+              const simBadge = linkedSim ? '<span class="badge badge-sim">含模拟器</span>' : '';
+              const searchStr = [
+                item.date, item.titleEn, item.titleZh, item.desc, uk,
+                isCw ? '课堂练习 classwork' : '作业本答案 workbook ak'
+              ].join(' ').toLowerCase();
+
+              const fileGroups = (item.files || []).map(f => `
+                <div class="hw-file-group${f.isAk ? ' is-ak' : ''}">
+                  <span class="hw-file-label">${esc(f.label)}</span>
+                  <a class="btn-act btn-preview" href="${esc(f.href)}" target="_blank" rel="noopener">预览</a>
+                  <a class="btn-act btn-download" href="${esc(f.href)}" download="${esc(f.download || '')}">下载 <span aria-hidden="true">↓</span></a>
+                </div>
+              `).join('');
+
+              const simGroup = linkedSim ? `
+                <div class="hw-file-group is-sim">
+                  <span class="hw-file-label">模拟器</span>
+                  <a class="btn-act btn-sim-primary" href="${esc(linkedSim.path)}" target="_blank" rel="noopener">打开 ↗</a>
+                </div>
+              ` : '';
+
+              return `
+                <li class="hw-card ${cardKindClass}${linkedSim ? ' simulator-card' : ''}${item.updated ? ' is-updated' : ''}"
+                    data-punit-card="${esc(uk)}"
+                    data-pkind="${esc(item.kind)}"
+                    data-psearch="${esc(searchStr)}">
+                  <div class="hw-date">${esc(item.date || '—')}</div>
+                  <div class="hw-body">
+                    <div class="hw-head-line">
+                      <span class="hw-title-en" lang="en">${esc(item.titleEn)}</span>
+                      ${badgeHtml}${simBadge}${updatedBadge}
+                    </div>
+                    <div class="hw-meta-line">
+                      <span class="hw-title-zh">${esc(item.titleZh)}</span>
+                      ${item.desc ? `<span class="hw-desc">${esc(item.desc)}</span>` : ''}
+                    </div>
+                  </div>
+                  <div class="hw-actions">
+                    ${fileGroups}${simGroup}
+                  </div>
+                </li>
+              `;
+            }).join('')}
+          </ul>
+        </section>
+      `;
+    }).join('');
+
+    const pPills = [...pillsEl.querySelectorAll('.filter-pill')];
+    const pInput = document.getElementById('practice-search');
+    const pClear = document.getElementById('practice-clear');
+    const pStatus = document.getElementById('practice-status');
+    const pReset = document.getElementById('practice-reset');
+    const pSections = [...practiceRoot.querySelectorAll('[data-punit]')];
+    const pCards = [...practiceRoot.querySelectorAll('[data-punit-card]')];
+    let pFilter = 'all';
+
+    function applyPractice() {
+      const q = (pInput.value || '').trim().toLowerCase();
+      pClear.hidden = q.length === 0;
+      let visible = 0;
+
+      for (const card of pCards) {
+        let filterOk = true;
+        if (pFilter.startsWith('kind:')) {
+          filterOk = card.dataset.pkind === pFilter.slice(5);
+        } else if (pFilter.startsWith('unit:')) {
+          filterOk = card.dataset.punitCard === pFilter.slice(5);
+        }
+        const textOk = !q || (card.dataset.psearch || '').includes(q);
+        const show = filterOk && textOk;
+        card.hidden = !show;
+        if (show) visible += 1;
+      }
+
+      for (const sec of pSections) {
+        const shown = [...sec.querySelectorAll('[data-punit-card]')].filter(c => !c.hidden).length;
+        sec.hidden = shown === 0;
+        const countEl = sec.querySelector('.unit-count');
+        if (countEl) countEl.textContent = `${shown} 份`;
+      }
+
+      practiceEmpty.hidden = visible > 0;
+      pStatus.textContent = (visible === materials.length && pFilter === 'all' && !q)
+        ? `显示全部 ${materials.length} 份资料`
+        : `已筛选显示 ${visible} / ${materials.length} 份资料`;
+    }
+
+    for (const pill of pPills) {
+      pill.addEventListener('click', () => {
+        pFilter = pill.dataset.pfilter;
+        for (const p of pPills) p.setAttribute('aria-pressed', String(p === pill));
+        applyPractice();
+      });
+    }
+    pInput.addEventListener('input', applyPractice);
+    pClear.addEventListener('click', () => { pInput.value = ''; pInput.focus(); applyPractice(); });
+    pReset.addEventListener('click', () => {
+      pFilter = 'all';
+      pInput.value = '';
+      for (const p of pPills) p.setAttribute('aria-pressed', String(p.dataset.pfilter === 'all'));
+      applyPractice();
+    });
+    applyPractice();
+  }
+
+  /* ---------- Render Simulators Panel ---------- */
+  const simPillsEl = document.getElementById('sim-pills');
+  const simRoot = document.getElementById('simulators-root');
+  const simInput = document.getElementById('sim-search');
+  const simClear = document.getElementById('sim-clear');
+  const simStatus = document.getElementById('sim-status');
+  const simEmpty = document.getElementById('sim-empty');
+  const simReset = document.getElementById('sim-reset');
+
+  const simUnits = [...new Set(simulators.map(s => s.unit))];
+  simPillsEl.innerHTML = [
+    `<button type="button" class="filter-pill" data-sfilter="all" aria-pressed="true">全部 <span class="pill-n">${simulators.length}</span></button>`,
+    ...simUnits.map(u => {
+      const cnt = simulators.filter(s => s.unit === u).length;
+      return `<button type="button" class="filter-pill" data-sfilter="${esc(u)}" aria-pressed="false">${esc(u.replace('unit-', 'Unit '))} <span class="pill-n">${cnt}</span></button>`;
+    })
+  ].join('');
+
+  simRoot.innerHTML = `
+    <div class="sim-grid">
+      ${simulators.map(s => {
+        const searchStr = [s.titleZh, s.titleEn, s.desc, s.unitLabel, ...(s.tags || [])].join(' ').toLowerCase();
+        return `
+          <article class="sim-card" data-sunit="${esc(s.unit)}" data-ssearch="${esc(searchStr)}">
+            <div class="sim-thumb">
+              <div class="sim-thumb-top">
+                <div class="sim-thumb-badges">
+                  <span class="badge badge-sim">${esc(s.unitLabel)}</span>
+                  ${s.isNew ? `<mark class="badge badge-updated">${esc(s.updatedLabel || '新上线')}</mark>` : ''}
+                </div>
+                <span class="sim-symbol" aria-hidden="true">${esc(s.symbol || '∑')}</span>
+              </div>
+              ${s.svg || ''}
+            </div>
+            <div class="sim-body">
+              <h3 class="sim-title-zh">${esc(s.titleZh)}</h3>
+              <p class="sim-title-en" lang="en">${esc(s.titleEn)}</p>
+              <p class="sim-desc">${esc(s.desc)}</p>
+              <div class="sim-tags">
+                ${(s.tags || []).map(t => `<span class="sim-tag">${esc(t)}</span>`).join('')}
+              </div>
+            </div>
+            <div class="sim-foot">
+              <span class="unit-sub">${esc(s.unitLabel)}</span>
+              <a class="btn-pill btn-pill-sage" href="${esc(s.path)}" target="_blank" rel="noopener">打开模拟器 ↗</a>
+            </div>
+          </article>
+        `;
+      }).join('')}
+    </div>
+  `;
+
+  const sPills = [...simPillsEl.querySelectorAll('.filter-pill')];
+  const sCards = [...simRoot.querySelectorAll('.sim-card')];
+  let sFilter = 'all';
+
+  function applySimulators() {
+    const q = (simInput.value || '').trim().toLowerCase();
+    simClear.hidden = q.length === 0;
+    let visible = 0;
+
+    for (const card of sCards) {
+      const unitOk = sFilter === 'all' || card.dataset.sunit === sFilter;
+      const textOk = !q || (card.dataset.ssearch || '').includes(q);
+      const show = unitOk && textOk;
+      card.hidden = !show;
+      if (show) visible += 1;
+    }
+
+    simEmpty.hidden = visible > 0;
+    simStatus.textContent = (visible === simulators.length && sFilter === 'all' && !q)
+      ? `显示全部 ${simulators.length} 个互动模拟器`
+      : `已筛选显示 ${visible} / ${simulators.length} 个互动模拟器`;
+  }
+
+  for (const pill of sPills) {
+    pill.addEventListener('click', () => {
+      sFilter = pill.dataset.sfilter;
+      for (const p of sPills) p.setAttribute('aria-pressed', String(p === pill));
+      applySimulators();
+    });
+  }
+  simInput.addEventListener('input', applySimulators);
+  simClear.addEventListener('click', () => { simInput.value = ''; simInput.focus(); applySimulators(); });
+  simReset.addEventListener('click', () => {
+    sFilter = 'all';
+    simInput.value = '';
+    for (const p of sPills) p.setAttribute('aria-pressed', String(p.dataset.sfilter === 'all'));
+    applySimulators();
+  });
+  applySimulators();
+
+  /* ---------- Render 13-Unit Syllabus Panel ---------- */
+  const jumpEl = document.getElementById('syllabus-jump');
+  const syllabusRoot = document.getElementById('syllabus-root');
+
+  jumpEl.innerHTML = syllabus.map(u => `
+    <a href="#syllabus-${esc(u.unit)}" data-jump="syllabus-${esc(u.unit)}">Unit ${u.unitNum}</a>
+  `).join('');
+
+  syllabusRoot.innerHTML = syllabus.map(u => `
+    <section class="map-section" id="syllabus-${esc(u.unit)}" aria-labelledby="h-syllabus-${esc(u.unit)}">
+      <h2 id="h-syllabus-${esc(u.unit)}">${esc(u.title)} · ${esc(u.sub)}</h2>
+      <div class="table-card" tabindex="0" role="region" aria-label="${esc(u.title)}">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 11%;">Lesson</th>
+              <th style="width: 47%;">Topic (English)</th>
+              <th style="width: 42%;">主题与互动资源</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${u.lessons.map(l => {
+              const sim = l.simulatorId ? simMap.get(l.simulatorId) : null;
+              const simLink = sim
+                ? `<a class="syllabus-sim-link" href="${esc(sim.path)}" target="_blank" rel="noopener">${esc(sim.titleZh)} ↗</a>`
+                : '';
+              return `
+                <tr>
+                  <td><strong>${esc(l.code)}</strong></td>
+                  <td lang="en">${esc(l.en)}</td>
+                  <td>${esc(l.zh)}${simLink}</td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  `).join('');
+
+  jumpEl.addEventListener('click', e => {
+    const a = e.target.closest('a[data-jump]');
+    if (!a) return;
+    e.preventDefault();
+    const id = a.dataset.jump;
+    history.replaceState(null, '', '#' + id);
+    const target = document.getElementById(id);
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  /* ---------- Initialize Active Tab ---------- */
+  syncFromHash();
+})();
+</script>
+</body>
+</html>

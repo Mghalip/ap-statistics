@@ -33,7 +33,24 @@
         line-height:1.6;
         -webkit-font-smoothing:antialiased;
       }
-      .wrap{ max-width:1180px; margin:0 auto; padding:28px 20px 56px; }
+      .wrap{ max-width:1180px; margin:0 auto; padding:24px 20px 56px; }
+
+      /* ---------- top nav bar ---------- */
+      .topbar{
+        display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+        margin-bottom:18px;
+      }
+      .topbar-links{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+      .backpill{
+        display:inline-flex; align-items:center; gap:6px;
+        padding:6px 14px; border-radius:999px;
+        background:var(--card); border:1px solid var(--line);
+        color:var(--green-dark); font-size:13.5px; font-weight:700;
+        text-decoration:none; transition:background-color .15s ease, border-color .15s ease, color .15s ease;
+      }
+      .backpill:hover{ background:var(--green); border-color:var(--green); color:#fff; }
+      .backpill.subtle{ color:var(--muted); font-weight:600; }
+      .backpill.subtle:hover{ background:var(--chip); border-color:var(--line); color:var(--ink); }
 
       /* ---------- header ---------- */
       .kicker{
@@ -193,8 +210,14 @@
   </head>
   <body>
     <div class="wrap">
+      <nav class="topbar" aria-label="返回普通统计">
+        <div class="topbar-links">
+          <a class="backpill" href="../index.html#simulators">← 返回普通统计</a>
+          <a class="backpill subtle" href="../index.html#syllabus">课程大纲</a>
+        </div>
+      </nav>
       <header>
-        <p class="kicker">AP Statistics · Unit 3 · Lesson 3.1 · Scatterplots</p>
+        <p class="kicker">MG Statistics · Unit 3 · Lesson 3.1 · Scatterplots</p>
         <h1>芭比蹦极模拟器 <em>Barbie Bungee</em></h1>
         <p class="subtitle">给芭比绑上橡皮筋，让她从高台上一跃而下。改变橡皮筋的数量，记录她的下落距离，亲手收集数据、画出散点图，再用<strong>方向、形式、强度、异常点</strong>描述两个变量之间的关系——目标是让她玩得最刺激，又不能撞到地面。</p>
       </header>
@@ -305,7 +328,7 @@
 
           <div class="card">
             <h2>描述这个关系 <span class="en">Describe the Relationship</span></h2>
-            <p class="hint">AP 考试描述散点图的四件套：<strong>方向 Direction · 形式 Form · 强度 Strength · 异常点 Unusual features</strong>。下面这段会随你的数据实时更新。</p>
+            <p class="hint">描述散点图的四件套：<strong>方向 Direction · 形式 Form · 强度 Strength · 异常点 Unusual features</strong>。下面这段会随你的数据实时更新。</p>
             <div class="chips">
               <span class="chip">方向 <b id="dDir">待收集数据</b></span>
               <span class="chip">形式 <b id="dForm">—</b></span>

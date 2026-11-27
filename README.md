@@ -20,3 +20,10 @@
 2. [样本比例的差值的抽样分布](https://mghalip.github.io/ap-statistics/sampling.html#proportion-difference)
 3. [样本均值的抽样分布](https://mghalip.github.io/ap-statistics/sampling.html#mean)
 4. [样本均值的差值的抽样分布](https://mghalip.github.io/ap-statistics/sampling.html#mean-difference)
+
+## 普通统计（Regular Statistics）分区
+
+独立入口：`regular/index.html`（线上访问 `https://stats.mgpreplab.com/regular/`），包含「练习与答案」「互动模拟器」「课程大纲（13 个单元）」三个标签页，视觉与资源完全独立于 AP Statistics。
+
+- **更新课堂练习与作业本答案**：将 PDF 放到 `regular/materials/`，并在 `regular/data.js` 的 `materials` 数组中按示例格式添加条目即可（支持课堂练习 `classwork` 与作业本答案 `workbook`）。
+- **新增普通统计互动模拟器**：将 HTML 放到 `regular/simulators/`，并在 `regular/data.js` 的 `simulators` 数组中登记一条记录；若对应大纲中的某一节课，可在 `syllabus` 对应 lesson 上加上 `simulatorId` 自动关联。
