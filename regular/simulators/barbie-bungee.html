@@ -6,9 +6,6 @@
     <meta name="color-scheme" content="light" />
     <link rel="icon" href="data:," />
     <title>芭比蹦极模拟器 · Barbie Bungee — Scatterplots</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700;900&family=Playfair+Display:ital,wght@1,600;1,700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
     <style>
       :root{
         --bg:#F7F8FA;
@@ -33,7 +30,7 @@
         line-height:1.6;
         -webkit-font-smoothing:antialiased;
       }
-      .wrap{ max-width:1360px; margin:0 auto; padding:24px 20px 56px; }
+      .wrap{ max-width:1160px; margin:0 auto; padding:24px 20px 56px; }
 
       /* ---------- top nav bar ---------- */
       .topbar{
@@ -103,7 +100,7 @@
       }
       .stepbtn:active{ background:var(--chip); }
       .bandnum{
-        font-family:"Noto Serif SC",serif; font-weight:900; font-size:34px;
+        font-variant-numeric:tabular-nums; font-weight:800; font-size:34px;
         min-width:52px; text-align:center; line-height:1;
       }
       .bandlabel{ font-size:14px; color:var(--muted); }
@@ -126,7 +123,7 @@
         font-size:15.5px; min-height:48px;
         display:flex; align-items:center;
       }
-      .readout b{ font-family:"Noto Serif SC",serif; font-size:19px; }
+      .readout b{ font-variant-numeric:tabular-nums; font-size:19px; }
       .readout .hit{ color:var(--red); font-weight:700; }
 
       /* ---------- stage ---------- */
@@ -140,8 +137,8 @@
         border:1px solid var(--line); padding:8px 2px; text-align:center;
       }
       table.handout th{ background:var(--chip); font-weight:700; }
-      table.handout td{ font-family:"Noto Serif SC",serif; font-weight:700; font-size:16px; height:42px; }
-      table.handout td.empty{ color:#C9BFA9; font-weight:400; }
+      table.handout td{ font-variant-numeric:tabular-nums; font-weight:700; font-size:16px; height:42px; }
+      table.handout td.empty{ color:#BFC3C9; font-weight:400; }
       table.handout td .cnt{ display:block; font-family:"Noto Sans SC",sans-serif; font-size:11px; color:var(--muted); font-weight:400; }
       table.handout td.hitcell{ color:var(--red); }
 
@@ -604,8 +601,8 @@
             var t2 = el("text",{x:px(xv), y:PH-PMB+20, "text-anchor":"middle","class":"ticklabel"}, g);
             t2.textContent = xv;
           }
-          el("line",{x1:PML, y1:PMT, x2:PML, y2:PH-PMB, stroke:"#C9BFA9","stroke-width":1.2}, g);
-          el("line",{x1:PML, y1:PH-PMB, x2:PW-PMR, y2:PH-PMB, stroke:"#C9BFA9","stroke-width":1.2}, g);
+          el("line",{x1:PML, y1:PMT, x2:PML, y2:PH-PMB, stroke:"#BFC3C9","stroke-width":1.2}, g);
+          el("line",{x1:PML, y1:PH-PMB, x2:PW-PMR, y2:PH-PMB, stroke:"#BFC3C9","stroke-width":1.2}, g);
           var xt = el("text",{x:(PML+PW-PMR)/2, y:PH-14, "text-anchor":"middle","class":"axis-title"}, g);
           xt.textContent = "橡皮筋数量 Number of rubber bands";
           var yt = el("text",{x:18, y:(PMT+PH-PMB)/2, "text-anchor":"middle","class":"axis-title", transform:"rotate(-90 18 "+((PMT+PH-PMB)/2)+")"}, g);
@@ -806,12 +803,12 @@
             t.textContent = xv;
           });
           [1,4,7,10,13].forEach(function(yv){
-            el("line",{x1:ML, y1:sy(yv), x2:W-MR, y2:sy(yv), stroke:"#EDE4CF","stroke-width":1}, g);
+            el("line",{x1:ML, y1:sy(yv), x2:W-MR, y2:sy(yv), stroke:"#E8EAED","stroke-width":1}, g);
             var t = el("text",{x:ML-8, y:sy(yv)+4, "text-anchor":"end","class":"ticklabel"}, g);
             t.textContent = yv;
           });
-          el("line",{x1:ML, y1:MT, x2:ML, y2:H-MB, stroke:"#C9BFA9","stroke-width":1.2}, g);
-          el("line",{x1:ML, y1:H-MB, x2:W-MR, y2:H-MB, stroke:"#C9BFA9","stroke-width":1.2}, g);
+          el("line",{x1:ML, y1:MT, x2:ML, y2:H-MB, stroke:"#BFC3C9","stroke-width":1.2}, g);
+          el("line",{x1:ML, y1:H-MB, x2:W-MR, y2:H-MB, stroke:"#BFC3C9","stroke-width":1.2}, g);
           var xt = el("text",{x:(ML+W-MR)/2, y:H-10, "text-anchor":"middle","class":"axis-title"}, g);
           xt.textContent = "出场时间 Screen time (min)";
           var yt = el("text",{x:16, y:(MT+H-MB)/2, "text-anchor":"middle","class":"axis-title", transform:"rotate(-90 16 "+((MT+H-MB)/2)+")"}, g);

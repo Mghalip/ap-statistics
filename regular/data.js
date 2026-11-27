@@ -17,7 +17,7 @@ window.MG_REGULAR_STATS = {
       titleEn: 'Barbie Bungee — Scatterplots',
       desc: '给芭比绑上不同数量的橡皮筋从高台跳下，亲手收集下落距离数据并实时绘制散点图，用方向、形式、强度与异常点描述双变量关系。',
       tags: ['Unit 3 双变量数据', '散点图 Scatterplot', 'Classnote 3.1', '含 Star Wars 练习'],
-      path: 'simulators/barbie-bungee.html',
+      path: 'simulators/barbie-bungee.html?v=20261127-ka3',
       isNew: true,
       updatedLabel: '新上线 · 11/27',
       symbol: 'r',
