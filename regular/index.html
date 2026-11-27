@@ -288,13 +288,16 @@
                 isCw ? '课堂练习 classwork' : '作业本答案 workbook ak'
               ].join(' ').toLowerCase();
 
-              const fileGroups = (item.files || []).map(f => `
-                <div class="hw-file-group${f.isAk ? ' is-ak' : ''}">
-                  <span class="hw-file-label">${esc(f.label)}</span>
-                  <a class="btn-act btn-preview" href="${esc(f.href)}" target="_blank" rel="noopener">预览</a>
-                  <a class="btn-act btn-download" href="${esc(f.href)}" download="${esc(f.download || '')}">下载 <span aria-hidden="true">↓</span></a>
-                </div>
-              `).join('');
+              const fileGroups = (item.files || []).map(f => {
+                const pdfUrl = f.href + (f.href.includes('?') ? '&' : '?') + 'v=20261127-pdf1';
+                return `
+                  <div class="hw-file-group${f.isAk ? ' is-ak' : ''}">
+                    <span class="hw-file-label">${esc(f.label)}</span>
+                    <a class="btn-act btn-preview" href="${esc(pdfUrl)}" target="_blank" rel="noopener">预览</a>
+                    <a class="btn-act btn-download" href="${esc(pdfUrl)}" download="${esc(f.download || '')}">下载 <span aria-hidden="true">↓</span></a>
+                  </div>
+                `;
+              }).join('');
 
               const simGroup = linkedSim ? `
                 <div class="hw-file-group is-sim">
