@@ -817,19 +817,19 @@ main {
 
 /* Direct File Actions */
 .hw-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(2, 232px);
   gap: 8px;
-  max-width: 470px;
+  width: 472px;
+  align-items: stretch;
 }
 
 .hw-file-group {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 4px 5px 4px 10px;
+  gap: 6px;
+  width: 100%;
+  padding: 4px 5px 4px 12px;
   border-radius: 6px;
   background: var(--surface-2);
   border: 1px solid var(--line);
@@ -839,7 +839,12 @@ main {
   background: #F4F5F7;
 }
 
+.hw-file-group.is-ak:last-child:nth-child(odd) {
+  grid-column: 2;
+}
+
 .hw-file-group.is-sim {
+  grid-column: 1 / -1;
   background: var(--sage-soft);
   border-color: var(--sage-border);
 }
@@ -848,7 +853,7 @@ main {
   font-size: 12px;
   font-weight: 700;
   color: var(--ink-2);
-  margin-right: 3px;
+  margin-right: auto;
   white-space: nowrap;
 }
 
@@ -1312,8 +1317,9 @@ main {
 
   .hw-actions {
     grid-column: 1 / -1;
-    justify-content: flex-start;
-    max-width: none;
+    width: 100%;
+    max-width: 546px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     padding-left: 74px;
   }
 
@@ -1416,16 +1422,17 @@ main {
 
   .hw-actions {
     padding-left: 0;
-    display: grid;
+    max-width: none;
     grid-template-columns: 1fr;
     gap: 7px;
   }
 
   .hw-file-group {
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    gap: 6px;
     padding: 5px 6px 5px 11px;
+  }
+
+  .hw-file-group.is-ak:last-child:nth-child(odd) {
+    grid-column: auto;
   }
 
   .btn-act {
