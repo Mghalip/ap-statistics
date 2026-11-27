@@ -106,6 +106,26 @@ window.MG_REGULAR_STATS = {
         <path d="M 34 92 C 74 91, 98 20, 130 20 S 186 91, 226 92" stroke="#1865F2" stroke-width="2.2" fill="none"/>
         <line x1="130" y1="16" x2="130" y2="96" stroke="#C5221F" stroke-width="1.8" stroke-dasharray="4 3"/>
       </svg>`
+    },
+    {
+      id: 'normal-linear-transformation',
+      unit: 'unit-2',
+      unitNum: 2,
+      unitLabel: 'Unit 2 · Lessons 2.3 & 2.5',
+      titleZh: '正态曲线与线性变换模拟',
+      titleEn: 'Normal Curve & Linear Transformation',
+      desc: '调节均值 μ、标准差 σ 与线性变换 Y = aX + b，直观观察正态密度曲线平移伸缩、68-95-99.7 区间与面积 / z 分数计算。',
+      tags: ['Unit 2 数据建模', '线性变换 Linear Transformation', '正态曲线 Normal Curve'],
+      path: 'simulators/normal-linear-transformation.html?v=20261127-cn4',
+      isNew: false,
+      symbol: 'z',
+      svg: `<svg viewBox="0 0 260 112" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <line x1="20" y1="94" x2="240" y2="94" stroke="#21242C" stroke-width="1.4" stroke-opacity="0.28"/>
+        <path d="M 26 92 C 58 90, 74 28, 96 28 S 134 90, 166 92" stroke="#1865F2" stroke-width="2" stroke-dasharray="4 3" fill="#EBF3FF" fill-opacity="0.55"/>
+        <path d="M 94 92 C 122 90, 144 40, 174 40 S 214 90, 238 92" stroke="#008A6E" stroke-width="2.4" fill="#E6F7F2" fill-opacity="0.65"/>
+        <path d="M 102 34 H 164" stroke="#C75000" stroke-width="2" stroke-linecap="round"/>
+        <path d="M 159 29 L 165 34 L 159 39" stroke="#C75000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>`
     }
   ],
 
@@ -449,9 +469,9 @@ window.MG_REGULAR_STATS = {
       lessons: [
         { code: '2.1', en: 'Percentile', zh: '百分位数' },
         { code: '2.2', en: 'Location in a Distribution', zh: '分布中的相对位置与 z 分数' },
-        { code: '2.3', en: 'Linear Transformations of Quantitative Data', zh: '定量数据的线性变换' },
+        { code: '2.3', en: 'Linear Transformations of Quantitative Data', zh: '定量数据的线性变换', simulatorId: 'normal-linear-transformation' },
         { code: '2.4', en: 'Normal Distributions and the Empirical Rule', zh: '正态分布与经验法则（68-95-99.7）', simulatorIds: ['die-roll', 'penny-toss', 'stopwatch'] },
-        { code: '2.5', en: 'Normal Distribution Calculations', zh: '正态分布概率与分位数计算' }
+        { code: '2.5', en: 'Normal Distribution Calculations', zh: '正态分布概率与分位数计算', simulatorId: 'normal-linear-transformation' }
       ]
     },
     {

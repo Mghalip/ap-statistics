@@ -1,0 +1,934 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Normal Curve and Linear Transformation Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fbfbf9;
+    --surface:#ffffff;
+    --surface-2:#f1f2ef;
+    --ink:#171b19;
+    --muted:#5b665f;
+    --faint:#8a948c;
+    --line:#dde1da;
+    --line-strong:#c8cec5;
+    --teal:#0e7569;
+    --teal-dark:#0a5c54;
+    --teal-soft:#dff0ec;
+    --teal-mid:#7fc4ba;
+    --amber:#c47a12;
+    --amber-dark:#9a5f0a;
+    --amber-soft:#fbeed3;
+    --amber-mid:#eec27a;
+    --red:#b3402a;
+    --red-soft:#fbe7e1;
+    --shadow:0 1px 2px rgba(20,30,25,.06),0 8px 24px rgba(20,30,25,.06);
+    --radius:14px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#101312;
+      --surface:#181c1a;
+      --surface-2:#202623;
+      --ink:#eef1ee;
+      --muted:#a7b3aa;
+      --faint:#7d8a80;
+      --line:#2c332f;
+      --line-strong:#3a443e;
+      --teal:#2fbfae;
+      --teal-dark:#5fd8ca;
+      --teal-soft:#173a36;
+      --teal-mid:#2a7a71;
+      --amber:#e8a83e;
+      --amber-dark:#f0bc66;
+      --amber-soft:#3a2c12;
+      --amber-mid:#8a6a2a;
+      --red:#e07a5f;
+      --red-soft:#3d201a;
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+    }
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.55;font-size:16px}
+  button,select,input{font:inherit}
+  button,[role="button"],select,input[type="range"]{min-height:40px}
+  a{color:var(--teal-dark)}
+  .wrap{max-width:1100px;margin:0 auto;padding:22px 18px 56px}
+  .topbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .backpill{
+    display:inline-flex;align-items:center;gap:6px;min-height:34px;
+    padding:5px 14px;border-radius:999px;
+    background:var(--surface);border:1px solid var(--line);
+    color:var(--teal-dark);font-size:13px;font-weight:700;text-decoration:none;
+    transition:background-color .15s ease,border-color .15s ease,color .15s ease;
+  }
+  .backpill:hover{background:var(--teal);border-color:var(--teal);color:#fff}
+  .backpill.subtle{color:var(--muted);font-weight:600}
+  .backpill.subtle:hover{background:var(--surface-2);border-color:var(--line);color:var(--ink)}
+  /* ---------- header ---------- */
+  .kicker{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);font-weight:600;margin:0 0 8px}
+  h1{font-family:"IBM Plex Serif",Georgia,serif;font-weight:600;font-size:clamp(28px,5vw,42px);line-height:1.08;margin:0 0 10px;letter-spacing:-.01em}
+  .lede{color:var(--muted);font-size:17px;max-width:720px;margin:0}
+  .lede strong{color:var(--ink)}
+  /* ---------- global controls ---------- */
+  .global-bar{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 18px 14px}
+  .global-top{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 16px;margin-bottom:6px}
+  .global-top h2{font-size:15px;margin:0;font-weight:700;letter-spacing:.01em}
+  .dist-notation{font-family:"IBM Plex Mono",monospace;font-size:15px;background:var(--teal-soft);color:var(--teal-dark);border:1px solid var(--teal-mid);padding:6px 12px;border-radius:999px;font-weight:600;white-space:nowrap}
+  .controls-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 28px;margin-top:10px}
+  @media (max-width:640px){.controls-grid{grid-template-columns:1fr}}
+  .ctl label{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;font-weight:600;margin-bottom:2px}
+  .ctl label .hint{font-weight:400;color:var(--faint);font-size:12.5px}
+  .ctl-row{display:flex;align-items:center;gap:10px}
+  .ctl-row input[type="range"]{flex:1;accent-color:var(--teal);height:40px;cursor:pointer}
+  .num-input{width:84px;flex:none;padding:8px 10px;border:1px solid var(--line-strong);border-radius:9px;background:var(--surface);color:var(--ink);font-family:"IBM Plex Mono",monospace;font-size:15px;text-align:right}
+  .num-input:focus{outline:2px solid var(--teal);outline-offset:1px;border-color:var(--teal)}
+  .quick-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+  .quick-row span{font-size:13px;color:var(--muted);align-self:center;margin-right:2px}
+  .chip{border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 14px;font-size:13.5px;font-weight:600;cursor:pointer;min-height:40px}
+  .chip:hover{border-color:var(--teal);color:var(--teal-dark)}
+  .chip.active{background:var(--teal);border-color:var(--teal);color:#fff}
+  @media (prefers-color-scheme: dark){.chip.active{color:#0b1513}}
+  /* ---------- sections ---------- */
+  section.block{margin-top:34px}
+  .block-head{display:flex;gap:14px;align-items:flex-start;margin-bottom:12px}
+  .block-num{flex:none;width:38px;height:38px;border-radius:10px;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:16px;margin-top:2px}
+  .block-head h2{font-family:"IBM Plex Serif",Georgia,serif;font-size:clamp(21px,3.4vw,27px);font-weight:600;margin:0;line-height:1.2}
+  .block-head p{margin:4px 0 0;color:var(--muted);font-size:15px;max-width:760px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+  .chart-wrap{width:100%}
+  svg.chart{width:100%;height:auto;display:block}
+  .legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13.5px;color:var(--muted);margin-top:8px}
+  .legend i{display:inline-block;width:22px;height:10px;border-radius:3px;vertical-align:middle;margin-right:6px}
+  .legend .sw-line{height:0;border-top:3px solid;border-radius:0;width:22px}
+  /* stat strip */
+  .stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+  @media (max-width:760px){.stat-strip{grid-template-columns:repeat(2,1fr)}}
+  .stat{background:var(--surface-2);border:1px solid var(--line);border-radius:11px;padding:10px 12px}
+  .stat .k{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .stat .v{font-family:"IBM Plex Mono",monospace;font-size:19px;font-weight:600;margin-top:2px}
+  .stat .s{font-size:12.5px;color:var(--muted)}
+  /* empirical table */
+  .emp-table{width:100%;border-collapse:collapse;margin-top:14px;font-size:14.5px}
+  .emp-table th,.emp-table td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+  .emp-table th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .emp-table td.mono,.emp-table th.mono{font-family:"IBM Plex Mono",monospace}
+  .emp-table tr:last-child td{border-bottom:none}
+  .band-dot{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:7px;vertical-align:-1px}
+  .toggle-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .toggle-btn{border:1px solid var(--line-strong);background:var(--surface);border-radius:999px;padding:8px 14px;font-size:13.5px;font-weight:600;cursor:pointer;min-height:40px;color:var(--muted)}
+  .toggle-btn.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  .note{font-size:14px;color:var(--muted);background:var(--surface-2);border:1px solid var(--line);border-radius:11px;padding:11px 13px;margin-top:12px}
+  .note strong{color:var(--ink)}
+  /* ---------- fractions & formulas ---------- */
+  .frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .18em;line-height:1.15;font-family:"IBM Plex Mono",monospace}
+  .frac .ft{padding:0 .35em .12em;border-bottom:1.6px solid currentColor}
+  .frac .fb{padding:.12em .35em 0}
+  .formula-line{font-size:17px;display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px}
+  .formula-line .sym{font-family:"IBM Plex Serif",Georgia,serif;font-style:italic;font-weight:600}
+  /* ---------- area section ---------- */
+  .seg{display:flex;flex-wrap:wrap;gap:6px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:5px}
+  .seg button{flex:1 1 auto;border:none;background:transparent;color:var(--muted);font-weight:600;font-size:14px;border-radius:8px;padding:9px 12px;cursor:pointer;min-height:42px;white-space:nowrap}
+  .seg button.active{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.14);border:1px solid var(--line-strong)}
+  .two-col{display:grid;grid-template-columns:340px 1fr;gap:16px;align-items:start}
+  @media (max-width:860px){.two-col{grid-template-columns:1fr}}
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+  .panel h3{margin:0 0 10px;font-size:14px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  .result-big{font-family:"IBM Plex Mono",monospace;font-size:clamp(30px,5vw,40px);font-weight:600;line-height:1.05;margin:6px 0 2px}
+  .result-pct{font-size:16px;color:var(--muted)}
+  .calc-box{background:var(--surface-2);border:1px solid var(--line);border-radius:11px;padding:13px 14px;margin-top:13px;font-size:15.5px}
+  .calc-box .step{margin:7px 0;display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px}
+  .calc-box .step:first-child{margin-top:0}.calc-box .step:last-child{margin-bottom:0}
+  .mini-chart-title{font-size:13px;font-weight:600;color:var(--muted);margin:0 0 4px}
+  /* ---------- transformation ---------- */
+  .trans-grid{display:grid;grid-template-columns:340px 1fr;gap:16px;align-items:start}
+  @media (max-width:860px){.trans-grid{grid-template-columns:1fr}}
+  .eq-display{font-family:"IBM Plex Serif",Georgia,serif;font-size:26px;font-weight:600;text-align:center;background:var(--surface-2);border:1px solid var(--line);border-radius:11px;padding:12px 8px;margin-bottom:14px}
+  .eq-display .yv{color:var(--amber-dark)} .eq-display .xv{color:var(--teal-dark)}
+  .result-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+  @media (max-width:520px){.result-cards{grid-template-columns:1fr}}
+  .rcard{border-radius:11px;padding:12px 13px;border:1px solid}
+  .rcard.teal{background:var(--teal-soft);border-color:var(--teal-mid)}
+  .rcard.amber{background:var(--amber-soft);border-color:var(--amber-mid)}
+  .rcard .k{font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;opacity:.85}
+  .rcard .v{font-family:"IBM Plex Mono",monospace;font-size:22px;font-weight:600;margin-top:2px}
+  .rcard .calc{font-size:13.5px;margin-top:4px;opacity:.9}
+  .probe-box{margin-top:14px;border-top:1px dashed var(--line-strong);padding-top:13px}
+  .probe-vals{display:flex;flex-wrap:wrap;gap:8px 22px;font-family:"IBM Plex Mono",monospace;font-size:15.5px;margin-top:8px}
+  .probe-vals b{font-weight:600}
+  .verdict{margin-top:10px;font-size:14.5px;border-radius:10px;padding:10px 12px;background:var(--teal-soft);border:1px solid var(--teal-mid);color:var(--ink)}
+  .verdict.warn{background:var(--red-soft);border-color:var(--red);color:var(--ink)}
+  /* summary */
+  .summary{margin-top:36px;background:var(--ink);color:var(--bg);border-radius:var(--radius);padding:20px}
+  .summary h2{font-family:"IBM Plex Serif",Georgia,serif;margin:0 0 12px;font-size:21px;font-weight:600}
+  .summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media (max-width:760px){.summary-grid{grid-template-columns:1fr}}
+  .summary .cell{background:rgba(127,127,127,.14);border:1px solid rgba(127,127,127,.3);border-radius:11px;padding:12px 13px;font-size:14.5px}
+  .summary .cell .t{font-weight:700;font-size:13px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px;opacity:.85}
+  footer{margin-top:22px;color:var(--faint);font-size:13px;text-align:center}
+  .hidden{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="topbar" aria-label="返回普通统计">
+    <a class="backpill" href="../index.html#simulators">← 返回普通统计</a>
+    <a class="backpill subtle" href="../index.html#syllabus">课程大纲</a>
+  </nav>
+
+  <p class="kicker">Unit 2 · Modeling Data — MG Statistics</p>
+  <h1>The Normal Curve &amp; Linear Transformations</h1>
+  <p class="lede">Drag <strong>μ</strong> and <strong>σ</strong> and watch the bell move and stretch. Then turn any value into a <strong>z-score</strong> to read off its area — and finally apply <strong>Y = aX + b</strong> to see exactly what shifting and scaling do to the mean and standard deviation.</p>
+
+  <!-- ===== Global parameters ===== -->
+  <div class="global-bar">
+    <div class="global-top">
+      <h2>The population: X follows a Normal model</h2>
+      <div class="dist-notation" id="distNotation">X ~ N(μ = 70, σ = 10)</div>
+    </div>
+    <div class="controls-grid">
+      <div class="ctl">
+        <label for="muRange">Mean &nbsp;μ <span class="hint">center — slides the curve left / right</span></label>
+        <div class="ctl-row">
+          <input type="range" id="muRange" min="-20" max="120" step="1" value="70" aria-label="Mean mu">
+          <input type="number" class="num-input" id="muNum" min="-20" max="120" step="1" value="70" aria-label="Mean mu value">
+        </div>
+      </div>
+      <div class="ctl">
+        <label for="sigmaRange">Standard deviation &nbsp;σ <span class="hint">spread — stretches / squeezes the curve</span></label>
+        <div class="ctl-row">
+          <input type="range" id="sigmaRange" min="1" max="30" step="0.5" value="10" aria-label="Standard deviation sigma">
+          <input type="number" class="num-input" id="sigmaNum" min="1" max="30" step="0.5" value="10" aria-label="Standard deviation sigma value">
+        </div>
+      </div>
+    </div>
+    <div class="quick-row">
+      <span>Try a context:</span>
+      <button class="chip preset-mu" data-mu="70" data-sigma="10">Test scores · N(70, 10)</button>
+      <button class="chip preset-mu" data-mu="170" data-sigma="8">Heights (cm) · N(170, 8)</button>
+      <button class="chip preset-mu" data-mu="500" data-sigma="100">SAT section · N(500, 100)</button>
+      <button class="chip preset-mu" data-mu="0" data-sigma="1">Standard Normal · N(0, 1)</button>
+    </div>
+  </div>
+
+  <!-- ===== Section 1: The curve ===== -->
+  <section class="block" aria-labelledby="h-sec1">
+    <div class="block-head">
+      <div class="block-num">1</div>
+      <div>
+        <h2 id="h-sec1">Move μ, stretch σ</h2>
+        <p>μ only moves the curve — it never changes the shape. σ never moves the center — it only changes how spread out the curve is. The total area under the curve is always 1.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="chart-wrap"><svg class="chart" id="mainChart" viewBox="0 0 720 310" role="img" aria-label="Normal density curve"></svg></div>
+      <div class="legend" id="mainLegend"></div>
+      <div class="toggle-row">
+        <button class="toggle-btn on" id="tglEmpirical" aria-pressed="true">Empirical Rule bands: On</button>
+        <button class="toggle-btn on" id="tglSigmaLines" aria-pressed="true">μ ± kσ lines: On</button>
+      </div>
+      <div class="stat-strip">
+        <div class="stat"><div class="k">Mean = Median = Mode</div><div class="v" id="stCenter">70</div><div class="s">perfectly symmetric — all three coincide</div></div>
+        <div class="stat"><div class="k">Inflection points</div><div class="v" id="stInfl">60 , 80</div><div class="s">curve changes bend at μ − σ and μ + σ</div></div>
+        <div class="stat"><div class="k">Middle 50% (IQR)</div><div class="v" id="stIQR">63.3 – 76.7</div><div class="s">Q1 = μ − 0.675σ · Q3 = μ + 0.675σ</div></div>
+        <div class="stat"><div class="k">Peak height</div><div class="v" id="stPeak">0.0399</div><div class="s">larger σ → lower, wider peak (area stays 1)</div></div>
+      </div>
+      <table class="emp-table" aria-label="Empirical rule intervals">
+        <thead><tr><th>Empirical Rule</th><th>Interval</th><th class="mono">Values right now</th><th class="mono">Area</th></tr></thead>
+        <tbody>
+          <tr><td><span class="band-dot" style="background:var(--teal)"></span>Within 1σ of μ</td><td>μ ± 1σ</td><td class="mono" id="emp1">60 to 80</td><td class="mono">≈ 68%</td></tr>
+          <tr><td><span class="band-dot" style="background:var(--teal-mid)"></span>Within 2σ of μ</td><td>μ ± 2σ</td><td class="mono" id="emp2">50 to 90</td><td class="mono">≈ 95%</td></tr>
+          <tr><td><span class="band-dot" style="background:var(--teal-soft);border:1px solid var(--teal-mid)"></span>Within 3σ of μ</td><td>μ ± 3σ</td><td class="mono" id="emp3">40 to 100</td><td class="mono">≈ 99.7%</td></tr>
+        </tbody>
+      </table>
+      <div class="note"><strong>Density ≠ probability.</strong> The height of the curve at a point is a <em>density</em>, not a probability — P(X = exactly one value) = 0 for a continuous model. Probability is <strong>area</strong> under the curve, which is what Section 2 computes.</div>
+    </div>
+  </section>
+
+  <!-- ===== Section 2: z-scores & area ===== -->
+  <section class="block" aria-labelledby="h-sec2">
+    <div class="block-head">
+      <div class="block-num">2</div>
+      <div>
+        <h2 id="h-sec2">z-scores &amp; area</h2>
+        <p>A z-score says how many standard deviations a value sits from the mean. Once you have z, the area — the probability — is the same no matter what μ and σ you started with.</p>
+      </div>
+    </div>
+
+    <div class="seg" role="tablist" aria-label="Area type" style="margin-bottom:14px">
+      <button data-mode="left" class="active">P(X &lt; x) &nbsp;left</button>
+      <button data-mode="right">P(X &gt; x) &nbsp;right</button>
+      <button data-mode="between">P(a &lt; X &lt; b) &nbsp;between</button>
+      <button data-mode="outside">Outside [a, b] &nbsp;two tails</button>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <h3>Set the value</h3>
+        <div id="singleCtl">
+          <div class="ctl">
+            <label for="xRange">Value &nbsp;x</label>
+            <div class="ctl-row">
+              <input type="range" id="xRange" step="0.5" value="85" aria-label="Value x">
+              <input type="number" class="num-input" id="xNum" step="0.5" value="85" aria-label="Value x number">
+            </div>
+          </div>
+        </div>
+        <div id="doubleCtl" class="hidden">
+          <div class="ctl" style="margin-bottom:12px">
+            <label for="loRange">Lower bound &nbsp;a</label>
+            <div class="ctl-row">
+              <input type="range" id="loRange" step="0.5" value="60" aria-label="Lower bound a">
+              <input type="number" class="num-input" id="loNum" step="0.5" value="60" aria-label="Lower bound a number">
+            </div>
+          </div>
+          <div class="ctl">
+            <label for="hiRange">Upper bound &nbsp;b</label>
+            <div class="ctl-row">
+              <input type="range" id="hiRange" step="0.5" value="85" aria-label="Upper bound b">
+              <input type="number" class="num-input" id="hiNum" step="0.5" value="85" aria-label="Upper bound b number">
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:16px">
+          <div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700" id="probLabel">P(X &lt; 85)</div>
+          <div class="result-big" id="probBig">0.9332</div>
+          <div class="result-pct" id="probPct">= 93.32% of the distribution</div>
+        </div>
+
+        <div class="calc-box" id="calcBox"></div>
+        <div class="note" style="margin-top:12px" id="percentileNote"></div>
+      </div>
+
+      <div class="panel">
+        <p class="mini-chart-title">On the original scale — X ~ N(<span class="js-mu">70</span>, <span class="js-sigma">10</span>)</p>
+        <svg class="chart" id="areaChart" viewBox="0 0 720 300" role="img" aria-label="Shaded area under normal curve"></svg>
+        <p class="mini-chart-title" style="margin-top:14px">The same area on the standard Normal — Z ~ N(0, 1)</p>
+        <svg class="chart" id="zChart" viewBox="0 0 720 210" role="img" aria-label="Shaded area under standard normal curve"></svg>
+        <div class="note"><strong>Why standardize?</strong> Every Normal problem becomes the <em>same</em> problem: shade the standard curve at z. Change μ or σ above and the shaded area on the X-chart moves — but for the same z, the Z-chart area never changes.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Section 3: Linear transformation ===== -->
+  <section class="block" aria-labelledby="h-sec3">
+    <div class="block-head">
+      <div class="block-num">3</div>
+      <div>
+        <h2 id="h-sec3">Linear transformation: Y = aX + b</h2>
+        <p>Adding b shifts everything. Multiplying by a rescales everything. The rules for the mean and SD are different — and that difference is the whole point.</p>
+      </div>
+    </div>
+
+    <div class="trans-grid">
+      <div class="panel">
+        <div class="eq-display"><span class="yv">Y</span> = <span id="eqA">2.0</span><span class="xv">X</span> <span id="eqBsign">−</span> <span id="eqB">10</span></div>
+        <div class="ctl" style="margin-bottom:14px">
+          <label for="aRange">Multiply by &nbsp;a <span class="hint">scales center AND spread</span></label>
+          <div class="ctl-row">
+            <input type="range" id="aRange" min="-3" max="3" step="0.1" value="2" aria-label="Multiplier a" style="accent-color:var(--amber)">
+            <input type="number" class="num-input" id="aNum" min="-3" max="3" step="0.1" value="2" aria-label="Multiplier a value">
+          </div>
+        </div>
+        <div class="ctl">
+          <label for="bRange">Then add &nbsp;b <span class="hint">shifts center only</span></label>
+          <div class="ctl-row">
+            <input type="range" id="bRange" min="-60" max="60" step="1" value="-10" aria-label="Shift b" style="accent-color:var(--amber)">
+            <input type="number" class="num-input" id="bNum" min="-60" max="60" step="1" value="-10" aria-label="Shift b value">
+          </div>
+        </div>
+
+        <div class="quick-row" style="margin-top:14px">
+          <span>Presets:</span>
+          <button class="chip preset-ab" data-a="1" data-b="10">Curve: +10 points · a=1, b=10</button>
+          <button class="chip preset-ab" data-a="2.54" data-b="0">Inches → cm · a=2.54, b=0</button>
+          <button class="chip preset-ab" data-a="1.8" data-b="32">°C → °F · a=1.8, b=32</button>
+          <button class="chip preset-ab" data-a="-1" data-b="140">Flip it · a=−1</button>
+          <button class="chip" id="presetStd">Standardize → Z · a=1/σ, b=−μ/σ</button>
+        </div>
+
+        <div class="result-cards">
+          <div class="rcard teal">
+            <div class="k">Original · X</div>
+            <div class="v" id="origDist">N(70, 10)</div>
+            <div class="calc">μ<sub>X</sub> = <span class="js-mu">70</span> &nbsp;·&nbsp; σ<sub>X</sub> = <span class="js-sigma">10</span></div>
+          </div>
+          <div class="rcard amber">
+            <div class="k">Transformed · Y = aX + b</div>
+            <div class="v" id="transDist">N(130, 20)</div>
+            <div class="calc" id="transCalc">μ<sub>Y</sub> = a·μ<sub>X</sub> + b &nbsp;·&nbsp; σ<sub>Y</sub> = |a|·σ<sub>X</sub></div>
+          </div>
+        </div>
+
+        <div class="calc-box" id="transFormulaBox"></div>
+
+        <div class="probe-box">
+          <div class="ctl">
+            <label for="probeRange">Follow one value &nbsp;x → y</label>
+            <div class="ctl-row">
+              <input type="range" id="probeRange" step="0.5" value="85" aria-label="Probe value x">
+              <input type="number" class="num-input" id="probeNum" step="0.5" value="85" aria-label="Probe value x number">
+            </div>
+          </div>
+          <div class="probe-vals">
+            <span>x = <b id="pvX">85</b></span>
+            <span>y = a·x + b = <b id="pvY">160</b></span>
+            <span>z<sub>X</sub> = <b id="pvZX">1.50</b></span>
+            <span>z<sub>Y</sub> = <b id="pvZY">1.50</b></span>
+          </div>
+          <div class="verdict" id="probeVerdict"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <p class="mini-chart-title">Both distributions on one axis</p>
+        <svg class="chart" id="transChart" viewBox="0 0 720 320" role="img" aria-label="Original and transformed normal curves"></svg>
+        <div class="legend">
+          <span><i class="sw-line" style="border-color:var(--teal)"></i>X — original</span>
+          <span><i class="sw-line" style="border-color:var(--amber)"></i>Y = aX + b — transformed</span>
+          <span><i style="background:var(--teal);opacity:.18"></i>under X</span>
+          <span><i style="background:var(--amber);opacity:.22"></i>under Y</span>
+        </div>
+        <div class="note" id="shapeNote"></div>
+        <div class="note"><strong>The two rules, side by side:</strong><br>
+          Adding / subtracting b: &nbsp;μ changes by b · σ <strong>does not change</strong> · shape does not change.<br>
+          Multiplying / dividing by a: &nbsp;μ is multiplied by a · σ is multiplied by <strong>|a|</strong> · shape stays Normal (mirrored if a &lt; 0).<br>
+          A linear transformation of a Normal variable is <strong>still Normal</strong>: &nbsp;Y ~ N(aμ + b, &nbsp;|a|σ).
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Summary ===== -->
+  <div class="summary">
+    <h2>Unit 2 — the three formulas to keep</h2>
+    <div class="summary-grid">
+      <div class="cell"><div class="t">Standardize</div><span style="font-family:'IBM Plex Mono',monospace">z = (x − μ) / σ</span><br>z counts standard deviations from the mean. Sign = direction, size = distance.</div>
+      <div class="cell"><div class="t">Empirical Rule</div>≈ 68% within μ ± σ<br>≈ 95% within μ ± 2σ<br>≈ 99.7% within μ ± 3σ</div>
+      <div class="cell"><div class="t">Y = aX + b</div><span style="font-family:'IBM Plex Mono',monospace">μ<sub>Y</sub> = a·μ<sub>X</sub> + b</span><br><span style="font-family:'IBM Plex Mono',monospace">σ<sub>Y</sub> = |a| · σ<sub>X</sub></span><br>b never touches σ. σ can never be negative — hence |a|.</div>
+    </div>
+  </div>
+
+  <footer>Normal model: area = probability. All probabilities computed from the standard Normal CDF, Φ(z). Drag μ and σ at the top — every chart, z-score, and transformation on this page updates together.</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ============ math ============ */
+function erf(x){
+  var s = x < 0 ? -1 : 1; x = Math.abs(x);
+  var t = 1/(1 + 0.3275911*x);
+  var y = 1 - (((((1.061405429*t - 1.453152027)*t) + 1.421413741)*t - 0.284496736)*t + 0.254829592)*t*Math.exp(-x*x);
+  return s*y;
+}
+function Phi(z){ return 0.5*(1 + erf(z/Math.SQRT2)); }
+function pdf(x, mu, sg){ var z=(x-mu)/sg; return Math.exp(-0.5*z*z)/(sg*Math.sqrt(2*Math.PI)); }
+function fmt(n, d){
+  if (d === undefined) d = (Math.abs(n) >= 100 ? 1 : (Math.abs(n) >= 10 ? 2 : 2));
+  if (!isFinite(n)) return "—";
+  var s = n.toFixed(d);
+  return s.replace(/\.?0+$/,"").length ? s : s; // keep as-is; trimming handled below
+}
+function fmtN(n, d){
+  if (!isFinite(n)) return "—";
+  var v;
+  if (d===undefined){
+    v = (Math.abs(n-Math.round(n))<1e-9) ? String(Math.round(n)) : n.toFixed(2).replace(/0$/,"");
+  } else {
+    v = n.toFixed(d);
+    if (v.indexOf('.')>-1) v = v.replace(/0+$/,"").replace(/\.$/,"");
+  }
+  return v;
+}
+function fmt4(n){ return n.toFixed(4); }
+function clamp(v,lo,hi){ return Math.min(hi, Math.max(lo, v)); }
+function fracHTML(top, bot){
+  return '<span class="frac"><span class="ft">'+top+'</span><span class="fb">'+bot+'</span></span>';
+}
+
+/* ============ state ============ */
+var state = {
+  mu: 70, sigma: 10,
+  mode: 'left',
+  x: 85, lo: 60, hi: 85,
+  a: 2, b: -10,
+  probe: 85,
+  showEmp: true, showSigma: true
+};
+
+/* preset contexts can push mu/sigma outside the base slider range; widen dynamically */
+var muRangeEl = document.getElementById('muRange'), muNumEl = document.getElementById('muNum');
+var sgRangeEl = document.getElementById('sigmaRange'), sgNumEl = document.getElementById('sigmaNum');
+
+function setMuSigma(mu, sg){
+  mu = clamp(mu, -600, 600); sg = clamp(sg, 0.2, 200);
+  /* widen slider bounds if needed so presets (170, 500) are reachable */
+  if (mu < parseFloat(muRangeEl.min)) muRangeEl.min = Math.floor(mu - 20);
+  if (mu > parseFloat(muRangeEl.max)) muRangeEl.max = Math.ceil(mu + 20);
+  muNumEl.min = muRangeEl.min; muNumEl.max = muRangeEl.max;
+  if (sg > parseFloat(sgRangeEl.max)) sgRangeEl.max = Math.ceil(sg + 10);
+  sgNumEl.max = sgRangeEl.max;
+  state.mu = mu; state.sigma = sg;
+  muRangeEl.value = mu; muNumEl.value = fmtN(mu);
+  sgRangeEl.value = sg; sgNumEl.value = fmtN(sg);
+  renderAll();
+}
+
+/* ============ chart helpers ============ */
+var NS = 'http://www.w3.org/2000/svg';
+function svgEl(tag, attrs){
+  var e = document.createElementNS(NS, tag);
+  for (var k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+function curvePath(mu, sg, xMin, xMax, X, Y, steps){
+  steps = steps || 160; var d = '';
+  for (var i=0;i<=steps;i++){
+    var x = xMin + (xMax-xMin)*i/steps;
+    var px = X(x), py = Y(pdf(x,mu,sg));
+    d += (i===0 ? 'M' : 'L') + px.toFixed(1) + ' ' + py.toFixed(1) + ' ';
+  }
+  return d;
+}
+function areaPath(mu, sg, from, to, xMin, xMax, X, Y, yBase){
+  var a = Math.max(from, xMin), b = Math.min(to, xMax);
+  if (b <= a) return '';
+  var steps = 90, d = 'M' + X(a).toFixed(1) + ' ' + yBase + ' ';
+  for (var i=0;i<=steps;i++){
+    var x = a + (b-a)*i/steps;
+    d += 'L' + X(x).toFixed(1) + ' ' + Y(pdf(x,mu,sg)).toFixed(1) + ' ';
+  }
+  d += 'L' + X(b).toFixed(1) + ' ' + yBase + ' Z';
+  return d;
+}
+function axisTicks(svg, ticks, X, yTop, yBase, color, labelColor){
+  ticks.forEach(function(t){
+    var px = X(t.v);
+    svg.appendChild(svgEl('line',{x1:px,y1:yTop,x2:px,y2:yBase,stroke:color,'stroke-width':t.major?1:0.6,'stroke-dasharray':t.major?'':'3 3',opacity:t.major?0.9:0.55}));
+    var tx = svgEl('text',{x:px,y:yBase+20,'text-anchor':'middle','font-size':'12.5','fill':labelColor,'font-family':"'IBM Plex Mono',monospace"});
+    tx.textContent = t.label; svg.appendChild(tx);
+    if (t.top){
+      var tt = svgEl('text',{x:px,y:yTop-5,'text-anchor':'middle','font-size':'12','font-weight':'600','fill':labelColor,'font-family':"'IBM Plex Mono',monospace"});
+      tt.textContent = t.top; svg.appendChild(tt);
+    }
+  });
+}
+function cssVar(name){
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+function palette(){
+  var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  return {
+    teal: dark ? '#2fbfae' : '#0e7569',
+    tealFill: dark ? 'rgba(47,191,174,.20)' : 'rgba(14,117,105,.16)',
+    tealBand1: dark ? 'rgba(47,191,174,.50)' : 'rgba(14,117,105,.42)',
+    tealBand2: dark ? 'rgba(47,191,174,.30)' : 'rgba(14,117,105,.24)',
+    tealBand3: dark ? 'rgba(47,191,174,.15)' : 'rgba(14,117,105,.11)',
+    amber: dark ? '#e8a83e' : '#c47a12',
+    amberFill: dark ? 'rgba(232,168,62,.24)' : 'rgba(196,122,18,.20)',
+    ink: dark ? '#eef1ee' : '#171b19',
+    muted: dark ? '#a7b3aa' : '#5b665f',
+    grid: dark ? '#2c332f' : '#dde1da',
+    red: dark ? '#e07a5f' : '#b3402a'
+  };
+}
+
+/* ============ Section 1 chart ============ */
+function renderMain(){
+  var P = palette(), mu = state.mu, sg = state.sigma;
+  var svg = document.getElementById('mainChart'); svg.innerHTML = '';
+  var W=720,H=310, mL=46,mR=18,mT=26,mB=40, pw=W-mL-mR, ph=H-mT-mB, yBase=mT+ph;
+  var xMin = mu-4*sg, xMax = mu+4*sg;
+  var yMax = pdf(mu,mu,sg)*1.18;
+  function X(x){ return mL + (x-xMin)/(xMax-xMin)*pw; }
+  function Y(y){ return yBase - y/yMax*ph; }
+  /* baseline */
+  svg.appendChild(svgEl('line',{x1:mL,y1:yBase,x2:W-mR,y2:yBase,stroke:P.grid,'stroke-width':1.4}));
+  /* empirical bands */
+  if (state.showEmp){
+    var bands = [
+      {k:3, fill:P.tealBand3},{k:2, fill:P.tealBand2},{k:1, fill:P.tealBand1}
+    ];
+    /* draw widest first, as full-width slices between -k and +k */
+    [3,2,1].forEach(function(k){
+      var fill = k===3?P.tealBand3:(k===2?P.tealBand2:P.tealBand1);
+      var d = areaPath(mu,sg,mu-k*sg,mu+k*sg,xMin,xMax,X,Y,yBase);
+      if (d) svg.appendChild(svgEl('path',{d:d,fill:fill,stroke:'none'}));
+    });
+    void bands;
+  } else {
+    var dAll = areaPath(mu,sg,xMin,xMax,xMin,xMax,X,Y,yBase);
+    svg.appendChild(svgEl('path',{d:dAll,fill:P.tealFill,stroke:'none'}));
+  }
+  /* sigma lines + ticks */
+  var ticks = [];
+  for (var k=-3;k<=3;k++){
+    var v = mu + k*sg;
+    var lab = k===0 ? 'μ' : (k>0 ? 'μ+'+k+'σ' : 'μ'+k+'σ');
+    ticks.push({v:v, label: fmtN(v), top: state.showSigma ? lab : null, major: k===0});
+    if (state.showSigma && k!==0){
+      var px = X(v);
+      svg.appendChild(svgEl('line',{x1:px,y1:Y(pdf(v,mu,sg)),x2:px,y2:yBase,stroke:P.muted,'stroke-width':1,'stroke-dasharray':'4 3',opacity:0.7}));
+    }
+  }
+  /* mean line */
+  svg.appendChild(svgEl('line',{x1:X(mu),y1:mT-2,x2:X(mu),y2:yBase,stroke:P.ink,'stroke-width':1.6}));
+  axisTicks(svg, ticks, X, mT, yBase, P.grid, P.muted);
+  /* curve */
+  svg.appendChild(svgEl('path',{d:curvePath(mu,sg,xMin,xMax,X,Y),fill:'none',stroke:P.teal,'stroke-width':2.8,'stroke-linejoin':'round'}));
+  /* labels for bands */
+  if (state.showEmp){
+    var p1 = Phi(1)-Phi(-1), p2 = Phi(2)-Phi(-2), p3 = Phi(3)-Phi(-3);
+    var lx = X(mu), ly = Y(pdf(mu,mu,sg)) + 26;
+    var t68 = svgEl('text',{x:lx,y:ly,'text-anchor':'middle','font-size':'13','font-weight':'700','fill':P.ink});
+    t68.textContent = '68%'; svg.appendChild(t68);
+    var t95 = svgEl('text',{x:X(mu+1.55*sg),y:Y(pdf(mu+1.55*sg,mu,sg))+22,'text-anchor':'middle','font-size':'12.5','font-weight':'600','fill':P.ink});
+    t95.textContent = '95% within ±2σ'; svg.appendChild(t95);
+    var t997 = svgEl('text',{x:X(mu-2.6*sg),y:Y(pdf(mu-2.6*sg,mu,sg))+20,'text-anchor':'middle','font-size':'12.5','font-weight':'600','fill':P.ink});
+    t997.textContent = '99.7% within ±3σ'; svg.appendChild(t997);
+    void p1; void p2; void p3;
+  }
+  /* stats */
+  document.getElementById('stCenter').textContent = fmtN(mu);
+  document.getElementById('stInfl').textContent = fmtN(mu-sg) + ' , ' + fmtN(mu+sg);
+  document.getElementById('stIQR').textContent = fmtN(mu-0.6745*sg,1) + ' – ' + fmtN(mu+0.6745*sg,1);
+  document.getElementById('stPeak').textContent = pdf(mu,mu,sg).toFixed(4);
+  document.getElementById('emp1').textContent = fmtN(mu-sg) + ' to ' + fmtN(mu+sg);
+  document.getElementById('emp2').textContent = fmtN(mu-2*sg) + ' to ' + fmtN(mu+2*sg);
+  document.getElementById('emp3').textContent = fmtN(mu-3*sg) + ' to ' + fmtN(mu+3*sg);
+  document.getElementById('mainLegend').innerHTML =
+    '<span><i style="background:'+P.tealBand1+'"></i>μ ± 1σ · ≈68%</span>' +
+    '<span><i style="background:'+P.tealBand2+'"></i>μ ± 2σ · ≈95%</span>' +
+    '<span><i style="background:'+P.tealBand3+'"></i>μ ± 3σ · ≈99.7%</span>' +
+    '<span><i class="sw-line" style="border-color:'+P.teal+'"></i>density curve · total area = 1</span>';
+}
+
+/* ============ Section 2 charts ============ */
+function shadeRanges(mu, sg){
+  /* returns list of [from,to] in x-units to shade, given mode */
+  var INF = 1e9;
+  if (state.mode==='left') return [[-INF, state.x]];
+  if (state.mode==='right') return [[state.x, INF]];
+  if (state.mode==='between') return [[Math.min(state.lo,state.hi), Math.max(state.lo,state.hi)]];
+  return [[-INF, Math.min(state.lo,state.hi)],[Math.max(state.lo,state.hi), INF]]; /* outside */
+}
+function drawShaded(svgId, mu, sg, ranges, opts){
+  opts = opts || {};
+  var P = palette();
+  var svg = document.getElementById(svgId); svg.innerHTML = '';
+  var W=720, H=opts.h||300, mL=46,mR=18,mT=24,mB=38, pw=W-mL-mR, ph=H-mT-mB, yBase=mT+ph;
+  var span = opts.span || 4;
+  var xMin = mu-span*sg, xMax = mu+span*sg;
+  var yMax = pdf(mu,mu,sg)*1.18;
+  function X(x){ return mL + (x-xMin)/(xMax-xMin)*pw; }
+  function Y(y){ return yBase - y/yMax*ph; }
+  svg.appendChild(svgEl('line',{x1:mL,y1:yBase,x2:W-mR,y2:yBase,stroke:P.grid,'stroke-width':1.4}));
+  /* unshaded fill */
+  svg.appendChild(svgEl('path',{d:areaPath(mu,sg,xMin,xMax,xMin,xMax,X,Y,yBase),fill:opts.baseFill||'rgba(127,140,130,.10)',stroke:'none'}));
+  /* shaded ranges */
+  ranges.forEach(function(r){
+    var d = areaPath(mu,sg,r[0],r[1],xMin,xMax,X,Y,yBase);
+    if (d) svg.appendChild(svgEl('path',{d:d,fill:opts.fill||P.amberFill,stroke:'none'}));
+  });
+  /* boundary lines */
+  var bounds = opts.bounds || [];
+  bounds.forEach(function(bv){
+    if (bv < xMin || bv > xMax) return;
+    var px = X(bv);
+    svg.appendChild(svgEl('line',{x1:px,y1:Y(pdf(bv,mu,sg)),x2:px,y2:yBase,stroke:P.amber,'stroke-width':2}));
+    var dot = svgEl('circle',{cx:px,cy:Y(pdf(bv,mu,sg)),r:4,fill:P.amber,stroke:'#fff','stroke-width':1.4});
+    svg.appendChild(dot);
+  });
+  /* mean line */
+  svg.appendChild(svgEl('line',{x1:X(mu),y1:mT-2,x2:X(mu),y2:yBase,stroke:P.ink,'stroke-width':1.2,'stroke-dasharray':'5 3',opacity:0.75}));
+  /* ticks: sigma steps */
+  var ticks=[];
+  for (var k=-3;k<=3;k++){
+    var v = mu+k*sg;
+    ticks.push({v:v, label: opts.zLabels ? (k===0?'0':(k>0?'+'+k:''+k)) : fmtN(v), major:k===0});
+  }
+  axisTicks(svg, ticks, X, mT, yBase, P.grid, P.muted);
+  /* curve */
+  svg.appendChild(svgEl('path',{d:curvePath(mu,sg,xMin,xMax,X,Y),fill:'none',stroke:opts.stroke||P.teal,'stroke-width':2.6,'stroke-linejoin':'round'}));
+  /* bound value labels on top */
+  bounds.forEach(function(bv){
+    if (bv < xMin || bv > xMax) return;
+    var px = X(bv);
+    var anchor = px < mL+50 ? 'start' : (px > W-mR-50 ? 'end' : 'middle');
+    var t = svgEl('text',{x:px,y:14,'text-anchor':anchor,'font-size':'13','font-weight':'700','fill':P.amber,'font-family':"'IBM Plex Mono',monospace"});
+    t.textContent = opts.zLabels ? ('z = '+fmtN((bv-mu)/sg)) : fmtN(bv);
+    svg.appendChild(t);
+  });
+}
+function currentProb(){
+  var mu=state.mu, sg=state.sigma;
+  if (state.mode==='left') return Phi((state.x-mu)/sg);
+  if (state.mode==='right') return 1-Phi((state.x-mu)/sg);
+  var lo=Math.min(state.lo,state.hi), hi=Math.max(state.lo,state.hi);
+  var between = Phi((hi-mu)/sg)-Phi((lo-mu)/sg);
+  if (state.mode==='between') return between;
+  return 1-between;
+}
+function renderArea(){
+  var mu=state.mu, sg=state.sigma, P=palette();
+  var ranges = shadeRanges(mu,sg);
+  var bounds = (state.mode==='left'||state.mode==='right') ? [state.x] : [Math.min(state.lo,state.hi), Math.max(state.lo,state.hi)];
+  drawShaded('areaChart', mu, sg, ranges, {bounds:bounds, fill:P.amberFill, h:300});
+  /* standard normal version: mu=0, sg=1, ranges converted to z */
+  var zRanges = ranges.map(function(r){
+    return [ r[0]===-1e9 ? -1e9 : (r[0]-mu)/sg, r[1]===1e9 ? 1e9 : (r[1]-mu)/sg ];
+  });
+  var zBounds = bounds.map(function(b){ return (b-mu)/sg; });
+  drawShaded('zChart', 0, 1, zRanges.map(function(r){ return [r[0]===-1e9?-4:r[0], r[1]===1e9?4:r[1]]; }), {bounds:zBounds, fill:P.tealFill, stroke:P.teal, h:210, span:3.6, zLabels:true});
+  /* NOTE: zChart draws with mu=0 sg=1 so bounds passed must be raw z values treated as x — handled because drawShaded uses them as x-values directly. */
+
+  var p = currentProb();
+  var label, calcHTML, percNote;
+  function zFrac(val){
+    var z = (val-mu)/sg;
+    return '<span class="step"><span class="sym" style="font-family:\'IBM Plex Serif\',serif;font-style:italic;font-weight:600">z</span> = '
+      + fracHTML(fmtN(val)+' − '+fmtN(mu), fmtN(sg))
+      + ' = <b style="font-family:\'IBM Plex Mono\',monospace">'+z.toFixed(2)+'</b></span>';
+  }
+  if (state.mode==='left'){
+    label = 'P(X < ' + fmtN(state.x) + ')';
+    calcHTML = zFrac(state.x)
+      + '<span class="step">P(X &lt; '+fmtN(state.x)+') = P(Z &lt; '+((state.x-mu)/sg).toFixed(2)+') = Φ('+((state.x-mu)/sg).toFixed(2)+') = <b>'+fmt4(p)+'</b></span>';
+    percNote = '<strong>Percentile:</strong> x = '+fmtN(state.x)+' sits at about the <strong>'+Math.round(p*100)+'th percentile</strong> — it is greater than roughly '+(p*100).toFixed(1)+'% of all values in this model.';
+  } else if (state.mode==='right'){
+    label = 'P(X > ' + fmtN(state.x) + ')';
+    calcHTML = zFrac(state.x)
+      + '<span class="step">P(X &gt; '+fmtN(state.x)+') = 1 − Φ('+((state.x-mu)/sg).toFixed(2)+') = 1 − '+fmt4(Phi((state.x-mu)/sg))+' = <b>'+fmt4(p)+'</b></span>';
+    percNote = '<strong>Upper tail:</strong> only '+(p*100).toFixed(1)+'% of values exceed x = '+fmtN(state.x)+'. Equivalently, '+fmtN(state.x)+' is at about the '+Math.round((1-p)*100)+'th percentile.';
+  } else {
+    var lo=Math.min(state.lo,state.hi), hi=Math.max(state.lo,state.hi);
+    var zlo=(lo-mu)/sg, zhi=(hi-mu)/sg;
+    var between = Phi(zhi)-Phi(zlo);
+    if (state.mode==='between'){
+      label = 'P(' + fmtN(lo) + ' < X < ' + fmtN(hi) + ')';
+      calcHTML = '<span class="step"><span style="font-family:\'IBM Plex Serif\',serif;font-style:italic;font-weight:600">z</span><sub>low</sub> = '+fracHTML(fmtN(lo)+' − '+fmtN(mu), fmtN(sg))+' = <b style="font-family:\'IBM Plex Mono\',monospace">'+zlo.toFixed(2)+'</b>'
+        + ' &nbsp;&nbsp; <span style="font-family:\'IBM Plex Serif\',serif;font-style:italic;font-weight:600">z</span><sub>high</sub> = '+fracHTML(fmtN(hi)+' − '+fmtN(mu), fmtN(sg))+' = <b style="font-family:\'IBM Plex Mono\',monospace">'+zhi.toFixed(2)+'</b></span>'
+        + '<span class="step">P = Φ('+zhi.toFixed(2)+') − Φ('+zlo.toFixed(2)+') = '+fmt4(Phi(zhi))+' − '+fmt4(Phi(zlo))+' = <b>'+fmt4(p)+'</b></span>';
+      percNote = '<strong>Between:</strong> subtract the two left-tail areas. The left tail up to '+fmtN(hi)+' minus the left tail up to '+fmtN(lo)+' leaves exactly the slice in the middle.';
+    } else {
+      label = 'P(X < ' + fmtN(lo) + ' or X > ' + fmtN(hi) + ')';
+      calcHTML = '<span class="step"><span style="font-family:\'IBM Plex Serif\',serif;font-style:italic;font-weight:600">z</span><sub>low</sub> = '+fracHTML(fmtN(lo)+' − '+fmtN(mu), fmtN(sg))+' = <b style="font-family:\'IBM Plex Mono\',monospace">'+zlo.toFixed(2)+'</b>'
+        + ' &nbsp;&nbsp; <span style="font-family:\'IBM Plex Serif\',serif;font-style:italic;font-weight:600">z</span><sub>high</sub> = '+fracHTML(fmtN(hi)+' − '+fmtN(mu), fmtN(sg))+' = <b style="font-family:\'IBM Plex Mono\',monospace">'+zhi.toFixed(2)+'</b></span>'
+        + '<span class="step">Middle = Φ('+zhi.toFixed(2)+') − Φ('+zlo.toFixed(2)+') = '+fmt4(between)+' &nbsp;→&nbsp; Outside = 1 − '+fmt4(between)+' = <b>'+fmt4(p)+'</b></span>';
+      percNote = '<strong>Two tails:</strong> fastest route is 1 − (middle). Values this far out in either direction make up '+(p*100).toFixed(1)+'% of the model.';
+    }
+  }
+  document.getElementById('probLabel').textContent = label;
+  document.getElementById('probBig').textContent = fmt4(p);
+  document.getElementById('probPct').textContent = '= ' + (p*100).toFixed(2) + '% of the distribution';
+  document.getElementById('calcBox').innerHTML = calcHTML;
+  document.getElementById('percentileNote').innerHTML = percNote;
+}
+
+/* ============ Section 3 ============ */
+function renderTrans(){
+  var mu=state.mu, sg=state.sigma, a=state.a, b=state.b, P=palette();
+  var muY = a*mu + b, sgY = Math.abs(a)*sg;
+  /* equation display */
+  document.getElementById('eqA').textContent = fmtN(a);
+  document.getElementById('eqBsign').textContent = b < 0 ? '−' : '+';
+  document.getElementById('eqB').textContent = fmtN(Math.abs(b));
+  document.getElementById('transDist').textContent = (a===0) ? 'Degenerate at '+fmtN(b) : 'N('+fmtN(muY)+', '+fmtN(sgY,2)+')';
+  document.getElementById('transFormulaBox').innerHTML =
+    '<span class="step"><span style="font-family:\'IBM Plex Serif\',serif;font-style:italic;font-weight:600">μ</span><sub>Y</sub> = a·μ<sub>X</sub> + b = ('+fmtN(a)+')('+fmtN(mu)+') + ('+fmtN(b)+') = <b style="font-family:\'IBM Plex Mono\',monospace">'+fmtN(muY)+'</b></span>'
+    + '<span class="step"><span style="font-family:\'IBM Plex Serif\',serif;font-style:italic;font-weight:600">σ</span><sub>Y</sub> = |a| · σ<sub>X</sub> = |'+fmtN(a)+'| × '+fmtN(sg)+' = <b style="font-family:\'IBM Plex Mono\',monospace">'+fmtN(sgY,2)+'</b> &nbsp;<span style="color:var(--muted)">— note: b does not appear here at all</span></span>'
+    + (a<0 ? '<span class="step" style="color:var(--red)"><b>a &lt; 0:</b> the distribution flips left–right. σ still uses |a| — a standard deviation can never be negative.</span>' : '')
+    + (a===0 ? '<span class="step" style="color:var(--red)"><b>a = 0:</b> every value collapses to Y = b. σ<sub>Y</sub> = 0 — there is no spread left.</span>' : '');
+
+  /* chart */
+  var svg = document.getElementById('transChart'); svg.innerHTML='';
+  var W=720,H=320, mL=46,mR=18,mT=26,mB=40, pw=W-mL-mR, ph=H-mT-mB, yBase=mT+ph;
+  var lo1 = mu-4*sg, hi1 = mu+4*sg;
+  var lo2 = a===0 ? b-1 : muY-4*sgY, hi2 = a===0 ? b+1 : muY+4*sgY;
+  var probe = state.probe, probeY = a*probe + b;
+  var xMin = Math.min(lo1, lo2, probe, probeY), xMax = Math.max(hi1, hi2, probe, probeY);
+  var pad = (xMax-xMin)*0.04; xMin -= pad; xMax += pad;
+  var yMax = Math.max(pdf(mu,mu,sg), a!==0 ? pdf(muY,muY,sgY) : 0)*1.2;
+  if (!isFinite(yMax) || yMax<=0) yMax = pdf(mu,mu,sg)*1.2;
+  function X(x){ return mL + (x-xMin)/(xMax-xMin)*pw; }
+  function Y(y){ return yBase - y/yMax*ph; }
+  svg.appendChild(svgEl('line',{x1:mL,y1:yBase,x2:W-mR,y2:yBase,stroke:P.grid,'stroke-width':1.4}));
+  /* fills */
+  svg.appendChild(svgEl('path',{d:areaPath(mu,sg,xMin,xMax,xMin,xMax,X,Y,yBase),fill:P.tealFill,stroke:'none'}));
+  if (a!==0) svg.appendChild(svgEl('path',{d:areaPath(muY,sgY,xMin,xMax,xMin,xMax,X,Y,yBase),fill:P.amberFill,stroke:'none'}));
+  /* mean lines */
+  svg.appendChild(svgEl('line',{x1:X(mu),y1:mT-4,x2:X(mu),y2:yBase,stroke:P.teal,'stroke-width':1.6,'stroke-dasharray':'6 3'}));
+  if (a!==0) svg.appendChild(svgEl('line',{x1:X(muY),y1:mT-4,x2:X(muY),y2:yBase,stroke:P.amber,'stroke-width':1.6,'stroke-dasharray':'6 3'}));
+  var tMu = svgEl('text',{x:X(mu),y:mT-8,'text-anchor':'middle','font-size':'12.5','font-weight':'700','fill':P.teal,'font-family':"'IBM Plex Mono',monospace"});
+  tMu.textContent = 'μX = '+fmtN(mu); svg.appendChild(tMu);
+  if (a!==0){
+    var anchorY = Math.abs(X(muY)-X(mu)) < 90 ? (X(muY)>X(mu)?'start':'end') : 'middle';
+    var tMuY = svgEl('text',{x:X(muY)+(anchorY==='start'?6:anchorY==='end'?-6:0),y:mT-8,'text-anchor':anchorY,'font-size':'12.5','font-weight':'700','fill':P.amber,'font-family':"'IBM Plex Mono',monospace"});
+    tMuY.textContent = 'μY = '+fmtN(muY); svg.appendChild(tMuY);
+  }
+  /* probe markers */
+  [[probe,P.teal],[probeY,P.amber]].forEach(function(pr){
+    if (pr[0] < xMin || pr[0] > xMax) return;
+    var px = X(pr[0]);
+    svg.appendChild(svgEl('line',{x1:px,y1:yBase-52,x2:px,y2:yBase,stroke:pr[1],'stroke-width':2}));
+    svg.appendChild(svgEl('circle',{cx:px,cy:yBase-56,r:4.5,fill:pr[1],stroke:'#fff','stroke-width':1.4}));
+  });
+  /* axis ticks: nice round steps */
+  var rawStep = (xMax-xMin)/7, mag = Math.pow(10, Math.floor(Math.log10(rawStep)));
+  var step = [1,2,2.5,5,10].map(function(m){return m*mag;}).filter(function(s){return s>=rawStep;})[0] || 10*mag;
+  var ticks=[];
+  for (var v=Math.ceil(xMin/step)*step; v<=xMax; v+=step) ticks.push({v:v, label: fmtN(Math.round(v*100)/100), major:false});
+  axisTicks(svg, ticks, X, mT+16, yBase, P.grid, P.muted);
+  /* curves on top */
+  svg.appendChild(svgEl('path',{d:curvePath(mu,sg,xMin,xMax,X,Y),fill:'none',stroke:P.teal,'stroke-width':2.8,'stroke-linejoin':'round'}));
+  if (a!==0) svg.appendChild(svgEl('path',{d:curvePath(muY,sgY,xMin,xMax,X,Y),fill:'none',stroke:P.amber,'stroke-width':2.8,'stroke-linejoin':'round'}));
+  else {
+    svg.appendChild(svgEl('line',{x1:X(b),y1:mT+6,x2:X(b),y2:yBase,stroke:P.amber,'stroke-width':3}));
+    var td = svgEl('text',{x:X(b),y:mT+22,'text-anchor':'middle','font-size':'12.5','font-weight':'700','fill':P.amber});
+    td.textContent = 'all values = '+fmtN(b); svg.appendChild(td);
+  }
+
+  /* probe readouts */
+  var zX = (probe-mu)/sg;
+  var zY = sgY>0 ? (probeY-muY)/sgY : 0;
+  document.getElementById('pvX').textContent = fmtN(probe);
+  document.getElementById('pvY').textContent = fmtN(probeY);
+  document.getElementById('pvZX').textContent = zX.toFixed(2);
+  document.getElementById('pvZY').textContent = sgY>0 ? zY.toFixed(2) : '—';
+  var verdict = document.getElementById('probeVerdict');
+  if (a > 0){
+    verdict.className = 'verdict';
+    verdict.innerHTML = '<strong>z-score unchanged.</strong> When a &gt; 0, standardizing before or after the transformation gives the same z ('+zX.toFixed(2)+'). The value keeps its exact position in the distribution — only the units changed.';
+  } else if (a < 0){
+    verdict.className = 'verdict warn';
+    verdict.innerHTML = '<strong>z-score flips sign.</strong> With a &lt; 0 the order reverses: the largest X becomes the smallest Y. z<sub>Y</sub> = −z<sub>X</sub> = '+zY.toFixed(2)+', but |z| — the distance from the mean — is preserved.';
+  } else {
+    verdict.className = 'verdict warn';
+    verdict.innerHTML = '<strong>No distribution left.</strong> With a = 0, Y is the constant '+fmtN(b)+' for every x. There is no spread, so z-scores for Y do not exist.';
+  }
+  /* shape note */
+  var parts = [];
+  if (b !== 0) parts.push('Adding b = '+fmtN(b)+' shifted the center by exactly '+fmtN(b)+' — and left σ untouched.');
+  else parts.push('b = 0, so there is no shift.');
+  if (Math.abs(a) > 1) parts.push('Multiplying by a = '+fmtN(a)+' stretched the spread: σ went from '+fmtN(sg)+' to '+fmtN(sgY,2)+'.');
+  else if (Math.abs(a) === 1 && a > 0) parts.push('a = 1, so the spread is unchanged: σ stays '+fmtN(sg)+'.');
+  else if (Math.abs(a) === 1 && a < 0) parts.push('a = −1 mirrors the curve around the center: σ stays '+fmtN(sg)+', values reverse order.');
+  else if (a !== 0) parts.push('Multiplying by a = '+fmtN(a)+' squeezed the spread: σ went from '+fmtN(sg)+' to '+fmtN(sgY,2)+'.');
+  parts.push('Shape stays Normal throughout.');
+  document.getElementById('shapeNote').innerHTML = '<strong>What just happened:</strong> ' + parts.join(' ');
+}
+
+/* ============ wiring ============ */
+function syncXBounds(){
+  var mu=state.mu, sg=state.sigma;
+  var lo = mu-4*sg, hi = mu+4*sg;
+  [['xRange','xNum',state.x],['loRange','loNum',state.lo],['hiRange','hiNum',state.hi],['probeRange','probeNum',state.probe]].forEach(function(t){
+    var r=document.getElementById(t[0]), n=document.getElementById(t[1]);
+    r.min=lo; r.max=hi; r.step = sg>=20?1:0.5;
+    n.min=lo; n.max=hi;
+    var v = clamp(t[2], lo, hi);
+    r.value=v; n.value=fmtN(v);
+  });
+  state.x = clamp(state.x, lo, hi); state.lo = clamp(state.lo, lo, hi); state.hi = clamp(state.hi, lo, hi); state.probe = clamp(state.probe, lo, hi);
+}
+function bindPair(rangeId, numId, get, set){
+  var r=document.getElementById(rangeId), n=document.getElementById(numId);
+  r.addEventListener('input', function(){ var v=parseFloat(r.value); if(isFinite(v)){ set(v); n.value=fmtN(v); } });
+  n.addEventListener('change', function(){ var v=parseFloat(n.value); if(isFinite(v)){ set(v); r.value=v; } });
+  void get;
+}
+function renderAll(){
+  document.getElementById('distNotation').textContent = 'X ~ N(μ = '+fmtN(state.mu)+', σ = '+fmtN(state.sigma)+')';
+  document.querySelectorAll('.js-mu').forEach(function(e){ e.textContent = fmtN(state.mu); });
+  document.querySelectorAll('.js-sigma').forEach(function(e){ e.textContent = fmtN(state.sigma); });
+  document.getElementById('origDist').textContent = 'N('+fmtN(state.mu)+', '+fmtN(state.sigma)+')';
+  syncXBounds();
+  renderMain(); renderArea(); renderTrans();
+}
+
+muRangeEl.addEventListener('input', function(){ var v=parseFloat(muRangeEl.value); if(isFinite(v)){ state.mu=v; muNumEl.value=fmtN(v); renderAll(); }});
+muNumEl.addEventListener('change', function(){ var v=parseFloat(muNumEl.value); if(isFinite(v)) setMuSigma(v, state.sigma); });
+sgRangeEl.addEventListener('input', function(){ var v=parseFloat(sgRangeEl.value); if(isFinite(v) && v>0){ state.sigma=v; sgNumEl.value=fmtN(v); renderAll(); }});
+sgNumEl.addEventListener('change', function(){ var v=parseFloat(sgNumEl.value); if(isFinite(v) && v>0) setMuSigma(state.mu, v); });
+
+document.querySelectorAll('.preset-mu').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.preset-mu').forEach(function(x){x.classList.remove('active');});
+    btn.classList.add('active');
+    setMuSigma(parseFloat(btn.dataset.mu), parseFloat(btn.dataset.sigma));
+    /* recenter the area values on the new scale */
+    state.x = state.mu + 1.5*state.sigma; state.lo = state.mu - state.sigma; state.hi = state.mu + 1.5*state.sigma; state.probe = state.mu + 1.5*state.sigma;
+    renderAll();
+  });
+});
+
+bindPair('xRange','xNum', null, function(v){ state.x=v; renderArea(); });
+bindPair('loRange','loNum', null, function(v){ state.lo=v; renderArea(); });
+bindPair('hiRange','hiNum', null, function(v){ state.hi=v; renderArea(); });
+bindPair('probeRange','probeNum', null, function(v){ state.probe=v; renderTrans(); });
+bindPair('aRange','aNum', null, function(v){ state.a=v; document.getElementById('aNum').value=fmtN(v); renderTrans(); });
+bindPair('bRange','bNum', null, function(v){ state.b=v; renderTrans(); });
+/* a/b number inputs need renderTrans with fresh eq display — bindPair already calls it */
+
+document.querySelectorAll('.seg button').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.seg button').forEach(function(x){x.classList.remove('active');});
+    btn.classList.add('active');
+    state.mode = btn.dataset.mode;
+    var single = (state.mode==='left'||state.mode==='right');
+    document.getElementById('singleCtl').classList.toggle('hidden', !single);
+    document.getElementById('doubleCtl').classList.toggle('hidden', single);
+    renderArea();
+  });
+});
+
+var tglE = document.getElementById('tglEmpirical'), tglS = document.getElementById('tglSigmaLines');
+tglE.addEventListener('click', function(){
+  state.showEmp = !state.showEmp;
+  tglE.classList.toggle('on', state.showEmp); tglE.setAttribute('aria-pressed', state.showEmp);
+  tglE.textContent = 'Empirical Rule bands: ' + (state.showEmp?'On':'Off');
+  renderMain();
+});
+tglS.addEventListener('click', function(){
+  state.showSigma = !state.showSigma;
+  tglS.classList.toggle('on', state.showSigma); tglS.setAttribute('aria-pressed', state.showSigma);
+  tglS.textContent = 'μ ± kσ lines: ' + (state.showSigma?'On':'Off');
+  renderMain();
+});
+
+document.querySelectorAll('.preset-ab').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    state.a = parseFloat(btn.dataset.a); state.b = parseFloat(btn.dataset.b);
+    document.getElementById('aRange').value = state.a; document.getElementById('aNum').value = fmtN(state.a);
+    document.getElementById('bRange').value = state.b; document.getElementById('bNum').value = fmtN(state.b);
+    renderTrans();
+  });
+});
+document.getElementById('presetStd').addEventListener('click', function(){
+  state.a = Math.round((1/state.sigma)*1000)/1000;
+  state.b = Math.round((-state.mu/state.sigma)*1000)/1000;
+  document.getElementById('aRange').value = clamp(state.a,-3,3); document.getElementById('aNum').value = fmtN(state.a,3);
+  document.getElementById('bRange').value = clamp(state.b,-60,60); document.getElementById('bNum').value = fmtN(state.b,2);
+  renderTrans();
+});
+
+if (window.matchMedia){
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  if (mq.addEventListener) mq.addEventListener('change', renderAll);
+}
+
+renderAll();
+})();
+</script>
+</body>
+</html>
