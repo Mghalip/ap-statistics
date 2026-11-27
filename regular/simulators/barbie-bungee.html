@@ -11,24 +11,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700;900&family=Playfair+Display:ital,wght@1,600;1,700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
     <style>
       :root{
-        --bg:#FAF6EE;
-        --card:#FFFDF8;
-        --ink:#1D2B3A;
-        --muted:#5C6B7A;
-        --green:#1E6B4F;
-        --green-dark:#14503A;
-        --gold:#A87F14;
-        --line:#E6DCC8;
-        --red:#BE3A2B;
-        --pink:#D9578B;
-        --chip:#F3EDDD;
+        --bg:#F7F8FA;
+        --card:#FFFFFF;
+        --ink:#21242C;
+        --muted:#525760;
+        --green:#008A6E;
+        --green-dark:#006E57;
+        --gold:#054E3E;
+        --line:#D6D8DA;
+        --red:#C5221F;
+        --pink:#D9467A;
+        --chip:#F0F1F4;
       }
       *{ box-sizing:border-box; }
       html,body{ margin:0; padding:0; }
       body{
         background:var(--bg);
         color:var(--ink);
-        font-family:"Noto Sans SC",-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+        font-family:"Lato","Noto Sans SC",-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
         font-size:16px;
         line-height:1.6;
         -webkit-font-smoothing:antialiased;
@@ -43,7 +43,7 @@
       .topbar-links{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
       .backpill{
         display:inline-flex; align-items:center; gap:6px;
-        padding:6px 14px; border-radius:999px;
+        padding:6px 14px; border-radius:6px;
         background:var(--card); border:1px solid var(--line);
         color:var(--green-dark); font-size:13.5px; font-weight:700;
         text-decoration:none; transition:background-color .15s ease, border-color .15s ease, color .15s ease;
@@ -56,24 +56,23 @@
       .kicker{
         color:var(--gold);
         font-size:12.5px; font-weight:700;
-        letter-spacing:.22em; text-transform:uppercase;
-        margin:0 0 10px;
+        letter-spacing:.12em; text-transform:uppercase;
+        margin:0 0 8px;
       }
       h1{
-        font-family:"Noto Serif SC",serif;
-        font-weight:900;
-        font-size:clamp(30px,5.2vw,46px);
+        font-family:"Lato","Noto Sans SC",-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;
+        font-weight:800;
+        font-size:clamp(28px,4.2vw,38px);
         line-height:1.15;
         margin:0 0 12px;
       }
       h1 em{
-        font-family:"Playfair Display",serif;
-        font-style:italic; font-weight:700;
+        font-style:normal; font-weight:800;
         color:var(--green);
         white-space:nowrap;
       }
-      .subtitle{ color:var(--muted); font-size:16.5px; max-width:46em; margin:0; }
-      .headrule{ border:none; border-top:1px solid var(--line); margin:22px 0 26px; }
+      .subtitle{ color:var(--muted); font-size:16px; max-width:46em; margin:0; }
+      .headrule{ border:none; border-top:1px solid var(--line); margin:20px 0 24px; }
 
       /* ---------- layout ---------- */
       .lab{ display:grid; grid-template-columns:400px 1fr; gap:20px; align-items:start; }
@@ -81,16 +80,17 @@
       .card{
         background:var(--card);
         border:1px solid var(--line);
-        border-radius:14px;
+        border-radius:8px;
+        box-shadow:0 1px 3px rgba(33,36,44,.06);
         padding:18px 20px 20px;
         margin-bottom:20px;
       }
       .card h2{
-        font-family:"Noto Serif SC",serif;
-        font-size:20px; font-weight:700;
+        font-family:"Lato","Noto Sans SC",-apple-system,sans-serif;
+        font-size:19px; font-weight:700;
         margin:0 0 4px;
       }
-      .card h2 .en{ font-family:"Playfair Display",serif; font-style:italic; color:var(--green); font-size:18px; }
+      .card h2 .en{ font-style:normal; color:var(--green); font-size:17px; }
       .card .hint{ color:var(--muted); font-size:14px; margin:0 0 12px; }
 
       /* ---------- controls ---------- */
@@ -261,8 +261,8 @@
               <text x="58" y="17" font-size="12" fill="#5C6B7A" font-weight="700">高台（释放点 = 0 cm）</text>
               <!-- lowest-point marker -->
               <g id="marker" style="display:none">
-                <line id="markerLine" x1="56" y1="0" x2="352" y2="0" stroke="#1E6B4F" stroke-width="1.6" stroke-dasharray="6 4" />
-                <text id="markerText" x="352" y="-7" text-anchor="end" font-size="13" font-weight="700" fill="#1E6B4F"></text>
+                <line id="markerLine" x1="56" y1="0" x2="352" y2="0" stroke="#008A6E" stroke-width="1.6" stroke-dasharray="6 4" />
+                <text id="markerText" x="352" y="-7" text-anchor="end" font-size="13" font-weight="700" fill="#008A6E"></text>
               </g>
               <!-- cord -->
               <line id="cord" x1="170" y1="38" x2="170" y2="90" stroke="#C89B5A" stroke-width="2.6" />
@@ -567,8 +567,8 @@
               markerLine.setAttribute("y2", lowestHeadY);
               markerText.setAttribute("y", lowestHeadY - 7);
               var hit = D >= FLOOR;
-              markerLine.setAttribute("stroke", hit? "#BE3A2B" : "#1E6B4F");
-              markerText.setAttribute("fill", hit? "#BE3A2B" : "#1E6B4F");
+              markerLine.setAttribute("stroke", hit? "#C5221F" : "#008A6E");
+              markerText.setAttribute("fill", hit? "#C5221F" : "#008A6E");
               markerText.textContent = hit ? "最低点 "+D.toFixed(1)+" cm — 撞到地面！" : "最低点 = "+D.toFixed(1)+" cm";
             }
             if(REDUCED || quick===0){

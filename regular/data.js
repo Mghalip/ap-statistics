@@ -22,18 +22,18 @@ window.MG_REGULAR_STATS = {
       updatedLabel: '新上线 · 11/27',
       symbol: 'r',
       svg: `<svg viewBox="0 0 260 112" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <line x1="28" y1="94" x2="232" y2="94" stroke="#172A48" stroke-width="1.4" stroke-opacity="0.3"/>
-        <line x1="28" y1="16" x2="28" y2="94" stroke="#172A48" stroke-width="1.4" stroke-opacity="0.3"/>
-        <line x1="28" y1="24" x2="232" y2="24" stroke="#B4342F" stroke-width="1.4" stroke-dasharray="5 4" stroke-opacity="0.7"/>
-        <line x1="36" y1="86" x2="216" y2="26" stroke="#1D6B53" stroke-width="2" stroke-dasharray="4 3" stroke-opacity="0.55"/>
-        <circle cx="48" cy="82" r="4.5" fill="#1D6B53"/>
-        <circle cx="72" cy="73" r="4.5" fill="#1D6B53"/>
-        <circle cx="96" cy="67" r="4.5" fill="#1D6B53"/>
-        <circle cx="120" cy="57" r="4.5" fill="#1D6B53"/>
-        <circle cx="144" cy="51" r="4.5" fill="#1D6B53"/>
-        <circle cx="168" cy="40" r="4.5" fill="#1D6B53"/>
-        <circle cx="192" cy="34" r="4.5" fill="#1D6B53"/>
-        <circle cx="212" cy="24" r="4.8" fill="#B4342F" stroke="#FFFDF8" stroke-width="1.4"/>
+        <line x1="28" y1="94" x2="232" y2="94" stroke="#21242C" stroke-width="1.4" stroke-opacity="0.28"/>
+        <line x1="28" y1="16" x2="28" y2="94" stroke="#21242C" stroke-width="1.4" stroke-opacity="0.28"/>
+        <line x1="28" y1="24" x2="232" y2="24" stroke="#C5221F" stroke-width="1.4" stroke-dasharray="5 4" stroke-opacity="0.72"/>
+        <line x1="36" y1="86" x2="216" y2="26" stroke="#008A6E" stroke-width="2" stroke-dasharray="4 3" stroke-opacity="0.58"/>
+        <circle cx="48" cy="82" r="4.5" fill="#008A6E"/>
+        <circle cx="72" cy="73" r="4.5" fill="#008A6E"/>
+        <circle cx="96" cy="67" r="4.5" fill="#008A6E"/>
+        <circle cx="120" cy="57" r="4.5" fill="#008A6E"/>
+        <circle cx="144" cy="51" r="4.5" fill="#008A6E"/>
+        <circle cx="168" cy="40" r="4.5" fill="#008A6E"/>
+        <circle cx="192" cy="34" r="4.5" fill="#008A6E"/>
+        <circle cx="212" cy="24" r="4.8" fill="#C5221F" stroke="#FFFFFF" stroke-width="1.4"/>
       </svg>`
     }
   ],

@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>普通统计 · MG | Statistics</title>
 <meta name="description" content="MG 普通统计（Statistics）课程资料站：课堂练习、作业本答案、互动模拟器与课程大纲">
-<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2040%2040%22%3E%3Crect%20width%3D%2240%22%20height%3D%2240%22%20rx%3D%2210%22%20fill%3D%22%231D6B53%22%2F%3E%3Ctext%20x%3D%2220%22%20y%3D%2226%22%20text-anchor%3D%22middle%22%20font-family%3D%22Georgia%2Cserif%22%20font-size%3D%2218%22%20font-weight%3D%22700%22%20fill%3D%22%23E8B04A%22%3EMG%3C%2Ftext%3E%3C%2Fsvg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2040%2040%22%3E%3Crect%20width%3D%2240%22%20height%3D%2240%22%20rx%3D%228%22%20fill%3D%22%23008A6E%22%2F%3E%3Ctext%20x%3D%2220%22%20y%3D%2225%22%20text-anchor%3D%22middle%22%20font-family%3D%22system-ui%2Csans-serif%22%20font-size%3D%2216%22%20font-weight%3D%22800%22%20fill%3D%22%23FFFFFF%22%3EMG%3C%2Ftext%3E%3C%2Fsvg%3E">
 <link rel="preload" href="../fonts/Montserrat-Variable.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../styles.css?v=editorial-3">
+<link rel="stylesheet" href="../styles.css?v=20261127-ka1">
 </head>
 <body class="theme-regular">
 <a class="skip" href="#main">跳转到内容</a>
@@ -38,7 +38,7 @@
 <main id="main">
   <section class="hero">
     <div class="hero-copy">
-      <p class="eyebrow"><span aria-hidden="true">✦</span> THE MG CLASSROOM · REGULAR STATISTICS</p>
+      <p class="eyebrow">THE MG CLASSROOM · REGULAR STATISTICS</p>
       <h1>Regular Statistics</h1>
       <p class="hero-sub">普通统计课程资料站 · 课堂练习、作业本答案、互动模拟器与课程大纲</p>
     </div>
@@ -60,8 +60,6 @@
 
   <!-- Panel 1: 课堂练习与作业本答案 -->
   <section class="regular-panel" id="panel-practice" aria-label="课堂练习与作业本答案">
-    <div id="spotlight-root"></div>
-
     <div id="practice-toolbar-wrap" hidden>
       <section class="toolbar" aria-label="筛选与搜索练习答案">
         <div class="toolbar-row">
@@ -207,33 +205,6 @@
 
   window.addEventListener('hashchange', syncFromHash);
 
-  /* ---------- Render Spotlight Banner on Practice Panel ---------- */
-  const spotlightRoot = document.getElementById('spotlight-root');
-  const featuredSim = simulators.find(s => s.isNew) || simulators[0];
-  if (featuredSim) {
-    spotlightRoot.innerHTML = `
-      <div class="sim-spotlight">
-        <div class="sim-spotlight-copy">
-          <div class="sim-spotlight-meta">
-            <span class="badge badge-sim">${esc(featuredSim.unitLabel)}</span>
-            ${featuredSim.updatedLabel ? `<mark class="badge badge-updated">${esc(featuredSim.updatedLabel)}</mark>` : ''}
-          </div>
-          <h2>${esc(featuredSim.titleZh)} · <span lang="en">${esc(featuredSim.titleEn)}</span></h2>
-          <p>${esc(featuredSim.desc)}</p>
-        </div>
-        <div class="sim-spotlight-actions">
-          <a class="btn-pill btn-pill-sage" href="${esc(featuredSim.path)}">打开模拟器 →</a>
-          <button type="button" class="btn-pill btn-pill-ghost" id="goto-sims-btn">查看全部模拟器 (${simulators.length})</button>
-        </div>
-      </div>
-    `;
-    document.getElementById('goto-sims-btn').addEventListener('click', () => {
-      history.pushState(null, '', '#simulators');
-      activateTab('simulators');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  }
-
   /* ---------- Render Practice & Answer Keys Panel ---------- */
   const practiceRoot = document.getElementById('practice-root');
   const practiceToolbarWrap = document.getElementById('practice-toolbar-wrap');
@@ -243,19 +214,19 @@
     practiceRoot.innerHTML = `
       <div class="placeholder-card">
         <strong>课堂练习与作业本答案即将按单元陆续上传</strong>
-        <p>普通统计的课堂练习（Classwork）与作业本答案（Workbook Answer Keys）将统一收录在此，支持按单元筛选、在线预览与直接下载。在此之前，你可以先体验本学期最新上线的互动模拟器或查阅完整课程大纲。</p>
+        <p>普通统计的课堂练习（Classwork）与作业本答案（Workbook Answer Keys）将统一收录在此，支持按单元筛选、在线预览与直接下载。在此之前，你可以先在互动模拟器或课程大纲页面查看配套内容。</p>
         <div class="placeholder-actions">
-          ${featuredSim ? `<a class="btn-pill btn-pill-sage" href="${esc(featuredSim.path)}">体验 ${esc(featuredSim.titleZh)} →</a>` : ''}
-          <a class="btn-pill btn-pill-ghost" href="#syllabus" data-jump-tab="syllabus">查看 13 个单元课程大纲 →</a>
+          <a class="btn-pill btn-pill-sage" href="#simulators" data-jump-tab="simulators">浏览互动模拟器 (${simulators.length}) →</a>
+          <a class="btn-pill btn-pill-ghost" href="#syllabus" data-jump-tab="syllabus">查看 ${syllabus.length} 个单元课程大纲 →</a>
         </div>
       </div>
     `;
-    const jumpSyllabus = practiceRoot.querySelector('[data-jump-tab="syllabus"]');
-    if (jumpSyllabus) {
-      jumpSyllabus.addEventListener('click', e => {
+    for (const jumpLink of practiceRoot.querySelectorAll('[data-jump-tab]')) {
+      jumpLink.addEventListener('click', e => {
         e.preventDefault();
-        history.pushState(null, '', '#syllabus');
-        activateTab('syllabus');
+        const targetTab = jumpLink.dataset.jumpTab;
+        history.pushState(null, '', '#' + targetTab);
+        activateTab(targetTab);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
     }
