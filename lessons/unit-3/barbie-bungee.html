@@ -1,0 +1,819 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light" />
+    <link rel="icon" href="data:," />
+    <title>芭比蹦极模拟器 · Barbie Bungee — Scatterplots</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700;900&family=Playfair+Display:ital,wght@1,600;1,700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+    <style>
+      :root{
+        --bg:#FAF6EE;
+        --card:#FFFDF8;
+        --ink:#1D2B3A;
+        --muted:#5C6B7A;
+        --green:#1E6B4F;
+        --green-dark:#14503A;
+        --gold:#A87F14;
+        --line:#E6DCC8;
+        --red:#BE3A2B;
+        --pink:#D9578B;
+        --chip:#F3EDDD;
+      }
+      *{ box-sizing:border-box; }
+      html,body{ margin:0; padding:0; }
+      body{
+        background:var(--bg);
+        color:var(--ink);
+        font-family:"Noto Sans SC",-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+        font-size:16px;
+        line-height:1.6;
+        -webkit-font-smoothing:antialiased;
+      }
+      .wrap{ max-width:1180px; margin:0 auto; padding:28px 20px 56px; }
+
+      /* ---------- header ---------- */
+      .kicker{
+        color:var(--gold);
+        font-size:12.5px; font-weight:700;
+        letter-spacing:.22em; text-transform:uppercase;
+        margin:0 0 10px;
+      }
+      h1{
+        font-family:"Noto Serif SC",serif;
+        font-weight:900;
+        font-size:clamp(30px,5.2vw,46px);
+        line-height:1.15;
+        margin:0 0 12px;
+      }
+      h1 em{
+        font-family:"Playfair Display",serif;
+        font-style:italic; font-weight:700;
+        color:var(--green);
+        white-space:nowrap;
+      }
+      .subtitle{ color:var(--muted); font-size:16.5px; max-width:46em; margin:0; }
+      .headrule{ border:none; border-top:1px solid var(--line); margin:22px 0 26px; }
+
+      /* ---------- layout ---------- */
+      .lab{ display:grid; grid-template-columns:400px 1fr; gap:20px; align-items:start; }
+      @media (max-width:920px){ .lab{ grid-template-columns:1fr; } }
+      .card{
+        background:var(--card);
+        border:1px solid var(--line);
+        border-radius:14px;
+        padding:18px 20px 20px;
+        margin-bottom:20px;
+      }
+      .card h2{
+        font-family:"Noto Serif SC",serif;
+        font-size:20px; font-weight:700;
+        margin:0 0 4px;
+      }
+      .card h2 .en{ font-family:"Playfair Display",serif; font-style:italic; color:var(--green); font-size:18px; }
+      .card .hint{ color:var(--muted); font-size:14px; margin:0 0 12px; }
+
+      /* ---------- controls ---------- */
+      .bandrow{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+      .stepper{ display:flex; align-items:center; gap:10px; }
+      .stepbtn{
+        width:44px; height:44px; border-radius:10px;
+        border:1.5px solid var(--green); background:#fff; color:var(--green-dark);
+        font-size:22px; font-weight:700; cursor:pointer; line-height:1;
+      }
+      .stepbtn:active{ background:var(--chip); }
+      .bandnum{
+        font-family:"Noto Serif SC",serif; font-weight:900; font-size:34px;
+        min-width:52px; text-align:center; line-height:1;
+      }
+      .bandlabel{ font-size:14px; color:var(--muted); }
+      input[type=range]{ width:100%; height:40px; accent-color:var(--green); cursor:pointer; }
+      .btnrow{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
+      .btn{
+        min-height:46px; padding:10px 20px;
+        border-radius:10px; border:1.5px solid var(--green);
+        font-size:16px; font-weight:700; cursor:pointer;
+        font-family:inherit;
+      }
+      .btn.primary{ background:var(--green); color:#fff; }
+      .btn.primary:active{ background:var(--green-dark); }
+      .btn.ghost{ background:#fff; color:var(--green-dark); }
+      .btn.plain{ background:#fff; border-color:var(--line); color:var(--muted); }
+      .btn:disabled{ opacity:.45; cursor:not-allowed; }
+      .readout{
+        margin-top:12px; padding:10px 14px;
+        background:var(--chip); border-radius:10px;
+        font-size:15.5px; min-height:48px;
+        display:flex; align-items:center;
+      }
+      .readout b{ font-family:"Noto Serif SC",serif; font-size:19px; }
+      .readout .hit{ color:var(--red); font-weight:700; }
+
+      /* ---------- stage ---------- */
+      .stagebox{ padding:10px 8px 6px; }
+      svg.stage{ width:100%; height:auto; display:block; }
+      .stageline{ font-size:13.5px; color:var(--muted); margin:6px 6px 2px; }
+
+      /* ---------- handout table ---------- */
+      table.handout{ width:100%; border-collapse:collapse; font-size:14.5px; }
+      table.handout th, table.handout td{
+        border:1px solid var(--line); padding:8px 2px; text-align:center;
+      }
+      table.handout th{ background:var(--chip); font-weight:700; }
+      table.handout td{ font-family:"Noto Serif SC",serif; font-weight:700; font-size:16px; height:42px; }
+      table.handout td.empty{ color:#C9BFA9; font-weight:400; }
+      table.handout td .cnt{ display:block; font-family:"Noto Sans SC",sans-serif; font-size:11px; color:var(--muted); font-weight:400; }
+      table.handout td.hitcell{ color:var(--red); }
+
+      /* ---------- scatterplot ---------- */
+      svg.plot{ width:100%; height:auto; display:block; }
+      .axis-title{ font-size:13px; fill:var(--ink); font-weight:700; }
+      .ticklabel{ font-size:11.5px; fill:var(--muted); }
+      .ptlabel{ font-size:9.5px; fill:var(--muted); }
+      .pt{ fill:var(--green); stroke:#fff; stroke-width:1.2; }
+      .pt.hit{ fill:var(--red); }
+      .pt.latest{ stroke:var(--gold); stroke-width:2.4; }
+      .pt.pop{ transform-box:fill-box; transform-origin:center; animation:pop .35s ease-out; }
+      @keyframes pop{ from{ transform:scale(.2);} to{ transform:scale(1);} }
+      @media (prefers-reduced-motion: reduce){ .pt.pop{ animation:none; } }
+
+      .chips{ display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 12px; }
+      .chip{
+        background:var(--chip); border-radius:999px;
+        padding:6px 14px; font-size:14px;
+      }
+      .chip b{ color:var(--green-dark); }
+      .sentence{
+        border-top:1px dashed var(--line); padding-top:12px; margin-top:4px;
+        font-size:16px;
+      }
+      .sentence .en-s{
+        display:block; margin-top:6px; color:var(--muted);
+        font-family:Georgia,"Times New Roman",serif; font-style:italic; font-size:15px;
+      }
+      .formulacard{
+        margin-top:14px; background:var(--chip); border-radius:10px;
+        padding:12px 16px; font-size:15.5px;
+        display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+      }
+      .formulacard .flabel{ color:var(--muted); font-size:13.5px; }
+      .frac{ display:inline-flex; flex-direction:column; text-align:center; vertical-align:middle; margin:0 .12em; }
+      .frac .top{ border-bottom:1.6px solid currentColor; padding:0 .35em; line-height:1.3; }
+      .frac .bot{ padding:0 .35em; line-height:1.3; }
+
+      /* ---------- questions / CYU ---------- */
+      .q{ border-top:1px solid var(--line); padding:12px 0 4px; }
+      .q:first-of-type{ border-top:none; }
+      .q p{ margin:0 0 6px; }
+      .q .qnum{
+        display:inline-block; background:var(--green); color:#fff;
+        border-radius:6px; font-weight:700; font-size:13px;
+        padding:1px 8px; margin-right:8px; vertical-align:1px;
+      }
+      details{ margin:4px 0 10px; }
+      summary{
+        cursor:pointer; color:var(--green-dark); font-weight:700; font-size:14.5px;
+        min-height:36px; display:flex; align-items:center;
+      }
+      details .ans{
+        background:var(--chip); border-radius:10px; padding:10px 14px;
+        font-size:15px; margin-bottom:6px;
+      }
+      .cyugrid{ display:grid; grid-template-columns:1fr 300px; gap:18px; align-items:start; }
+      @media (max-width:920px){ .cyugrid{ grid-template-columns:1fr; } }
+      table.sw{ width:100%; border-collapse:collapse; font-size:13.5px; }
+      table.sw th, table.sw td{ border:1px solid var(--line); padding:5px 7px; text-align:left; }
+      table.sw th{ background:var(--chip); }
+      table.sw td.num{ text-align:right; font-variant-numeric:tabular-nums; }
+      .foot{ color:var(--muted); font-size:13.5px; margin-top:8px; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <p class="kicker">AP Statistics · Unit 3 · Lesson 3.1 · Scatterplots</p>
+        <h1>芭比蹦极模拟器 <em>Barbie Bungee</em></h1>
+        <p class="subtitle">给芭比绑上橡皮筋，让她从高台上一跃而下。改变橡皮筋的数量，记录她的下落距离，亲手收集数据、画出散点图，再用<strong>方向、形式、强度、异常点</strong>描述两个变量之间的关系——目标是让她玩得最刺激，又不能撞到地面。</p>
+      </header>
+      <hr class="headrule" />
+
+      <div class="lab">
+        <!-- left column -->
+        <div>
+          <div class="card">
+            <h2>蹦极台 <span class="en">The Jump</span></h2>
+            <p class="hint">先选橡皮筋数量（Classnote 数据表的范围是 0–7 根），再让芭比跳。</p>
+            <div class="bandrow">
+              <div class="stepper">
+                <button class="stepbtn" id="minusBtn" aria-label="减少橡皮筋">−</button>
+                <div class="bandnum" id="bandNum">3</div>
+                <button class="stepbtn" id="plusBtn" aria-label="增加橡皮筋">+</button>
+              </div>
+              <div class="bandlabel">橡皮筋数量<br />Number of rubber bands</div>
+            </div>
+            <input type="range" id="bandSlider" min="0" max="7" step="1" value="3" aria-label="橡皮筋数量" />
+            <div class="btnrow">
+              <button class="btn primary" id="dropBtn">让芭比跳！</button>
+              <button class="btn ghost" id="autoBtn">自动补满 0–7</button>
+              <button class="btn plain" id="clearBtn">清空数据</button>
+            </div>
+            <div class="readout" id="readout">芭比已就位。选择橡皮筋数量，点「让芭比跳」记录第一次下落。</div>
+          </div>
+
+          <div class="card stagebox">
+            <svg class="stage" id="stage" viewBox="0 0 360 500" role="img" aria-label="芭比蹦极示意台">
+              <!-- ruler -->
+              <g id="ruler"></g>
+              <!-- ground -->
+              <rect id="groundRect" x="0" y="467" width="360" height="33" fill="#E9DFC9" />
+              <g id="groundHatch" stroke="#CBBd97" stroke-width="1.4"></g>
+              <line id="floorLine" x1="0" y1="467" x2="360" y2="467" stroke="#BE3A2B" stroke-width="1.6" stroke-dasharray="7 5" />
+              <text id="floorLabel" x="356" y="461" text-anchor="end" font-size="12" fill="#BE3A2B" font-weight="700">地面 · 116 cm — 撞到就受伤！</text>
+              <!-- platform -->
+              <rect x="14" y="24" width="180" height="12" rx="3" fill="#1D2B3A" />
+              <rect x="14" y="36" width="10" height="52" fill="#1D2B3A" opacity=".55" />
+              <text x="58" y="17" font-size="12" fill="#5C6B7A" font-weight="700">高台（释放点 = 0 cm）</text>
+              <!-- lowest-point marker -->
+              <g id="marker" style="display:none">
+                <line id="markerLine" x1="56" y1="0" x2="352" y2="0" stroke="#1E6B4F" stroke-width="1.6" stroke-dasharray="6 4" />
+                <text id="markerText" x="352" y="-7" text-anchor="end" font-size="13" font-weight="700" fill="#1E6B4F"></text>
+              </g>
+              <!-- cord -->
+              <line id="cord" x1="170" y1="38" x2="170" y2="90" stroke="#C89B5A" stroke-width="2.6" />
+              <g id="bandBundle"></g>
+              <!-- doll -->
+              <g id="doll">
+                <!-- legs (up, tied to cord) -->
+                <rect x="-7.5" y="1" width="5.6" height="17" rx="2.4" fill="#F0BE96" />
+                <rect x="1.9" y="1" width="5.6" height="17" rx="2.4" fill="#F0BE96" />
+                <rect x="-8.6" y="-1.5" width="7.6" height="4.6" rx="2" fill="#D9578B" />
+                <rect x="1" y="-1.5" width="7.6" height="4.6" rx="2" fill="#D9578B" />
+                <!-- dress -->
+                <path d="M -6 16 L 6 16 L 13 40 L -13 40 Z" fill="#D9578B" />
+                <rect x="-6" y="16" width="12" height="9" fill="#C74A7D" />
+                <!-- arms -->
+                <path d="M -5 19 L -15 33" stroke="#F0BE96" stroke-width="4.4" stroke-linecap="round" />
+                <path d="M 5 19 L 15 33" stroke="#F0BE96" stroke-width="4.4" stroke-linecap="round" />
+                <!-- hair + head -->
+                <circle cx="0" cy="45" r="11.5" fill="#F2C14E" />
+                <circle cx="0" cy="49" r="9.4" fill="#F6CBA0" />
+                <circle cx="0" cy="36.5" r="4" fill="#F2C14E" />
+                <circle cx="-3.4" cy="50" r="1.15" fill="#1D2B3A" />
+                <circle cx="3.4" cy="50" r="1.15" fill="#1D2B3A" />
+                <path d="M -3 54.4 Q 0 56.4 3 54.4" stroke="#1D2B3A" stroke-width="1.1" fill="none" stroke-linecap="round" />
+              </g>
+            </svg>
+            <p class="stageline">下落距离 = 从释放点到芭比头部最低点的距离（cm）。同一个数量多跳几次，结果会略有不同——这就是<strong>变异性</strong>。</p>
+          </div>
+
+          <div class="card">
+            <h2>数据表 <span class="en">Data Table</span></h2>
+            <p class="hint">与 Classnote 相同的一行表格：每个数量显示最近一次的下落距离，下方小字是该数量的总跳数。</p>
+            <table class="handout" aria-label="橡皮筋数量与下落距离数据表">
+              <thead>
+                <tr><th>橡皮筋数量</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th></tr>
+              </thead>
+              <tbody>
+                <tr><th>下落距离 (cm)</th>
+                  <td class="empty" data-cell="0">—</td><td class="empty" data-cell="1">—</td>
+                  <td class="empty" data-cell="2">—</td><td class="empty" data-cell="3">—</td>
+                  <td class="empty" data-cell="4">—</td><td class="empty" data-cell="5">—</td>
+                  <td class="empty" data-cell="6">—</td><td class="empty" data-cell="7">—</td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="foot">散点图会画出<strong>每一次</strong>跳跃的数据点；重复跳同一数量，可以看到点在垂直方向上的散布。</p>
+          </div>
+        </div>
+
+        <!-- right column -->
+        <div>
+          <div class="card">
+            <h2>散点图 <span class="en">Scatterplot</span></h2>
+            <p class="hint">解释变量（x）= 橡皮筋数量；响应变量（y）= 下落距离。红色点 = 这一次撞到了地面。</p>
+            <svg class="plot" id="plot" viewBox="0 0 620 430" role="img" aria-label="橡皮筋数量与下落距离的散点图"></svg>
+            <div class="chips">
+              <span class="chip">数据点 <b id="statN">n = 0</b></span>
+              <span class="chip">相关系数 <b id="statR">r = —</b></span>
+              <span class="chip">x̄ = <b id="statMx">—</b></span>
+              <span class="chip">ȳ = <b id="statMy">—</b></span>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>描述这个关系 <span class="en">Describe the Relationship</span></h2>
+            <p class="hint">AP 考试描述散点图的四件套：<strong>方向 Direction · 形式 Form · 强度 Strength · 异常点 Unusual features</strong>。下面这段会随你的数据实时更新。</p>
+            <div class="chips">
+              <span class="chip">方向 <b id="dDir">待收集数据</b></span>
+              <span class="chip">形式 <b id="dForm">—</b></span>
+              <span class="chip">强度 <b id="dStr">—</b></span>
+              <span class="chip">异常点 <b id="dOut">—</b></span>
+            </div>
+            <div class="sentence" id="dSentence">
+              先让芭比跳至少 4 次（数量尽量不同），这里会自动生成一段完整的描述。
+              <span class="en-s">Collect at least 4 jumps with different numbers of rubber bands, and a full description will appear here.</span>
+            </div>
+            <div class="formulacard">
+              <span class="flabel">强度从哪来？相关系数 r 的公式（分数形式）：</span>
+              <span>r =
+                <span class="frac"><span class="top">Σ (x − x̄)(y − ȳ)</span><span class="bot">(n − 1) · s<sub>x</sub> · s<sub>y</sub></span></span>
+              </span>
+              <span class="flabel">r 越接近 ±1，点越贴近一条直线，关系越强；r 接近 0 表示线性关系很弱。</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- classnote questions -->
+      <div class="card">
+        <h2>Classnote 3.1 的四个问题 <span class="en">Answer with Your Data</span></h2>
+        <p class="hint">先用模拟器把数据收集完，再回答下面四个问题——这正是 Classnote 3.1 活动页上的原题。点开可以核对答案。</p>
+        <div class="q">
+          <p><span class="qnum">Q1</span>Identify the explanatory and response variables.（指出解释变量和响应变量）</p>
+          <details>
+            <summary>查看答案</summary>
+            <div class="ans"><strong>解释变量：</strong>橡皮筋的数量——是我们主动改变、用来解释结果的变量，放 x 轴。<br /><strong>响应变量：</strong>下落距离（distance travelled）——是我们测量的结果，放 y 轴。</div>
+          </details>
+        </div>
+        <div class="q">
+          <p><span class="qnum">Q2</span>How many variables do we have? Are they categorical or quantitative?（有几个变量？定性还是定量？）</p>
+          <details>
+            <summary>查看答案</summary>
+            <div class="ans">共 <strong>2 个变量，都是定量变量（quantitative）</strong>：橡皮筋数量是计数，下落距离是测量值，都可以取数值并做平均——所以用散点图，而不是条形图。</div>
+          </details>
+        </div>
+        <div class="q">
+          <p><span class="qnum">Q3</span>Make a scatterplot.（作出散点图）</p>
+          <details>
+            <summary>查看答案</summary>
+            <div class="ans">就是上面那张图：每个数据点 = 一次跳跃（橡皮筋数量， 下落距离）。作图检查清单：x 轴放解释变量、两轴都标注变量名和单位、刻度均匀。</div>
+          </details>
+        </div>
+        <div class="q">
+          <p><span class="qnum">Q4</span>Describe the relationship displayed in the scatterplot.（描述散点图显示的关系）</p>
+          <details>
+            <summary>查看答案</summary>
+            <div class="ans">用你自己数据的版本见上方「描述这个关系」面板。典型结论：散点图显示橡皮筋数量与下落距离之间存在<strong>强的、正的、大致线性的</strong>关系，没有明显异常点——橡皮筋越多，芭比下落得越远。</div>
+          </details>
+        </div>
+        <div class="q">
+          <p><span class="qnum">讨论</span>How many rubber bands give Barbie the most fun without getting injured?（几根橡皮筋最刺激又不受伤？）</p>
+          <details>
+            <summary>查看讨论要点</summary>
+            <div class="ans">地面在 116 cm。沿着散点图的趋势看，下落距离接近 116 cm 大约需要 7 根橡皮筋；但注意<strong>变异性</strong>：7 根时平均约 112 cm，某一次完全可能超过 116 cm 撞到地面。只看平均值不够，还要看点散布得有多宽——这也是为什么真实蹦极要留安全余量。</div>
+          </details>
+        </div>
+      </div>
+
+      <!-- Check Your Understanding: Star Wars -->
+      <div class="card">
+        <h2>Check Your Understanding <span class="en">Star Wars: Screen Time vs. Rank</span></h2>
+        <p class="hint">Classnote 的练习题：14 位最受欢迎的星球大战角色，出场时间（分钟）与人气排名（第 1 名 = 最受欢迎）。先自己用四件套描述，再点开核对。</p>
+        <div class="cyugrid">
+          <div>
+            <svg class="plot" id="swPlot" viewBox="0 0 620 380" role="img" aria-label="星球大战角色出场时间与人气排名散点图"></svg>
+            <div class="chips">
+              <span class="chip">方向 <b id="swDir">?</b></span>
+              <span class="chip">形式 <b id="swForm">?</b></span>
+              <span class="chip">强度 <b id="swStr">?</b></span>
+              <span class="chip">相关系数 <b id="swR">r = ?</b></span>
+            </div>
+            <details>
+              <summary>查看答案：解释变量、响应变量与关系描述</summary>
+              <div class="ans">
+                <strong>解释变量：</strong>出场时间（screen time）——研究者想看它能否预测排名；<strong>响应变量：</strong>人气排名（rank）。<br />
+                <span id="swSentence">散点图显示：出场时间与排名之间存在中等强度的负关系，形式大致线性。注意排名数字越小越受欢迎，所以「负方向」在这里其实意味着：出场时间越长，角色往往越受欢迎（排名数字越小）。</span>
+              </div>
+            </details>
+          </div>
+          <div>
+            <table class="sw" aria-label="星球大战角色数据表">
+              <thead><tr><th>角色 Character</th><th>排名 Rank</th><th>出场时间 (min)</th></tr></thead>
+              <tbody id="swBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <p class="foot">数据来源：Classnote 3.1「Check Your Understanding」原题表格（14 位角色）。</p>
+      </div>
+
+      <p class="foot">本模拟器的下落距离由「线性模型 + 随机误差」生成，所以同一数量重复跳结果不同；真实课堂实验中，橡皮筋的老化、测量方式也会带来类似的变异。</p>
+    </div>
+
+    <script>
+      (function(){
+        "use strict";
+        var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        /* ============ model ============ */
+        var MODEL_A = 22, MODEL_B = 12.8, MODEL_SD = 2.8, FLOOR = 116;
+        function randn(){
+          var u=0,v=0;
+          while(u===0) u=Math.random();
+          while(v===0) v=Math.random();
+          return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+        }
+        function genDistance(b){
+          var raw = MODEL_A + MODEL_B*b + randn()*MODEL_SD;
+          if(raw >= FLOOR) return { d: FLOOR, hit: true };
+          var d = Math.round(raw*2)/2;
+          if(d < 4) d = 4;
+          return { d: d, hit: false };
+        }
+
+        /* ============ state ============ */
+        var bands = 3;
+        var trials = []; // {b, d, hit}
+        var animating = false;
+        var autoCancel = false;
+
+        /* ============ stage geometry ============ */
+        var AX = 170, AY = 38, SCALE = 3.7, DOLL_LEN = 59;
+        var stage = document.getElementById("stage");
+        var doll = document.getElementById("doll");
+        var cord = document.getElementById("cord");
+        var bundle = document.getElementById("bandBundle");
+        var marker = document.getElementById("marker");
+        var markerLine = document.getElementById("markerLine");
+        var markerText = document.getElementById("markerText");
+        var SVGNS = "http://www.w3.org/2000/svg";
+        function el(name, attrs, parent){
+          var e = document.createElementNS(SVGNS, name);
+          for(var k in attrs) e.setAttribute(k, attrs[k]);
+          if(parent) parent.appendChild(e);
+          return e;
+        }
+        // ruler ticks
+        (function buildRuler(){
+          var g = document.getElementById("ruler");
+          for(var cm=0; cm<=120; cm+=10){
+            var y = AY + cm*SCALE;
+            var major = (cm % 20 === 0);
+            el("line",{x1: major?38:44, y1:y, x2:52, y2:y, stroke:"#B9A87F","stroke-width": major?1.6:1}, g);
+            if(major){
+              var t = el("text",{x:34, y:y+4, "text-anchor":"end","font-size":11, fill:"#8A7B52"}, g);
+              t.textContent = cm;
+            }
+          }
+          var cap = el("text",{x:34, y:AY-24, "text-anchor":"end","font-size":11, fill:"#8A7B52","font-weight":700}, g);
+          cap.textContent = "cm";
+          var hatch = document.getElementById("groundHatch");
+          for(var x=-20; x<380; x+=16){
+            el("line",{x1:x, y1:500, x2:x+14, y2:467}, hatch);
+          }
+        })();
+
+        function drawBundle(){
+          while(bundle.firstChild) bundle.removeChild(bundle.firstChild);
+          if(bands===0){
+            el("circle",{cx:AX, cy:AY+3, r:3, fill:"none", stroke:"#8A7B52","stroke-width":1.6}, bundle);
+            return;
+          }
+          for(var i=0;i<bands;i++){
+            el("ellipse",{cx:AX, cy:AY+3.5+i*2.7, rx:7.5, ry:2.3, fill:"none", stroke: i%2? "#C89B5A":"#D9578B","stroke-width":1.5, opacity:.85}, bundle);
+          }
+        }
+        function setDoll(feetY){
+          doll.setAttribute("transform","translate("+AX+","+feetY+")");
+          cord.setAttribute("y2", feetY);
+        }
+        function hangIdle(){
+          setDoll(AY + 30 + bands*7);
+        }
+
+        /* ============ controls ============ */
+        var bandNum = document.getElementById("bandNum");
+        var slider = document.getElementById("bandSlider");
+        var dropBtn = document.getElementById("dropBtn");
+        var autoBtn = document.getElementById("autoBtn");
+        var clearBtn = document.getElementById("clearBtn");
+        var readout = document.getElementById("readout");
+
+        function syncBands(v){
+          bands = Math.max(0, Math.min(7, v|0));
+          bandNum.textContent = bands;
+          slider.value = bands;
+          drawBundle();
+          if(!animating) hangIdle();
+        }
+        slider.addEventListener("input", function(){ syncBands(+slider.value); });
+        document.getElementById("minusBtn").addEventListener("click", function(){ syncBands(bands-1); });
+        document.getElementById("plusBtn").addEventListener("click", function(){ syncBands(bands+1); });
+
+        function setBusy(b){
+          animating = b;
+          dropBtn.disabled = b; autoBtn.disabled = b;
+          slider.disabled = b;
+          document.getElementById("minusBtn").disabled = b;
+          document.getElementById("plusBtn").disabled = b;
+        }
+
+        /* ============ animation ============ */
+        function animateDrop(D, quick){
+          return new Promise(function(resolve){
+            var lowestHeadY = AY + D*SCALE;
+            var startFeet = AY + 6;
+            var lowestFeet = lowestHeadY - DOLL_LEN;
+            var drop = Math.max(10, lowestFeet - startFeet);
+            var restFeet = lowestFeet - drop*0.16;
+            var keys = [
+              [0.00, startFeet],
+              [0.52, lowestFeet],
+              [0.70, lowestFeet - drop*0.13],
+              [0.84, lowestFeet - drop*0.045],
+              [1.00, restFeet]
+            ];
+            function posAt(t){
+              for(var i=0;i<keys.length-1;i++){
+                var t0=keys[i][0], t1=keys[i+1][0];
+                if(t>=t0 && t<=t1){
+                  var u=(t-t0)/(t1-t0);
+                  u = u*u*(3-2*u);
+                  return keys[i][1] + (keys[i+1][1]-keys[i][1])*u;
+                }
+              }
+              return restFeet;
+            }
+            var markerShown = false;
+            function showMarker(){
+              if(markerShown) return; markerShown = true;
+              marker.style.display = "";
+              markerLine.setAttribute("y1", lowestHeadY);
+              markerLine.setAttribute("y2", lowestHeadY);
+              markerText.setAttribute("y", lowestHeadY - 7);
+              var hit = D >= FLOOR;
+              markerLine.setAttribute("stroke", hit? "#BE3A2B" : "#1E6B4F");
+              markerText.setAttribute("fill", hit? "#BE3A2B" : "#1E6B4F");
+              markerText.textContent = hit ? "最低点 "+D.toFixed(1)+" cm — 撞到地面！" : "最低点 = "+D.toFixed(1)+" cm";
+            }
+            if(REDUCED || quick===0){
+              setDoll(restFeet); showMarker(); resolve(); return;
+            }
+            var dur = quick ? 620 : 1500;
+            var t0 = performance.now();
+            function frame(now){
+              var t = Math.min(1, (now - t0)/dur);
+              setDoll(posAt(t));
+              if(t >= 0.52) showMarker();
+              if(t < 1) requestAnimationFrame(frame);
+              else resolve();
+            }
+            requestAnimationFrame(frame);
+          });
+        }
+
+        /* ============ scatterplot ============ */
+        var plot = document.getElementById("plot");
+        var PW=620, PH=430, PML=66, PMR=18, PMT=16, PMB=60;
+        function px(x){ return PML + (x+0.6)/8.2*(PW-PML-PMR); }
+        function py(y){ return PH-PMB - y/125*(PH-PMT-PMB); }
+        var pointsG;
+        (function buildPlot(){
+          var g = el("g",{},plot);
+          for(var yv=0; yv<=120; yv+=20){
+            el("line",{x1:PML, y1:py(yv), x2:PW-PMR, y2:py(yv), stroke:"#EDE4CF","stroke-width":1}, g);
+            var t = el("text",{x:PML-8, y:py(yv)+4, "text-anchor":"end","class":"ticklabel"}, g);
+            t.textContent = yv;
+          }
+          for(var xv=0; xv<=7; xv++){
+            var t2 = el("text",{x:px(xv), y:PH-PMB+20, "text-anchor":"middle","class":"ticklabel"}, g);
+            t2.textContent = xv;
+          }
+          el("line",{x1:PML, y1:PMT, x2:PML, y2:PH-PMB, stroke:"#C9BFA9","stroke-width":1.2}, g);
+          el("line",{x1:PML, y1:PH-PMB, x2:PW-PMR, y2:PH-PMB, stroke:"#C9BFA9","stroke-width":1.2}, g);
+          var xt = el("text",{x:(PML+PW-PMR)/2, y:PH-14, "text-anchor":"middle","class":"axis-title"}, g);
+          xt.textContent = "橡皮筋数量 Number of rubber bands";
+          var yt = el("text",{x:18, y:(PMT+PH-PMB)/2, "text-anchor":"middle","class":"axis-title", transform:"rotate(-90 18 "+((PMT+PH-PMB)/2)+")"}, g);
+          yt.textContent = "下落距离 Distance travelled (cm)";
+          // floor reference on plot
+          el("line",{x1:PML, y1:py(FLOOR), x2:PW-PMR, y2:py(FLOOR), stroke:"#BE3A2B","stroke-width":1.2,"stroke-dasharray":"6 4", opacity:.65}, g);
+          var ft = el("text",{x:PW-PMR-4, y:py(FLOOR)-6, "text-anchor":"end","font-size":11.5, fill:"#BE3A2B"}, g);
+          ft.textContent = "地面 116 cm";
+          pointsG = el("g",{},plot);
+        })();
+        function renderPoints(){
+          while(pointsG.firstChild) pointsG.removeChild(pointsG.firstChild);
+          trials.forEach(function(tr, i){
+            var c = el("circle",{cx:px(tr.b), cy:py(tr.d), r:5.5, "class":"pt"+(tr.hit?" hit":"")+(i===trials.length-1?" latest pop":"")}, pointsG);
+            var title = el("title",{},c);
+            title.textContent = "("+tr.b+", "+tr.d.toFixed(1)+")";
+          });
+        }
+
+        /* ============ stats + description ============ */
+        function mean(a){ return a.reduce(function(s,v){return s+v;},0)/a.length; }
+        function corr(pts){
+          if(pts.length<2) return NaN;
+          var mx = mean(pts.map(function(p){return p[0];}));
+          var my = mean(pts.map(function(p){return p[1];}));
+          var sxy=0,sxx=0,syy=0;
+          pts.forEach(function(p){
+            sxy += (p[0]-mx)*(p[1]-my);
+            sxx += (p[0]-mx)*(p[0]-mx);
+            syy += (p[1]-my)*(p[1]-my);
+          });
+          if(sxx===0 || syy===0) return NaN;
+          return sxy/Math.sqrt(sxx*syy);
+        }
+        function countOutliers(pts){
+          if(pts.length<6) return 0;
+          var mx = mean(pts.map(function(p){return p[0];}));
+          var my = mean(pts.map(function(p){return p[1];}));
+          var sxy=0,sxx=0;
+          pts.forEach(function(p){ sxy+=(p[0]-mx)*(p[1]-my); sxx+=(p[0]-mx)*(p[0]-mx); });
+          if(sxx===0) return 0;
+          var b = sxy/sxx, a = my - b*mx;
+          var ss=0;
+          var res = pts.map(function(p){ var e=p[1]-(a+b*p[0]); ss+=e*e; return e; });
+          var s = Math.sqrt(ss/(pts.length-2));
+          if(s===0) return 0;
+          return res.filter(function(e){ return Math.abs(e) > 2.2*s; }).length;
+        }
+        function strengthWord(ar){
+          if(ar>=0.80) return ["强","strong"];
+          if(ar>=0.55) return ["中等偏强","moderately strong"];
+          if(ar>=0.35) return ["中等","moderate"];
+          if(ar>=0.15) return ["弱","weak"];
+          return ["几乎没有","very weak"];
+        }
+        function describe(pts){
+          var r = corr(pts);
+          if(isNaN(r)) return null;
+          var ar = Math.abs(r);
+          var dir, dirEN;
+          if(r > 0.12){ dir="正"; dirEN="positive"; }
+          else if(r < -0.12){ dir="负"; dirEN="negative"; }
+          else { dir="无明显"; dirEN="no clear"; }
+          var form = ar>=0.5 ? ["大致线性","roughly linear"] : ["大致线性，但点比较分散","roughly linear, with considerable scatter"];
+          var str = strengthWord(ar);
+          var out = countOutliers(pts);
+          return { r:r, dir:dir, dirEN:dirEN, form:form, str:str, out:out };
+        }
+
+        var statN=document.getElementById("statN"), statR=document.getElementById("statR"),
+            statMx=document.getElementById("statMx"), statMy=document.getElementById("statMy"),
+            dDir=document.getElementById("dDir"), dForm=document.getElementById("dForm"),
+            dStr=document.getElementById("dStr"), dOut=document.getElementById("dOut"),
+            dSentence=document.getElementById("dSentence");
+
+        function updateStats(){
+          var pts = trials.map(function(t){ return [t.b, t.d]; });
+          statN.textContent = "n = " + trials.length;
+          if(trials.length===0){
+            statR.textContent="r = —"; statMx.textContent="—"; statMy.textContent="—";
+            return;
+          }
+          statMx.textContent = mean(pts.map(function(p){return p[0];})).toFixed(2);
+          statMy.textContent = mean(pts.map(function(p){return p[1];})).toFixed(1);
+          var r = corr(pts);
+          statR.textContent = isNaN(r) ? "r = —" : "r = " + r.toFixed(3);
+          if(trials.length < 4){
+            dDir.textContent="继续收集数据"; dForm.textContent="—"; dStr.textContent="—"; dOut.textContent="—";
+            dSentence.innerHTML = "已收集 "+trials.length+" 个数据点。至少跳 4 次（数量尽量不同），这里会自动生成一段完整的描述。"+
+              "<span class='en-s'>Keep jumping — a full description will appear once you have at least 4 points.</span>";
+            return;
+          }
+          var d = describe(pts);
+          if(!d) return;
+          dDir.textContent = d.dir==="无明显" ? "无明显方向" : d.dir+"方向";
+          dForm.textContent = d.form[0];
+          dStr.textContent = d.str[0]+"（r = "+d.r.toFixed(2)+"）";
+          dOut.textContent = d.out===0 ? "无明显异常点" : d.out+" 个可能的异常点";
+          var outCN = d.out===0 ? "，没有明显异常点" : "，有 "+d.out+" 个可能的异常点";
+          var outEN = d.out===0 ? ", with no obvious outliers" : ", with "+d.out+" possible outlier(s)";
+          dSentence.innerHTML =
+            "散点图显示：橡皮筋数量与下落距离之间存在<strong>"+d.str[0]+"的、"+d.dir+"的</strong>关系，形式<strong>"+d.form[0]+"</strong>"+outCN+"。也就是说，橡皮筋数量越多，芭比下落的距离总体上越远。"+
+            "<span class='en-s'>The scatterplot shows a "+d.str[1]+", "+d.dirEN+", "+d.form[1]+" association between the number of rubber bands and the distance travelled"+outEN+".</span>";
+        }
+
+        /* ============ data table ============ */
+        function updateTable(){
+          var latest = {}, count = {}, hitLatest = {};
+          trials.forEach(function(t){
+            latest[t.b]=t.d; hitLatest[t.b]=t.hit;
+            count[t.b]=(count[t.b]||0)+1;
+          });
+          for(var b=0;b<=7;b++){
+            var cell = document.querySelector('[data-cell="'+b+'"]');
+            if(latest[b]===undefined){
+              cell.className="empty"; cell.textContent="—";
+            } else {
+              cell.className = hitLatest[b] ? "hitcell" : "";
+              cell.innerHTML = latest[b].toFixed(1) + (count[b]>1 ? "<span class='cnt'>共 "+count[b]+" 跳</span>" : "");
+            }
+          }
+        }
+
+        /* ============ jump flow ============ */
+        function record(t){
+          trials.push(t);
+          renderPoints(); updateTable(); updateStats();
+          if(t.hit){
+            readout.innerHTML = "砰！"+t.b+" 根橡皮筋时下落 <b>"+t.d.toFixed(1)+" cm</b>，<span class='hit'>撞到地面了</span>——这个数量太危险。数据点已记入散点图（红点）。";
+          } else {
+            readout.innerHTML = t.b+" 根橡皮筋：下落距离 <b>"+t.d.toFixed(1)+" cm</b>，安全！芭比离地面还有 "+(FLOOR-t.d).toFixed(1)+" cm。数据点已加入散点图。";
+          }
+        }
+        function performJump(quick){
+          if(animating) return Promise.resolve();
+          setBusy(true);
+          var res = genDistance(bands);
+          return animateDrop(res.d, quick).then(function(){
+            record({ b: bands, d: res.d, hit: res.hit });
+            setBusy(false);
+          });
+        }
+        dropBtn.addEventListener("click", function(){ performJump(false); });
+        autoBtn.addEventListener("click", function(){
+          if(animating) return;
+          autoCancel = false;
+          var missing = [];
+          var seen = {};
+          trials.forEach(function(t){ seen[t.b]=true; });
+          for(var b=0;b<=7;b++) if(!seen[b]) missing.push(b);
+          if(missing.length===0){
+            readout.innerHTML = "0–7 根的数据都已经有了。想看变异性，可以对同一个数量再多跳几次。";
+            return;
+          }
+          var chain = Promise.resolve();
+          missing.forEach(function(b){
+            chain = chain.then(function(){
+              if(autoCancel) return;
+              syncBands(b);
+              return performJump(true);
+            });
+          });
+          chain.then(function(){
+            if(!autoCancel) readout.innerHTML += " 自动收集完成——看看散点图和下面的描述吧。";
+          });
+        });
+        clearBtn.addEventListener("click", function(){
+          autoCancel = true;
+          trials = [];
+          marker.style.display = "none";
+          renderPoints(); updateTable(); updateStats();
+          hangIdle();
+          readout.textContent = "数据已清空。从任意一个橡皮筋数量开始，重新收集数据吧。";
+        });
+
+        /* ============ Star Wars CYU ============ */
+        var SW = [
+          ["Darth Vader",1,150],["Han Solo",2,261],["Luke Skywalker",3,282],["Princess Leia",4,163],
+          ["Anakin Skywalker",5,316],["Obi-Wan Kenobi",6,294],["R2-D2",7,410],["Chewbacca",8,260],
+          ["Yoda",9,134],["C-3PO",10,359],["Rey",11,100],["Padmé Amidala",12,210],
+          ["Emperor Palpatine",13,107],["Boba Fett",14,59]
+        ];
+        (function buildSW(){
+          var body = document.getElementById("swBody");
+          SW.forEach(function(row){
+            var tr = document.createElement("tr");
+            tr.innerHTML = "<td>"+row[0]+"</td><td class='num'>"+row[1]+"</td><td class='num'>"+row[2]+"</td>";
+            body.appendChild(tr);
+          });
+          var svg = document.getElementById("swPlot");
+          var W=620,H=380,ML=54,MR=14,MT=14,MB=52;
+          function sx(x){ return ML + x/460*(W-ML-MR); }
+          function sy(y){ return H-MB - (y-0.4)/14.2*(H-MT-MB); }
+          var g = el("g",{},svg);
+          [0,100,200,300,400].forEach(function(xv){
+            el("line",{x1:sx(xv), y1:MT, x2:sx(xv), y2:H-MB, stroke:"#EDE4CF","stroke-width":1}, g);
+            var t = el("text",{x:sx(xv), y:H-MB+20, "text-anchor":"middle","class":"ticklabel"}, g);
+            t.textContent = xv;
+          });
+          [1,4,7,10,13].forEach(function(yv){
+            el("line",{x1:ML, y1:sy(yv), x2:W-MR, y2:sy(yv), stroke:"#EDE4CF","stroke-width":1}, g);
+            var t = el("text",{x:ML-8, y:sy(yv)+4, "text-anchor":"end","class":"ticklabel"}, g);
+            t.textContent = yv;
+          });
+          el("line",{x1:ML, y1:MT, x2:ML, y2:H-MB, stroke:"#C9BFA9","stroke-width":1.2}, g);
+          el("line",{x1:ML, y1:H-MB, x2:W-MR, y2:H-MB, stroke:"#C9BFA9","stroke-width":1.2}, g);
+          var xt = el("text",{x:(ML+W-MR)/2, y:H-10, "text-anchor":"middle","class":"axis-title"}, g);
+          xt.textContent = "出场时间 Screen time (min)";
+          var yt = el("text",{x:16, y:(MT+H-MB)/2, "text-anchor":"middle","class":"axis-title", transform:"rotate(-90 16 "+((MT+H-MB)/2)+")"}, g);
+          yt.textContent = "人气排名 Rank";
+          SW.forEach(function(row){
+            var c = el("circle",{cx:sx(row[2]), cy:sy(row[1]), r:5, "class":"pt"}, g);
+            var title = el("title",{},c);
+            title.textContent = row[0]+": rank "+row[1]+", "+row[2]+" min";
+            var lab = el("text",{x:sx(row[2])+8, y:sy(row[1])-6, "class":"ptlabel"}, g);
+            lab.textContent = row[0].split(" ").pop();
+          });
+          var pts = SW.map(function(r){ return [r[2], r[1]]; });
+          var d = describe(pts);
+          if(d){
+            document.getElementById("swDir").textContent = d.dir==="无明显" ? "无明显方向" : d.dir+"方向";
+            document.getElementById("swForm").textContent = d.form[0];
+            document.getElementById("swStr").textContent = d.str[0];
+            document.getElementById("swR").textContent = "r = " + d.r.toFixed(2);
+          }
+        })();
+
+        /* init */
+        syncBands(3);
+        updateStats();
+      })();
+    </script>
+  </body>
+</html>
