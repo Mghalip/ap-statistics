@@ -60,7 +60,298 @@ window.MG_REGULAR_STATS = {
    *   ]
    * }
    */
-  materials: [],
+  materials: [
+    // Unit 3（当前进度：3.1）
+    {
+      id: 'u3-1-classwork',
+      unit: 'unit-3',
+      unitNum: 3,
+      date: '3.1',
+      kind: 'classwork',
+      titleEn: 'Scatterplots',
+      titleZh: '散点图与双变量关系描述',
+      desc: '当前进度 · 课堂笔记与练习 · 含完整答案（AK）',
+      updated: true,
+      updatedLabel: '当前进度',
+      simulatorId: 'barbie-bungee',
+      files: [
+        { label: '课堂练习', href: 'materials/classnote-3-1.pdf', download: 'Classnote 3.1 Scatterplots.pdf', isAk: false },
+        { label: '答案（AK）', href: 'materials/classnote-3-1-ak.pdf', download: 'Classnote 3.1 Scatterplots AK.pdf', isAk: true }
+      ]
+    },
+
+    // Unit 2 · Modeling Data（2.5 → 2.1）
+    {
+      id: 'u2-5-classwork',
+      unit: 'unit-2',
+      unitNum: 2,
+      date: '2.5',
+      kind: 'classwork',
+      titleEn: 'Normal Distribution Calculations',
+      titleZh: '正态分布概率与分位数计算',
+      desc: '课堂笔记与练习 · 含完整答案（AK）',
+      files: [
+        { label: '课堂练习', href: 'materials/classnote-2-5.pdf', download: 'Classnote 2.5 Normal Distribution Calculations.pdf', isAk: false },
+        { label: '答案（AK）', href: 'materials/classnote-2-5-ak.pdf', download: 'Classnote 2.5 Normal Distribution Calculations AK.pdf', isAk: true }
+      ]
+    },
+    {
+      id: 'u2-4-classwork',
+      unit: 'unit-2',
+      unitNum: 2,
+      date: '2.4',
+      kind: 'classwork',
+      titleEn: 'Normal Distributions and the Empirical Rule',
+      titleZh: '正态分布与经验法则（68-95-99.7）',
+      desc: '课堂笔记与练习 · 含完整答案（AK）',
+      files: [
+        { label: '课堂练习', href: 'materials/classnote-2-4.pdf', download: 'Classnote 2.4 Normal Distributions and the Empirical Rule.pdf', isAk: false },
+        { label: '答案（AK）', href: 'materials/classnote-2-4-ak.pdf', download: 'Classnote 2.4 Normal Distributions and the Empirical Rule AK.pdf', isAk: true }
+      ]
+    },
+    {
+      id: 'u2-3-classwork',
+      unit: 'unit-2',
+      unitNum: 2,
+      date: '2.3',
+      kind: 'classwork',
+      titleEn: 'Linear Transformations of Quantitative Data',
+      titleZh: '定量数据的线性变换',
+      desc: '课堂笔记与练习 · 含完整答案（AK）',
+      files: [
+        { label: '课堂练习', href: 'materials/classnote-2-3.pdf', download: 'Classnote 2.3 Linear Transformations of Quantitative Data.pdf', isAk: false },
+        { label: '答案（AK）', href: 'materials/classnote-2-3-ak.pdf', download: 'Classnote 2.3 Linear Transformations of Quantitative Data AK.pdf', isAk: true }
+      ]
+    },
+    {
+      id: 'u2-2-classwork',
+      unit: 'unit-2',
+      unitNum: 2,
+      date: '2.2',
+      kind: 'classwork',
+      titleEn: 'Location in a Distribution',
+      titleZh: '分布中的相对位置与 z 分数',
+      desc: '课堂笔记与练习 · 含完整答案（AK）',
+      files: [
+        { label: '课堂练习', href: 'materials/classnote-2-2.pdf', download: 'Classnote 2.2 Location in a Distribution.pdf', isAk: false },
+        { label: '答案（AK）', href: 'materials/classnote-2-2-ak.pdf', download: 'Classnote 2.2 Location in a Distribution AK.pdf', isAk: true }
+      ]
+    },
+    {
+      id: 'u2-1-classwork',
+      unit: 'unit-2',
+      unitNum: 2,
+      date: '2.1',
+      kind: 'classwork',
+      titleEn: 'Percentile',
+      titleZh: '百分位数',
+      desc: '课堂笔记与练习 · 含完整答案（AK）',
+      files: [
+        { label: '课堂练习', href: 'materials/classnote-2-1.pdf', download: 'Classnote 2.1 Percentile.pdf', isAk: false },
+        { label: '答案（AK）', href: 'materials/classnote-2-1-ak.pdf', download: 'Classnote 2.1 Percentile AK.pdf', isAk: true }
+      ]
+    },
+
+    // Unit 1 · Analyzing Data（1.5 → 1.1）
+    {
+      id: 'u1-5-classwork',
+      unit: 'unit-1',
+      unitNum: 1,
+      date: '1.5',
+      kind: 'classwork',
+      titleEn: 'Comparing Quantitative Data',
+      titleZh: '多组定量数据分布比较与箱线图',
+      desc: '课堂笔记与练习 · 含完整答案（AK）',
+      files: [
+        { label: '课堂练习', href: 'materials/classnote-1-5.pdf', download: 'Classnote 1.5 Comparing Quantitative Data.pdf', isAk: false },
+        { label: '答案（AK）', href: 'materials/classnote-1-5-ak.pdf', download: 'Classnote 1.5 Comparing Quantitative Data AK.pdf', isAk: true }
+      ]
+    },
+    {
+      id: 'u1-4-classwork',
+      unit: 'unit-1',
+      unitNum: 1,
+      date: '1.4',
+      kind: 'classwork',
+      titleEn: 'Measuring Variability',
+      titleZh: '离散程度的度量（标准差与四分位距）',
+      desc: '课堂笔记与练习 · 含完整答案（AK）',
+      files: [
+        { label: '课堂练习', href: 'materials/classnote-1-4.pdf', download: 'Classnote 1.4 Measuring Variability.pdf', isAk: false },
+        { label: '答案（AK）', href: 'materials/classnote-1-4-ak.pdf', download: 'Classnote 1.4 Measuring Variability AK.pdf', isAk: true }
+      ]
+    },
+    {
+      id: 'u1-3-classwork',
+      unit: 'unit-1',
+      unitNum: 1,
+      date: '1.3',
+      kind: 'classwork',
+      titleEn: 'Describing Quantitative Data',
+      titleZh: '定量数据的分布描述',
+      desc: '课堂笔记与练习 · 含完整答案（AK）',
+      files: [
+        { label: '课堂练习', href: 'materials/classnote-1-3.pdf', download: 'Classnote 1.3 Describing Quantitative Data.pdf', isAk: false },
+        { label: '答案（AK）', href: 'materials/classnote-1-3-ak.pdf', download: 'Classnote 1.3 Describing Quantitative Data AK.pdf', isAk: true }
+      ]
+    },
+    {
+      id: 'u1-2-classwork',
+      unit: 'unit-1',
+      unitNum: 1,
+      date: '1.2',
+      kind: 'classwork',
+      titleEn: 'Representing Categorical Data',
+      titleZh: '分类数据的图表展示',
+      desc: '课堂笔记与练习 · 含完整答案（AK）',
+      files: [
+        { label: '课堂练习', href: 'materials/classnote-1-2.pdf', download: 'Classnote 1.2 Representing Categorical Data.pdf', isAk: false },
+        { label: '答案（AK）', href: 'materials/classnote-1-2-ak.pdf', download: 'Classnote 1.2 Representing Categorical Data AK.pdf', isAk: true }
+      ]
+    },
+    {
+      id: 'u1-1-classwork',
+      unit: 'unit-1',
+      unitNum: 1,
+      date: '1.1',
+      kind: 'classwork',
+      titleEn: 'Analyzing Categorical Data',
+      titleZh: '分类数据分析',
+      desc: '课堂笔记与补充练习 · 含完整答案（AK）',
+      files: [
+        { label: '课堂练习', href: 'materials/classnote-1-1.pdf', download: 'Classnote 1.1 Analyzing Categorical Data Extra 2.pdf', isAk: false },
+        { label: '答案（AK）', href: 'materials/classnote-1-1-ak.pdf', download: 'Classnote 1.1 Analyzing Categorical Data AK.pdf', isAk: true }
+      ]
+    },
+
+    // Unit 4 · Collecting Data（4.9 → 4.1，第一阶段授课单元）
+    {
+      id: 'u4-9-classwork',
+      unit: 'unit-4',
+      unitNum: 4,
+      date: '4.9',
+      kind: 'classwork',
+      titleEn: 'Scope of Inference',
+      titleZh: '统计推断的适用范围（推广与因果）',
+      desc: '课堂笔记与练习 · 含完整答案（AK）',
+      files: [
+        { label: '课堂练习', href: 'materials/classnote-4-9.pdf', download: 'Classnote 4.9 Scope of Inference.pdf', isAk: false },
+        { label: '答案（AK）', href: 'materials/classnote-4-9-ak.pdf', download: 'Classnote 4.9 Scope of Inference AK.pdf', isAk: true }
+      ]
+    },
+    {
+      id: 'u4-8-classwork',
+      unit: 'unit-4',
+      unitNum: 4,
+      date: '4.8',
+      kind: 'classwork',
+      titleEn: 'Inference and Experiments',
+      titleZh: '实验结果与统计显著性初步推断',
+      desc: '课堂笔记与练习 · 含完整答案（AK）',
+      files: [
+        { label: '课堂练习', href: 'materials/classnote-4-8.pdf', download: 'Classnote 4.8 Inference and Experiments.pdf', isAk: false },
+        { label: '答案（AK）', href: 'materials/classnote-4-8-ak.pdf', download: 'Classnote 4.8 Inference and Experiments AK.pdf', isAk: true }
+      ]
+    },
+    {
+      id: 'u4-7-classwork',
+      unit: 'unit-4',
+      unitNum: 4,
+      date: '4.7',
+      kind: 'classwork',
+      titleEn: 'Selecting an Experimental Design',
+      titleZh: '完全随机、区组与配对实验设计',
+      desc: '课堂笔记与练习 · 含完整答案（AK）',
+      files: [
+        { label: '课堂练习', href: 'materials/classnote-4-7.pdf', download: 'Classnote 4.7 Selecting an Experimental Design.pdf', isAk: false },
+        { label: '答案（AK）', href: 'materials/classnote-4-7-ak.pdf', download: 'Classnote 4.7 Selecting an Experimental Design AK.pdf', isAk: true }
+      ]
+    },
+    {
+      id: 'u4-6-classwork',
+      unit: 'unit-4',
+      unitNum: 4,
+      date: '4.6',
+      kind: 'classwork',
+      titleEn: 'Designing Experiments',
+      titleZh: '实验设计基本原则（对照、随机、重复）',
+      desc: '课堂笔记与练习 · 含完整答案（AK）',
+      files: [
+        { label: '课堂练习', href: 'materials/classnote-4-6.pdf', download: 'Classnote 4.6 Designing Experiments.pdf', isAk: false },
+        { label: '答案（AK）', href: 'materials/classnote-4-6-ak.pdf', download: 'Classnote 4.6 Designing Experiments AK.pdf', isAk: true }
+      ]
+    },
+    {
+      id: 'u4-5-classwork',
+      unit: 'unit-4',
+      unitNum: 4,
+      date: '4.5',
+      kind: 'classwork',
+      titleEn: 'Observational Studies and Experiments',
+      titleZh: '观察性研究与控制实验',
+      desc: '课堂笔记与练习 · 含完整答案（AK）',
+      files: [
+        { label: '课堂练习', href: 'materials/classnote-4-5.pdf', download: 'Classnote 4.5 Observational Studies and Experiments.pdf', isAk: false },
+        { label: '答案（AK）', href: 'materials/classnote-4-5-ak.pdf', download: 'Classnote 4.5 Observational Studies and Experiments AK.pdf', isAk: true }
+      ]
+    },
+    {
+      id: 'u4-4-classwork',
+      unit: 'unit-4',
+      unitNum: 4,
+      date: '4.4',
+      kind: 'classwork',
+      titleEn: 'Potential Problems with Sampling',
+      titleZh: '抽样中的潜在偏差与问题',
+      desc: '课堂笔记与练习 · 含完整答案（AK）',
+      files: [
+        { label: '课堂练习', href: 'materials/classnote-4-4.pdf', download: 'Classnote 4.4 Potential Problems with Sampling.pdf', isAk: false },
+        { label: '答案（AK）', href: 'materials/classnote-4-4-ak.pdf', download: 'Classnote 4.4 Potential Problems with Sampling AK.pdf', isAk: true }
+      ]
+    },
+    {
+      id: 'u4-3-classwork',
+      unit: 'unit-4',
+      unitNum: 4,
+      date: '4.3',
+      kind: 'classwork',
+      titleEn: 'Cluster and Systematic Samples',
+      titleZh: '整群抽样与系统抽样',
+      desc: '课堂笔记与练习 · 含完整答案（AK）',
+      files: [
+        { label: '课堂练习', href: 'materials/classnote-4-3.pdf', download: 'Classnote 4.3 Cluster and Systematic Samples.pdf', isAk: false },
+        { label: '答案（AK）', href: 'materials/classnote-4-3-ak.pdf', download: 'Classnote 4.3 Cluster and Systematic Samples AK.pdf', isAk: true }
+      ]
+    },
+    {
+      id: 'u4-2-classwork',
+      unit: 'unit-4',
+      unitNum: 4,
+      date: '4.2',
+      kind: 'classwork',
+      titleEn: 'Stratified Random Samples',
+      titleZh: '分层随机抽样',
+      desc: '课堂笔记与练习 · 含完整答案（AK）',
+      files: [
+        { label: '课堂练习', href: 'materials/classnote-4-2.pdf', download: 'Classnote 4.2 Stratified Random Samples.pdf', isAk: false },
+        { label: '答案（AK）', href: 'materials/classnote-4-2-ak.pdf', download: 'Classnote 4.2 Stratified Random Samples AK.pdf', isAk: true }
+      ]
+    },
+    {
+      id: 'u4-1-classwork',
+      unit: 'unit-4',
+      unitNum: 4,
+      date: '4.1',
+      kind: 'classwork',
+      titleEn: 'Simple Random Sample',
+      titleZh: '简单随机抽样（SRS）',
+      desc: '课堂笔记与练习 · 含完整答案（AK）',
+      files: [
+        { label: '课堂练习', href: 'materials/classnote-4-1.pdf', download: 'Classnote 4.1 Simple Random Sample.pdf', isAk: false },
+        { label: '答案（AK）', href: 'materials/classnote-4-1-ak.pdf', download: 'Classnote 4.1 Simple Random Sample AK.pdf', isAk: true }
+      ]
+    }
+  ],
 
   /**
    * 普通统计课程大纲（13 个教学单元，与课堂笔记与作业编号完全一致）

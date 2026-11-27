@@ -134,7 +134,7 @@
   <a class="back-top" href="#main">返回顶部 ↑</a>
 </footer>
 
-<script src="data.js"></script>
+<script src="data.js?v=20261127-cn1"></script>
 <script>
 (() => {
   const data = window.MG_REGULAR_STATS || { simulators: [], materials: [], syllabus: [] };
@@ -242,11 +242,7 @@
       if (item.kind === 'workbook') wbCount += 1;
     }
 
-    const sortedUnitKeys = [...unitCounts.keys()].sort((a, b) => {
-      const na = syllabusMap.get(a)?.unitNum ?? parseInt(a.replace(/\D+/g, ''), 10) ?? 0;
-      const nb = syllabusMap.get(b)?.unitNum ?? parseInt(b.replace(/\D+/g, ''), 10) ?? 0;
-      return nb - na;
-    });
+    const sortedUnitKeys = [...unitCounts.keys()];
 
     const pillsEl = document.getElementById('practice-pills');
     const pillsHtml = [
@@ -302,7 +298,7 @@
 
               const simGroup = linkedSim ? `
                 <div class="hw-file-group is-sim">
-                  <span class="hw-file-label">模拟器</span>
+                  <span class="hw-file-label">配套模拟器 · ${esc(linkedSim.titleZh)}</span>
                   <a class="btn-act btn-sim-primary" href="${esc(linkedSim.path)}">打开 →</a>
                 </div>
               ` : '';
